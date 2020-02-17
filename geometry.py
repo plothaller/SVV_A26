@@ -6,23 +6,26 @@ import math
 class Geometry:
 
 	def __init__(self, height, thickness_str, height_str, width_str, chord, number_str):
-		self.h = height             #height of aileron
+		self.height = height             #height of aileron
 		self.t_st = thickness_str   #thickness of stringer
 		self.h_st = height_str      #height of stringer
 		self.w_st = width_str       #width of stringer
-		self.c_a = chord            #chord length
+		self.chord = chord            #chord length
 		self.n_str = number_str      #number of stringers
 		self.perimeter = math.pi*height/2 + 2*math.sqrt(math.pow(height/2,2) + math.pow(chord - height/2,2))
 		self.spacing = math.pi*height/2 + 2*math.sqrt(math.pow(height/2,2) + math.pow(chord - height/2,2))/number_str
-		self.Stratos_scaling_factor = (height)/(2*chord) - 1 
+		self.Stratos_scaling_factor = (self.height/2)/(self.chord-self.height/2) 
 
 	def idealization(self):
-		x1_circle = np.linspace(-self.h/2, 0, 50)
-		y1_circle = np.sqrt((-self.h/2)**2 - (x1_circle)**2)
-		x_circle = np.append(x1_circle, x1_circle)
-		y_circle = np.append(y1_circle, -y1_circle)
-		#plt.plot(x_circle, y_circle,'b')
-		plt.plot(x_circle, -y_circle)
+		print(self.Stratos_scaling_factor)
+		x_circle = np.linspace(-self.height/2, 0, 50)
+		y_circle = np.sqrt((-self.height/2)**2 - (x_circle)**2)
+		x_plate = np.linspace(0, self.chord - self.height/2, 50)
+		y_plate = self.height/2 - self.Stratos_scaling_factor * x_plate
+		plt.plot(x_circle, y_circle,'b')
+		plt.plot(x_circle, -y_circle,'b')
+		plt.plot(x_plate, y_plate,'b')
+		plt.plot(x_plate, -y_plate,'b')
 		plt.show()
 
 
@@ -40,8 +43,8 @@ class Geometry:
 				x.append(self.height/2 * math.cos(self.spacing/(math.pi*self.height/2)*180))
 				y.append(self.height/2 * math.sin(self.spacing/(math.pi*self.height/2)*180))
 			else:
-				x.append = math.sqrt((self.spacing-(math.pi*self.height)/4)/math.sqrt(math.pow(self.Stratos_scaling_factor,2)+1))
-				y.append = self.Stratos_scaling_factor * x
+				x.append = math.sqrt((self.spacing-(math.pi*self.height)/4)/math.sqrt(math.pow(self.height/2 - self.Stratos_scaling_factor,2)+1))
+				y.append = (self.height/2 - self.Stratos_scaling_factor) * math.sqrt((self.spacing-(math.pi*self.height)/4)/math.sqrt(math.pow(self.height/2 - self.Stratos_scaling_factor,2)+1))
 		print(x,y)
 
 
