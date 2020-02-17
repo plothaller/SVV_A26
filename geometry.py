@@ -24,6 +24,7 @@ class Geometry:
     def area_str(self):
         self.area_st = (self.h_st + self.w_st)* self.t_st
         return self.area_st
+print("a")
 
 
 x = Geometry(5,6,7,8,9,10)
