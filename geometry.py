@@ -80,8 +80,7 @@ class Geometry:
 
 	def compute_geometric_properties(self):
 		x_boom, y_boom = self.booms()
-		moments_of_inertia(self, x_boom, y_boom)
-		shear_nodes = define_shear_center_nodes(x_booms, y_booms)
+		self.moments_of_inertia(x_boom, y_boom)
 
 	def centroid(self):
 		print("No")
@@ -94,16 +93,6 @@ class Geometry:
 		for y in y_boom:
 			I_xx = I_xx + math.pow(abs(y),2) * self.str_area 
 		return I_xx, I_yy
-
-	def define_shear_nodes(self, x_booms, y_booms):
-		shear_nodes = []
-		for i in range(1,len(x_booms)):
-			shear_nodes.append([(x_booms[i]-x_booms[i-1])/2, (y_booms[i]-y_booms[i-1])/2, 0])
-
-	def Add_open_shear_flow(self, shear_nodes):
-		#Cutting the wingbox at the leading edge node and the vertical flange
-		print("NO")
-
 
 
 	def node_closet_to_x0(self, x_boom, y_boom):
