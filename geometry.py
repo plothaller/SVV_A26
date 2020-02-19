@@ -30,15 +30,8 @@ class Geometry:
 		ax.plot(x_plate, y_plate,'b')
 		ax.plot(x_plate, -y_plate,'b')
 		ax.scatter(x_boom, y_boom)
-		ax.set_aspect(aspect=0.5)
-
-
+		ax.set_aspect(aspect=1)
 		plt.show()
-
-
-	def area_str(self):
-		self.area_st = (self.h_st + self.w_st)* self.t_st
-		return self.area_st
 	
 	def booms(self):
 		print("Running booms")
@@ -66,7 +59,13 @@ class Geometry:
 				print(">pi*r/2", i)
 				x.append(((effective_spacing-(math.pi*self.height/4))*((self.chord-self.height/2)/(math.sqrt(math.pow((self.chord-self.height/2),2)+math.pow((self.height/2),2)))))-(self.height/2*math.cos(math.pi/2*(incircle*self.spacing)/(math.pi*self.height/4))))
 				y.append(self.height/2*(1-((((effective_spacing-(math.pi*self.height/4))*((self.chord-self.height/2)/(math.sqrt(math.pow((self.chord-self.height/2),2)+math.pow((self.height/2),2)))))-(self.height/2*math.cos(math.pi/2*(incircle*self.spacing)/(math.pi*self.height/4))))/(self.chord-self.height/2))))
+		for i in range(1, math.ceil(self.n_str/2)):
+			x.append(x[i])
+			y.append(-y[i])
 		return x,y
+
+	def centroid(self):
+		print("No")
 
 	def moments_of_inertia(self):
 		I_xx = 0
@@ -78,8 +77,16 @@ class Geometry:
 			I_xx = I_xx + math.pow(abs(y),2) * self.str_area 
 		return I_xx, I_yy
 
-	def shear_center():
+	def shear_center(self):
 		print("NO")
+
+	def node_closet_to_x0(self, x_boom, y_boom):
+		min_boom = min(x_boom)
+		min_boom_index = index(min(x_boom))
+
+
+
+		
 
 
 x = Geometry(10,6,7,8,40,29)
