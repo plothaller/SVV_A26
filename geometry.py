@@ -12,6 +12,7 @@ class Geometry:
 		self.w_st = width_str       #width of stringer
 		self.chord = chord          #chord length
 		self.n_str = number_str     #number of stringers
+		self.str_area = width_str * thickness_str + height_str * thickness_str
 		self.perimeter = math.pi*height/2 + 2*math.sqrt(math.pow(height/2,2) + math.pow(chord - height/2,2))
 		self.spacing = (math.pi*height/2 + 2*math.sqrt(math.pow(height/2,2) + math.pow(chord - height/2,2)))/(number_str)
 		self.Stratos_scaling_factor = (self.height/2)/(self.chord-self.height/2) 
@@ -67,12 +68,22 @@ class Geometry:
 				y.append(self.height/2*(1-((((effective_spacing-(math.pi*self.height/4))*((self.chord-self.height/2)/(math.sqrt(math.pow((self.chord-self.height/2),2)+math.pow((self.height/2),2)))))-(self.height/2*math.cos(math.pi/2*(incircle*self.spacing)/(math.pi*self.height/4))))/(self.chord-self.height/2))))
 		return x,y
 
+	def moments_of_inertia(self):
+		I_xx = 0
+		I_yy = 0
+		x_boom, y_boom = self.booms()
+		for x in x_boom:
+			I_yy = I_yy + math.pow(abs(x),2) * self.str_area
+		for y in y_boom:
+			I_xx = I_xx + math.pow(abs(y),2) * self.str_area 
+		return I_xx, I_yy
 
-
-
+	def shear_center():
+		print("NO")
 
 
 x = Geometry(10,6,7,8,40,29)
 print(x.idealization())
 print(x.booms())
+print(x.moments_of_inertia())
 
