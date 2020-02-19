@@ -3,6 +3,17 @@ import numpy as np
 import math
 
 
+'''
+TODO:
+
+-Coordinate system uses X-Y (code) instead on Z-Y (report)
+-Shear center
+-Centroid
+-Fix boom spacing
+
+'''
+
+
 class Geometry:
 
 	def __init__(self, height, thickness_str, height_str, width_str, chord, number_str):
@@ -64,25 +75,41 @@ class Geometry:
 			y.append(-y[i])
 		return x,y
 
+
+
+
+	def compute_geometric_properties(self):
+		x_boom, y_boom = self.booms()
+		moments_of_inertia(self, x_boom, y_boom)
+		shear_nodes = define_shear_center_nodes(x_booms, y_booms)
+
 	def centroid(self):
 		print("No")
 
-	def moments_of_inertia(self):
+	def moments_of_inertia(self, x_boom, y_boom):
 		I_xx = 0
 		I_yy = 0
-		x_boom, y_boom = self.booms()
 		for x in x_boom:
 			I_yy = I_yy + math.pow(abs(x),2) * self.str_area
 		for y in y_boom:
 			I_xx = I_xx + math.pow(abs(y),2) * self.str_area 
 		return I_xx, I_yy
 
-	def shear_center(self):
+	def define_shear_nodes(self, x_booms, y_booms):
+		shear_nodes = []
+		for i in range(1,len(x_booms)):
+			shear_nodes.append([(x_booms[i]-x_booms[i-1])/2, (y_booms[i]-y_booms[i-1])/2, 0])
+
+	def Add_open_shear_flow(self, shear_nodes):
+		#Cutting the wingbox at the leading edge node and the vertical flange
 		print("NO")
 
+
+
 	def node_closet_to_x0(self, x_boom, y_boom):
-		min_boom = min(x_boom)
-		min_boom_index = index(min(x_boom))
+		min_boom = min(x_boom, key=abs)
+		min_boom_index = x_boom.index(min(x_boom, key=abs))
+		print("Index is:", min_boom_index)
 
 
 
@@ -92,5 +119,7 @@ class Geometry:
 x = Geometry(10,6,7,8,40,29)
 print(x.idealization())
 print(x.booms())
-print(x.moments_of_inertia())
+print(x.compute_geometric_properties())
+x_booms, y_booms = x.booms()
+print(x.node_closet_to_x0(x_booms, y_booms))
 
