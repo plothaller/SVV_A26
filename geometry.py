@@ -109,15 +109,31 @@ class Geometry:
 		shear_nodes_x = np.asarray(self.SNx)
 		shear_nodes_y = np.asarray(self.SNy)
 		shear_nodes_flow = np.zeros(len(self.booms_y))
+		Delta_theta = 0
+		Delta_lenght = 0
 
 		for i in range(0,len(self.SNx)):
-			if -self.height/2 < self.booms_z[i] < 0: #Case 1 and 6
-				print("Doing shear center for node:", i, "In case 1")
-				Delta_theta = self.height/self.spacing
-				shear_flow = -1/self.I_zz * (math.cos(Delta_theta)*(-self.skin_thickness * math.pow(self.height,2))+(self.sum_booms_SC(0,i)))
+			if -self.height/2 < self.booms_z[i] < 0: #Cases 1 and 6
+				print("Doing shear center for node:", i, "Case 1,6")
+				Delta_lenght = 0
+				Delta_theta = Delta_theta + self.height/self.spacing
+				shear_flow = -1/self.I_zz * ((math.cos(Delta_theta))*(-self.skin_thickness * math.pow(self.height,2))+(self.sum_booms_SC(0,i)))
 				shear_nodes_flow[i] = shear_flow
 				print(shear_flow)
-			#if 
+			else: 
+				Delta_theta = 0
+			if self.booms_z[i] > 0 and self.booms_y[i] > 0: #Case 3
+				print("Doing shear center for node:", i, "Case 3")
+				Delta_lenght = Delta_lenght + self.spacing
+				shear_flow = -1/self.I_zz * (self.skin_thickness*self.height*Delta_lenght - (math.pow(Delta_lenght,2)/2*(self.skin_thickness*self.height)/((self.perimeter - math.pi*self.height/2)/2)))
+				shear_nodes_flow[i] = shear_flow
+				print(shear_flow)
+			if self.booms_z[i] > 0 and self.booms_y[i] < 0: #Case 4
+				print("Doing shear center for node:", i, "Case 4")
+				Delta_lenght = Delta_lenght + self.spacing
+				Shear_flow = -(math.pow(Delta_lenght,2)/2*(self.skin_thickness*self.height)/((self.perimeter - math.pi*self.height/2)/2))
+				shear_nodes_flow[i] = shear_flow
+				print(shear_flow)
 		return 0
 
 	def sum_booms_SC(self, start, end):
