@@ -68,8 +68,8 @@ class Geometry:
 				y.append(math.sin(2*effective_spacing/self.height)*self.height/2)
 			else:
 				print(">pi*r/2", i)
-				x.append(((effective_spacing-(math.pi*self.height/4))*((self.chord-self.height/2)/(math.sqrt(math.pow((self.chord-self.height/2),2)+math.pow((self.height/2),2)))))-(self.height/2*math.cos(math.pi/2*(incircle*self.spacing)/(math.pi*self.height/4))))
-				y.append(self.height/2*(1-((((effective_spacing-(math.pi*self.height/4))*((self.chord-self.height/2)/(math.sqrt(math.pow((self.chord-self.height/2),2)+math.pow((self.height/2),2)))))-(self.height/2*math.cos(math.pi/2*(incircle*self.spacing)/(math.pi*self.height/4))))/(self.chord-self.height/2))))
+				x.append(((effective_spacing-(math.pi*self.height/4))*((self.chord-self.height/2)/(math.sqrt(math.pow((self.chord-self.height/2),2)+math.pow((self.height/2),2))))))
+				y.append(self.height/2*(1-((effective_spacing-(math.pi*self.height/4))*((self.chord-self.height/2)/(math.sqrt(math.pow((self.chord-self.height/2),2)+math.pow((self.height/2),2)))))/(self.chord-self.height/2)))
 		for i in range(1, math.ceil(self.n_str/2)):
 			x.append(x[i])
 			y.append(-y[i])
