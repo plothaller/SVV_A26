@@ -104,10 +104,10 @@ class Geometry:
 		return I_zz, I_yy
 
 
-	def node_closest_to_x0(self, x_boom, y_boom):
-		min_boom = min(x_boom, key=abs)
-		min_boom_index = x_boom.index(min(x_boom, key=abs))
-		print("Index is:", min_boom_index)
+	#def node_closest_to_x0(self, x_boom, y_boom):
+	#	min_boom = min(x_boom, key=abs)
+	#	min_boom_index = x_boom.index(min(x_boom, key=abs))
+	#	print("Index is:", min_boom_index)
 
 	def shear_center_x(self):
 		shear_nodes_x = np.asarray(self.SNx)
@@ -153,7 +153,6 @@ class Geometry:
 x = Geometry(10,1,6,7,8,40,29)
 print(x.idealization())
 x_booms, y_booms = x.booms(x.spacing)
-print(x.node_closest_to_x0(x_booms, y_booms))
 print("str_area:", x.str_area)
 print("str 1:", y_booms[1])
 print("Sum booms SC:", x.sum_booms_SC(0,2))
