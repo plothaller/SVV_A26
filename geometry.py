@@ -100,6 +100,10 @@ class Geometry:
 		min_boom_index = x_boom.index(min(x_boom, key=abs))
 		print("Index is:", min_boom_index)
 
+	def shear_center_x(self):
+		print("NOT IMPLEMENTED YET. RETURNS SC_x = 0")
+		return 0
+
 
 
 		
