@@ -133,7 +133,7 @@ class Geometry:
 				Delta_lenght = Delta_lenght + self.spacing
 				Shear_flow = -(math.pow(Delta_lenght,2)/2*(self.skin_thickness*self.height)/((self.perimeter - math.pi*self.height/2)/2))
 				shear_nodes_flow[i] = shear_flow
-				print(shear_flow)
+				print("ashas",shear_flow)
 	
 
 	def sum_booms_SC(self, start, end):
