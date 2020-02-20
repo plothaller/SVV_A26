@@ -13,6 +13,7 @@ TODO:
 -What happens when the boom is exactly in the vertical plate and leading edge and trailing edge plate joint?????????
 -Trailing edge shear element is not considered
 -Aliron height is the full spar or only half the spar?????
+-Shear flow cases 2,5 (spar) are yet not implemented
 
 '''
 
@@ -33,10 +34,12 @@ class Geometry:
 		self.spacing = (math.pi*height/2 + 2*math.sqrt(math.pow(height/2,2) + math.pow(chord - height/2,2)))/(number_str)
 		self.booms_z = self.booms(self.spacing)[0]
 		self.booms_y = self.booms(self.spacing)[1]
-		self.I_zz = self.moments_of_inertia(self.booms_z, self.booms_y)[0]
-		self.I_yy = self.moments_of_inertia(self.booms_z, self.booms_y)[1]
+		self.zero_area_boom_z = [0,0,chord-height/2]
+		self.zero_area_boom_y = [height/2,-height/2,0]
 		self.SNx = self.booms(self.spacing/2)[0][1::2]
 		self.SNy = self.booms(self.spacing/2)[1][1::2]
+		self.I_zz = self.moments_of_inertia(self.booms_z, self.booms_y)[0]
+		self.I_yy = self.moments_of_inertia(self.booms_z, self.booms_y)[1]
 
 	def booms(self, spacing):
 		print("Running booms")
@@ -84,6 +87,7 @@ class Geometry:
 		ax.plot(x_plate, -y_plate,'b')
 		ax.scatter(x_boom, y_boom)
 		ax.scatter(self.SNx, self.SNy)
+		ax.scatter(self.zero_area_boom_z, self.zero_area_boom_y)
 		ax.set_aspect(aspect=1)
 		plt.show()
 	
@@ -115,8 +119,10 @@ class Geometry:
 		for i in range(0,len(self.SNx)):
 			if -self.height/2 < self.booms_z[i] < 0: #Cases 1 and 6
 				print("Doing shear center for node:", i, "Case 1,6")
-				Delta_lenght = 0
+				Delta_lenght = math.sqrt(math.pow(min(i for i in self.booms_z if i > 0),2)+math.pow(self.height/2 - self.booms_y[self.booms_z.index(min(i for i in self.booms_z if i > 0))],2))
 				Delta_theta = Delta_theta + self.height/self.spacing
+				if Delta_theta > math.pi/2:
+					Delta_theta = math.pi/2
 				shear_flow = -1/self.I_zz * ((math.cos(Delta_theta))*(-self.skin_thickness * math.pow(self.height,2))+(self.sum_booms_SC(0,i)))
 				shear_nodes_flow[i] = shear_flow
 				print(shear_flow)
@@ -134,8 +140,7 @@ class Geometry:
 				Shear_flow = -(math.pow(Delta_lenght,2)/2*(self.skin_thickness*self.height)/((self.perimeter - math.pi*self.height/2)/2))
 				shear_nodes_flow[i] = shear_flow
 				print("ashas",shear_flow)
-	
-
+			
 	def sum_booms_SC(self, start, end):
 		summation = 0
 		if end > len(self.booms_y):
