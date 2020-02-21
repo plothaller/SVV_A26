@@ -14,6 +14,7 @@ TODO:
 -Trailing edge shear element is not considered
 -Aliron height is the full spar or only half the spar?????
 -Shear flow cases 2,5 (spar) are yet not implemented
+-Do we want to implement skin into the booms with a large number of booms (10k-100k) ????
 
 '''
 
@@ -36,8 +37,8 @@ class Geometry:
 		self.booms_y = self.booms(self.spacing)[1]
 		self.zero_area_boom_z = [0,0,chord-height/2]
 		self.zero_area_boom_y = [height/2,-height/2,0]
-		self.SNx = self.booms(self.spacing/2)[0][1::2]
-		self.SNy = self.booms(self.spacing/2)[1][1::2]
+		self.SNx = np.append(self.booms(self.spacing/2)[0][1::2], np.array([0, (self.chord - self.height/2) - 1/4 * self.spacing, (self.chord - self.height/2) - 1/4 * self.spacing ]))
+		self.SNy = np.append(self.booms(self.spacing/2)[1][1::2], np.array([0, self.height/2*(1-((self.chord - self.height/2) - 1/4 * self.spacing)/(self.chord-self.height/2)), -self.height/2*(1-((self.chord - self.height/2) - 1/4 * self.spacing)/(self.chord-self.height/2))]))
 		self.I_zz = self.moments_of_inertia(self.booms_z, self.booms_y)[0]
 		self.I_yy = self.moments_of_inertia(self.booms_z, self.booms_y)[1]
 
@@ -110,6 +111,7 @@ class Geometry:
 	#	print("Index is:", min_boom_index)
 
 	def shear_center_x(self):
+		print("np.zeros(1):", np.zeros(1))
 		shear_nodes_x = np.asarray(self.SNx)
 		shear_nodes_y = np.asarray(self.SNy)
 		shear_nodes_flow_z = np.zeros(len(self.booms_y))
