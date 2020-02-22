@@ -8,6 +8,7 @@ TODO:
 
 -Coordinate system uses X-Y (code) instead on Z-Y (report)
 -Shear center
+-Torsional constant
 -Centroid
 -Fix boom spacing
 -What happens when the boom is exactly in the vertical plate and leading edge and trailing edge plate joint?????????
@@ -43,6 +44,7 @@ class Geometry:
 		self.centroid_y = self.centroid()[1]
 		self.I_zz = self.moments_of_inertia(self.booms_z, self.booms_y)[0]
 		self.I_yy = self.moments_of_inertia(self.booms_z, self.booms_y)[1]
+
 	def idealization(self):
 		x_circle = np.linspace(-self.h/2, 0, 500)
 		y_circle = np.sqrt((-self.h/2)**2 - (x_circle)**2)
