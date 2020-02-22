@@ -43,6 +43,15 @@ class Geometry:
 		self.centroid_y = self.centroid()[1]
 		self.I_zz = self.moments_of_inertia(self.booms_z, self.booms_y)[0]
 		self.I_yy = self.moments_of_inertia(self.booms_z, self.booms_y)[1]
+	def idealization(self):
+		x_circle = np.linspace(-self.h/2, 0, 500)
+		y_circle = np.sqrt((-self.h/2)**2 - (x_circle)**2)
+		x_skin = np.linspace(0, (self.c_a -self.h/2), 500)
+		gradient_skin = ((-self.h/2)/(self.c_a - self.h/2))
+		y_skin = gradient_skin*(x_skin) + self.h/2
+		plt.plot(x_circle, y_circle,'b')
+		plt.plot(x_skin, y_skin, 'b')
+		plt.show()
 
 	def booms(self, booms_per_str, Booms = False):
 		print("Running booms")
