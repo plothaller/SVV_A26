@@ -5,9 +5,10 @@ import numpy as np
 # Notes:
 # file size is 81 x 41
 # =============================================================================
+
 #global variables C_a and l_a for the chord and length of the aileron, respectively
-C_a = 1
-l_a = 1
+C_a = 0.484
+l_a = 1.691
 
 
 
@@ -55,71 +56,98 @@ with open(r"C:\Users\Max van Huffelen\Desktop\Quick Access\University\SVV\aerody
         i = 0
         for line in aerodynamicloadcrj700.readlines():
             line = line.strip().split(',')
-            #print(np.float_(line))
             AeroLoading[i] = np.float_(line)
             i += 1
         return AeroLoading
     AeroLoading = AeroLoadingMap(aerodynamicloadcrj700)
     
     
-    def generateSplines(AeroLoading = AeroLoading):
-        #generates all the splines using interpolateSpline and places them in the final matrix
-        WeightMatrix = np.zeros([80, 40, 4])
-        for idx_z in range(0, 80):
-            for idx_x in range(0, 40):
-                p11 = AeroLoading[idx_z, idx_x]
-                p12 = AeroLoading[idx_z, idx_x + 1]
-                p21 = AeroLoading[idx_z+1, idx_x]
-                p22 = AeroLoading[idx_z+1, idx_x+1]
-                localSplineWeights = interpolateSpline(p11, p12, p21, p22, idx_z, idx_x)[:].ravel()
-                WeightMatrix[idx_z, idx_x, :] = localSplineWeights
-        return WeightMatrix
-    WeightMatrix = generateSplines()
-    
-    
-    def findIndex(loc_z, loc_x):
-        #input: z, x; location of a point on the aileron surface
-        #outputs: index_z, index_x: the indices of the location in the weight matrix (p11)
-        guess_index_z = np.arccos(1 + 2*loc_z/C_a)*81/np.pi + 1 - 0.5
-        guess_index_x = np.arccos(1 - 2*loc_x/l_a)*41/np.pi + 1 - 0.5
+def generateSplines(AeroLoading = AeroLoading):
+    #generates all the splines using interpolateSpline and places them in the final matrix
+    WeightMatrix = np.zeros([80, 40, 4])
+    for idx_z in range(0, 80):
+        for idx_x in range(0, 40):
+            p11 = AeroLoading[idx_z, idx_x]
+            p12 = AeroLoading[idx_z, idx_x + 1]
+            p21 = AeroLoading[idx_z+1, idx_x]
+            p22 = AeroLoading[idx_z+1, idx_x+1]
+            localSplineWeights = interpolateSpline(p11, p12, p21, p22, idx_z, idx_x)[:].ravel()
+            WeightMatrix[idx_z, idx_x, :] = localSplineWeights
+    return WeightMatrix
 
-        
-        def validate_guess_z(guess_index_z, z):
-            print('guess: ', guess_index_z, '\n guess location: ', locationz(int(guess_index_z)), '\n desired location: ', loc_z)
-            guess_index_z = int(guess_index_z)
-            if locationz(guess_index_z) <= z <= locationz(guess_index_z +1):
-                return guess_index_z
-            elif locationz(guess_index_z) > z:
-                validate_guess_z(guess_index_z-1,z)
-            else:
-                validate_guess_z(guess_index_z+1, z)
-                
-        def validate_guess_x(guess_index_x, x):
-            print('guess: ', guess_index_x, '\n guess location: ', locationz(int(guess_index_x)), '\n desired location: ', loc_x)
-            guess_index_x = int(guess_index_x)
-            if locationz(guess_index_x) <= x <= locationz(guess_index_x +1):
-                return guess_index_x
-            elif locationz(guess_index_x) > x:
-                validate_guess_x(guess_index_x-1,x)
-            else:
-                validate_guess_x(guess_index_x+1, x)
-        index_z, index_x = validate_guess_z(guess_index_z, loc_z), validate_guess_x(guess_index_x, loc_x)
-        return index_z, index_x
-                
-    def findInterpolatedValue(loc_z, loc_x, weights = WeightMatrix):
-        #inputs: z, x; location of a point on the aileron surface
-        #outputs: s; the approximate aerodynamic load at the input location
-        
-        #[find at which spline the location is]
-        localWeights = weights[loc_index_z, loc_index_x, :]
-        loc = np.array([1, loc_x, loc_z, loc_x*loc_z])
-        
-        s = loc@localWeights
-        return s
-        
-                
     
+    
+def findIndex(loc_z, loc_x):
+    #input: z, x; location of a point on the aileron surface
+    #outputs: index_z, index_x: the indices of the location in the weight matrix (p11)
+# =============================================================================
+#     def findx(loc_x, guess_index_x):
+#         if locationx(guess_index_x+1) >= loc_x >= locationx(guess_index_x):
+#             return guess_index_x
+#         elif loc_x < locationx(guess_index_x):
+#             return findx(loc_x, guess_index_x-1)
+#         else:
+#             return findx(loc_x, guess_index_x+1)
+#     def findz(loc_z, guess_index_z):
+#         if locationz(guess_index_z +1) <= loc_z <= locationz(guess_index_z):
+#             return guess_index_z
+#         elif loc_z > locationz(guess_index_z):
+#             return findz(loc_z, guess_index_z -1)
+#         else:
+#             return findz(loc_z, guess_index_z +1)
+#     found_index_z, found_index_x = findz(loc_z, 40), findx(loc_x, 20)
+# =============================================================================
+
+    def findz(loc_z):
+        for index_z in range(0, 82):
+            if locationz(index_z + 1) < loc_z <= locationz(index_z):
+                return index_z
+    def findx(loc_x):
+        for index_x in range(0, 42):
+            if locationx(index_x) <= loc_x < locationx(index_x + 1):
+                return index_x
+    return findz(loc_z), findx(loc_x)
+
+          
+       
+WeightMatrix = generateSplines()  
+def findInterpolatedValue(loc_z, loc_x, weights = WeightMatrix):
+    #inputs: z, x; location of a point on the aileron surface
+    #outputs: s; the approximate aerodynamic load at the input location
+    
+    loc_index_z, loc_index_x = findIndex(loc_z, loc_x)
+    localWeights = weights[loc_index_z, loc_index_x, :]
+    loc = np.array([1, loc_x, loc_z, loc_x*loc_z])
+    
+    s = loc@localWeights
+    return s
+    
+
+def integrate(loc_z_max, loc_x_max, loc_z_min = -0.0001, loc_x_min = 0.0013, weights = WeightMatrix):
+    def integrateSpline(index_z, index_x, loc_z_max, loc_x_max, loc_z_min = 0, loc_x_min = 0, weights = WeightMatrix):
+        a, b, c, d = weights[index_z, index_x, 0], weights[index_z, index_x, 1], weights[index_z, index_x, 2], weights[index_z, index_x, 3]
+        x_min = max(loc_x_min, locationx(index_x))
+        x_max = min(loc_x_max, locationx(index_x+1))
+        z_min = min(loc_z_min, locationz(index_z))
+        z_max = max(loc_z_max, locationz(index_z+1))
+        if x_min <= x_max and z_min >= z_max and locationz(index_z+1) <= z_max <= locationz(index_z) and locationz(index_z+1) <= z_min <= locationz(index_z) and locationx(index_x+1) >= x_max >= locationx(index_x) and locationx(index_x+1) >= x_min >= locationx(index_x):
+            Volume = a*(x_max*z_max - x_min*z_min) + b*(x_max*x_max*z_max - x_min*x_min*z_min) + c*(x_max*z_max*z_max - x_min*z_min*z_min) + d*(x_max**2*z_max**2 - x_min**2*z_min**2)
+            return Volume
+        else:
+            print("inproper integration variables")
+            raise AssertionError
+      
+    index_z_min, index_x_min = findIndex(loc_z_min, loc_x_min)
+    index_z_max, index_x_max = findIndex(loc_z_max, loc_x_max)
+    totalVolume = 0
+    #print('indices z: ', index_z_min, index_z_max)
+    #print('indices x: ', index_x_min, index_x_max)
+    for index_z in range(index_z_min, index_z_max+1):
+        for index_x in range(index_x_min, index_x_max+1):
+            totalVolume += integrateSpline(index_z, index_x, loc_z_max, loc_x_max, loc_z_min, loc_x_min)
+    return totalVolume
                 
+
                 
                 
                 
