@@ -44,6 +44,7 @@ class Geometry:
 		self.centroid_y = self.centroid()[1]
 		self.I_zz = self.moments_of_inertia(self.booms_z, self.booms_y)[0]
 		self.I_yy = self.moments_of_inertia(self.booms_z, self.booms_y)[1]
+		self.shear_center_x = self.shear_center()[0]
 
 	def idealization(self):
 		x_circle = np.linspace(-self.h/2, 0, 500)
@@ -160,9 +161,9 @@ class Geometry:
 			I_zz = I_zz + math.pow(abs(y-self.centroid_y),2) * self.str_area 
 		return I_zz, I_yy
 
-	def shear_center_x(self):
+	def shear_center(self):
 		print("np.zeros(1):", np.zeros(1))
-		shear_nodes_x = np.asarray(self.SNx)
+		shear_nodes_z = np.asarray(self.SNx)
 		shear_nodes_y = np.asarray(self.SNy)
 		shear_nodes_flow_z = np.zeros(self.SNx.size)
 		shear_nodes_flow_y = np.zeros(self.SNx.size)
@@ -207,6 +208,10 @@ class Geometry:
 				shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow
 				#The shear flows are wrong, they are only the integral component
 
+		shear_center_z = np.dot(shear_nodes_flow_y, shear_nodes_y) - np.dot(shear_nodes_flow_z, shear_nodes_z)
+		return shear_center_z, 0
+
+
 	def components(self, index):
 		Deltaz = self.booms_z[index+1] - self.booms_z[index]
 		Deltay = self.booms_y[index+1] - self.booms_y[index]
@@ -230,5 +235,5 @@ x_booms, y_booms = x.booms(x.spacing)[0], x.booms(x.spacing)[1]
 print("str_area:", x.str_area)
 print("str 1:", y_booms[1])
 print("Sum booms SC:", x.sum_booms_SC(0,2))
-print(x.shear_center_x())
+print("Shear center location is:", x.shear_center())
 
