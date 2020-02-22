@@ -14,6 +14,7 @@ TODO:
 -Trailing edge shear element is not considered
 -Aliron height is the full spar or only half the spar?????
 -Shear flow cases 2,5 (spar) are yet not implemented
+-Do we want to implement skin into the booms with a large number of booms (10k-100k) ????
 
 '''
 
@@ -36,8 +37,10 @@ class Geometry:
 		self.booms_y = self.booms(self.spacing)[1]
 		self.zero_area_boom_z = [0,0,chord-height/2]
 		self.zero_area_boom_y = [height/2,-height/2,0]
-		self.SNx = self.booms(self.spacing/2)[0][1::2]
-		self.SNy = self.booms(self.spacing/2)[1][1::2]
+		self.SNx = np.append(self.booms(self.spacing/2)[0][1::2], np.array([0, (self.chord - self.height/2) - 1/4 * self.spacing, (self.chord - self.height/2) - 1/4 * self.spacing ]))
+		self.SNy = np.append(self.booms(self.spacing/2)[1][1::2], np.array([0, self.height/2*(1-((self.chord - self.height/2) - 1/4 * self.spacing)/(self.chord-self.height/2)), -self.height/2*(1-((self.chord - self.height/2) - 1/4 * self.spacing)/(self.chord-self.height/2))]))
+		self.centroid_z = self.centroid()[0]
+		self.centroid_y = self.centroid()[1]
 		self.I_zz = self.moments_of_inertia(self.booms_z, self.booms_y)[0]
 		self.I_yy = self.moments_of_inertia(self.booms_z, self.booms_y)[1]
 	def idealization(self):
@@ -95,24 +98,26 @@ class Geometry:
 		ax.plot(x_plate, y_plate,'b')
 		ax.plot(x_plate, -y_plate,'b')
 		ax.scatter(x_boom, y_boom)
-		ax.scatter(self.SNx, self.SNy)
+		#ax.scatter(self.SNx, self.SNy)
+		ax.scatter(self.centroid_z, self.centroid_y)
 		ax.scatter(self.zero_area_boom_z, self.zero_area_boom_y)
 		ax.set_aspect(aspect=1)
 		plt.show()
 	
 	def centroid(self):
-		print("No")
-	def area_str(self):
-		self.area_st = (self.h_st + self.w_st)* self.t_st
-		return self.area_st
+		centroid_z = 0
+		centroid_y = 0
+		for z in self.booms_z:
+			centroid_z = centroid_z + z 
+		return centroid_z/len(self.booms_z), centroid_y
 
 	def moments_of_inertia(self, z_boom, y_boom):
 		I_zz = 0
 		I_yy = 0
 		for z in z_boom:
-			I_yy = I_yy + math.pow(abs(z),2) * self.str_area
+			I_yy = I_yy + math.pow(abs(z-self.centroid_z),2) * self.str_area
 		for y in y_boom:
-			I_zz = I_zz + math.pow(abs(y),2) * self.str_area 
+			I_zz = I_zz + math.pow(abs(y-self.centroid_y),2) * self.str_area 
 		return I_zz, I_yy
 
 
@@ -121,39 +126,40 @@ class Geometry:
 	#	min_boom_index = x_boom.index(min(x_boom, key=abs))
 	#	print("Index is:", min_boom_index)
 
-	def shear_center_x(self):
-		shear_nodes_x = np.asarray(self.SNx)
-		shear_nodes_y = np.asarray(self.SNy)
-		shear_nodes_flow_z = np.zeros(len(self.booms_y))
-		shear_nodes_flow_y = np.zeros(len(self.booms_y))
-		Delta_theta = 0
-		Delta_lenght = math.sqrt(math.pow(min(i for i in self.booms_z if i > 0),2)+math.pow(self.height/2 - self.booms_y[self.booms_z.index(min(i for i in self.booms_z if i > 0))],2))
+	#def shear_center_x(self):
+	#	print("np.zeros(1):", np.zeros(1))
+	#	shear_nodes_x = np.asarray(self.SNx)
+	#	shear_nodes_y = np.asarray(self.SNy)
+	#	shear_nodes_flow_z = np.zeros(len(self.booms_y))
+	#	shear_nodes_flow_y = np.zeros(len(self.booms_y))
+	#	Delta_theta = 0
+	#	Delta_lenght = math.sqrt(math.pow(min(i for i in self.booms_z if i > 0),2)+math.pow(self.height/2 - self.booms_y[self.booms_z.index(min(i for i in self.booms_z if i > 0))],2))
 
-		for i in range(0,len(self.SNx)):
-			if -self.height/2 < self.booms_z[i] < 0: #Cases 1 and 6
-				print("Doing shear center for node:", i, "Case 1,6")
-				Delta_theta = Delta_theta + self.height/self.spacing
-				if Delta_theta > math.pi/2:
-					Delta_theta = math.pi/2
-				shear_flow = -1/self.I_zz * ((math.cos(Delta_theta))*(-self.skin_thickness * math.pow(self.height,2))+(self.sum_booms_SC(0,i)))
-				shear_nodes_flow_z[i] = 0
-				print(shear_flow)
-			else: 
-				Delta_theta = 0
-			if self.booms_z[i] > 0 and self.booms_y[i] > 0: #Case 3
-				print("Doing shear center for node:", i, "Case 3")
-				Delta_lenght = Delta_lenght + self.spacing
-				shear_flow = -1/self.I_zz * (self.skin_thickness*self.height*Delta_lenght - (math.pow(Delta_lenght,2)/2*(self.skin_thickness*self.height)/((self.perimeter - math.pi*self.height/2)/2)))
-				shear_nodes_flow_z[i] = 0
-				print(shear_flow)
-			elif self.booms_z[i] > 0 and self.booms_y[i] < 0: #Case 4
-				print("Doing shear center for node:", i, "Case 4")
-				Delta_lenght = Delta_lenght + self.spacing
-				Shear_flow = -(math.pow(Delta_lenght,2)/2*(self.skin_thickness*self.height)/((self.perimeter - math.pi*self.height/2)/2))
-				shear_nodes_flow_z[i] = 0
-				print("ashas",shear_flow)
-			else:
-				Delta_lenght = math.sqrt(math.pow(min(i for i in self.booms_z if i > 0),2)+math.pow(self.height/2 - self.booms_y[self.booms_z.index(min(i for i in self.booms_z if i > 0))],2))
+		#for i in range(0,len(self.SNx)):
+		#	if -self.height/2 < self.booms_z[i] < 0: #Cases 1 and 6
+		#		print("Doing shear center for node:", i, "Case 1,6")
+		#		Delta_theta = Delta_theta + self.height/self.spacing
+		#		if Delta_theta > math.pi/2:
+		#			Delta_theta = math.pi/2
+		#		shear_flow = -1/self.I_zz * ((math.cos(Delta_theta))*(-self.skin_thickness * math.pow(self.height,2))+(self.sum_booms_SC(0,i)))
+		#		shear_nodes_flow_z[i] = 0
+		#		print(shear_flow)
+		#	else: 
+		#		Delta_theta = 0
+		#	if self.booms_z[i] > 0 and self.booms_y[i] > 0: #Case 3
+		#		print("Doing shear center for node:", i, "Case 3")
+		#		Delta_lenght = Delta_lenght + self.spacing
+		#		shear_flow = -1/self.I_zz * (self.skin_thickness*self.height*Delta_lenght - (math.pow(Delta_lenght,2)/2*(self.skin_thickness*self.height)/((self.perimeter - math.pi*self.height/2)/2)))
+		#		shear_nodes_flow_z[i] = 0
+		#		print(shear_flow)
+		#	elif self.booms_z[i] > 0 and self.booms_y[i] < 0: #Case 4
+		#		print("Doing shear center for node:", i, "Case 4")
+		#		Delta_lenght = Delta_lenght + self.spacing
+		#		Shear_flow = -(math.pow(Delta_lenght,2)/2*(self.skin_thickness*self.height)/((self.perimeter - math.pi*self.height/2)/2))
+		#		shear_nodes_flow_z[i] = 0
+		#		print("ashas",shear_flow)
+		#	else:
+		#		Delta_lenght = math.sqrt(math.pow(min(i for i in self.booms_z if i > 0),2)+math.pow(self.height/2 - self.booms_y[self.booms_z.index(min(i for i in self.booms_z if i > 0))],2))
 
 			
 	def sum_booms_SC(self, start, end):
@@ -171,5 +177,5 @@ x_booms, y_booms = x.booms(x.spacing)
 print("str_area:", x.str_area)
 print("str 1:", y_booms[1])
 print("Sum booms SC:", x.sum_booms_SC(0,2))
-x.shear_center_x()
+#x.shear_center_x()
 
