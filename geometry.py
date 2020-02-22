@@ -95,6 +95,15 @@ class Geometry:
 					a.append(self.str_area)
 				else:
 					a.append(0)
+				
+		x.append(-self.height/2)
+		y.append(0)
+		a.append(0)
+		if Booms == False:
+			x.append(-self.height/2)
+			y.append(0)
+			a.append(0)
+
 		for i in range(1, len(x)):
 			x.append(x[i])
 			y.append(-y[i])
@@ -161,14 +170,18 @@ class Geometry:
 		Delta_lenght = math.sqrt(math.pow(min(i for i in self.booms_z if i > 0),2)+math.pow(self.height/2 - self.booms_y[self.booms_z.index(min(i for i in self.booms_z if i > 0))],2))
 
 		for i in range(0,len(self.SNx)):
+			if self.SNy[i] == 0:
+				shear_flow_z = 0
+				shear_flow_y = 0
+				continue
 			if -self.height/2 < self.SNx[i] < 0: #Cases 1 and 6
 				print("Doing shear center for node:", i, "Case 1,6")
 				Delta_theta = Delta_theta + self.height/self.spacing
 				if Delta_theta > math.pi/2:
 					Delta_theta = math.pi/2
 				shear_flow = -1/self.I_zz * ((math.cos(Delta_theta))*(-self.skin_thickness * math.pow(self.height,2))+(self.sum_booms_SC(0,i)))
-				shear_nodes_flow_z[i] = 0
-				print(shear_flow)
+				shear_nodes_flow_z[i] = self.components(i)[0]*shear_flow
+				shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow
 			else: 
 				Delta_theta = 0
 			if self.SNx[i] > 0 and self.SNy[i] > 0: #Case 3
@@ -176,24 +189,27 @@ class Geometry:
 				Delta_lenght = Delta_lenght + self.spacing
 				#The shear flows are wrong, they are only the integral component
 				shear_flow = -1/self.I_zz * (self.skin_thickness*self.height*Delta_lenght - (math.pow(Delta_lenght,2)/2*(self.skin_thickness*self.height)/((self.perimeter - math.pi*self.height/2)/2)))
-				shear_nodes_flow_z[i] = 0
-				print(shear_flow)
+				shear_nodes_flow_z[i] = self.components(i)[0]*shear_flow
+				shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow
 			elif self.SNx[i] > 0 and self.SNy[i] < 0: #Case 4
 				print("Doing shear center for node:", i, "Case 4")
 				Delta_lenght = Delta_lenght + self.spacing
 				#The shear flows are wrong, they are only the integral component
 				Shear_flow = -(math.pow(Delta_lenght,2)/2*(self.skin_thickness*self.height)/((self.perimeter - math.pi*self.height/2)/2))
-				shear_nodes_flow_z[i] = 0
-				print("ashas",shear_flow)
+				shear_nodes_flow_z[i] = self.components(i)[0]*shear_flow
+				shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow
 			else:
 				Delta_lenght = math.sqrt(math.pow(min(i for i in self.booms_z if i > 0),2)+math.pow(self.height/2 - self.booms_y[self.booms_z.index(min(i for i in self.booms_z if i > 0))],2))
 			if self.SNx[i] == 0 and self.SNy[i] == 0:
 				Delta_lenght = self.height/2
+				shear_flow = -1/self.I_zz * (5)
+				shear_nodes_flow_z[i] = self.components(i)[0]*shear_flow
+				shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow
 				#The shear flows are wrong, they are only the integral component
 
 	def components(self, index):
-		Deltaz = self.booms_z[i+1] - self.booms_z[i]
-		Deltay = self.booms_y[i+1] - self.booms_y[i]
+		Deltaz = self.booms_z[index+1] - self.booms_z[index]
+		Deltay = self.booms_y[index+1] - self.booms_y[index]
 		Lenght = math.sqrt(math.pow(Deltaz,2)+math.pow(Deltay,2))
 		z_comp = Deltaz/Lenght
 		y_comp = Deltay/Lenght
