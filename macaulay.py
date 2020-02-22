@@ -1,6 +1,6 @@
 import numpy as np
 
-def Macaulay(Ca, la, x1, x2, x3, xa, ha, tsk, tsp, tst, hst, wst, nst, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy):
+def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy):
 
 	# Solving for the reaction forces using Ax = b
 	# x represents the column vector containing all unknowns
@@ -104,21 +104,21 @@ def Macaulay(Ca, la, x1, x2, x3, xa, ha, tsk, tsp, tst, hst, wst, nst, d1, d3, t
 	#b matrix
 	b[0] = P * np.sin(theta) + DOUBLEINTEGRAL
 	b[1] = P * np.cos(theta)
-	b[2] = -ha / 2 * P * np.cos(theta) + (ha / 2 - zsc) * P * np.sin(theta) + DOULBEINTEGRALPLUSZMINUSZSC
+	b[2] = (-ha / 2) * P * np.cos(theta) + (ha / 2 - zsc) * P * np.sin(theta) + DOULBEINTEGRALPLUSZMINUSZSC
 	b[3] = P * np.cos(theta) * (la - xi2)
 	b[4] = P * np.sin(theta) * (la - xi2) + DOUBLEINTEGRAL
 	b[5] = d1*np.cos(theta) + 1 / (E * I_zz) * FIVEINTEGRAL + zsc / (G * J) * TRIPLEINTEGRALPLUSZMINUSZSC
-	b[6] = d1*np.sin(theta)
+	b[6] = -d1*np.sin(theta)
 	b[7] = 1 / (E * I_zz) * FIVEINTEGRAL + zsc / (G * J) * TRIPLEINTEGRALPLUSZMINUSZSC
 	b[9] = d3*np.cos(theta) - zsc / (G * J) * TRIPLEINTEGRALPLUSZMINUSZSC + zsc / (G * J) * ha / 2 * P * np.cos(theta) * (x3 - xi2) - zsc / (G * J) * (ha / 2 - zsc) * P * np.sin(theta) * (x3 - xi2) - 1 / (E * I_zz) * FIVEINTEGRAL - P * np.sin(theta) * (x3 - xi2) ** 3 / (6 * E * I_zz)
-	b[10] = d3*np.sin(theta) + P * np.cos(theta) * (x3 - xi2) ** 3 / (6 * E * I_yy)
+	b[10] = -d3*np.sin(theta) + P * np.cos(theta) * (x3 - xi2) ** 3 / (6 * E * I_yy)
 	b[11] = -np.sin(theta) / (E * I_zz) * FIVEINTEGRAL - ha * np.cos(theta) / (2 * G * J) * TRIPLEINTEGRALPLUSZMINUSZSC - zsc * np.sin(theta) / (G * J) * TRIPLEINTEGRALPLUSZMINUSZSC;
 
 	# solve for x
 	x = np.linalg.solve(A,b)
+	print(x)
 
 	Fy = x[0] + x[1] + x[2] + x[3]*np.sin(theta) - P*np.sin(theta)
 	Fz = x[3]*np.cos(theta) - P*np.cos(theta) + x[4] + x[5] + x[6]
 
 	return [Fy, Fz]
-
