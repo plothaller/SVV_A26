@@ -188,6 +188,14 @@ class Geometry:
 			if self.SNx[i] == 0 and self.SNy[i] == 0:
 				Delta_lenght = self.height/2
 				#The shear flows are wrong, they are only the integral component
+
+	def components(self, index):
+		Deltaz = self.booms_z[i+1] - self.booms_z[i]
+		Deltay = self.booms_y[i+1] - self.booms_y[i]
+		Lenght = math.sqrt(math.pow(Deltaz,2)+math.pow(Deltay,2))
+		z_comp = Deltaz/Lenght
+		y_comp = Deltay/Lenght
+		return z_comp, y_comp
 	
 	def sum_booms_SC(self, start, end):
 		summation = 0
