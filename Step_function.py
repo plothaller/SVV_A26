@@ -32,7 +32,6 @@ def Macaulay(Ca, la, x1, x2, x3, xa, ha, tsk, tsp, tst, hst, wst, nst, d1, d3, t
 	#intergral placeholders
 	DOUBLEINTEGRAL = 0
 	DOULBEINTEGRALPLUSZMINUSZSC = 0
-	TRIPLEINTEGRAL = 0
 	TRIPLEINTEGRALPLUSZMINUSZSC = 0
 	FIVEINTEGRAL = 0
 
@@ -94,7 +93,7 @@ def Macaulay(Ca, la, x1, x2, x3, xa, ha, tsk, tsp, tst, hst, wst, nst, d1, d3, t
 	A[10, 9] = x3
 	A[10, 10] = 1
 	#row 11
-	A[11, 0] = -np.sin(theta) * (xi1 - x1) ** 3 / (6 * E * I_zz) + ha * np.cos(theta) * zsc * (xi1 - x1) ** 3 / (2 * G * J) + eta ** 2 * np.sin(theta) * (xi1 - x1) / (G * J);
+	A[11, 0] = -np.sin(theta) * (xi1 - x1) ** 3 / (6 * E * I_zz) + ha * np.cos(theta) * zsc * (xi1 - x1) ** 3 / (2 * G * J) + zsc ** 2 * np.sin(theta) * (xi1 - x1) / (G * J);
 	A[11, 4] = np.cos(theta) * (xi1 - x1) ** 2 / (6 * E * I_yy)
 	A[11, 7] = xi1
 	A[11, 8] = 1
@@ -116,9 +115,10 @@ def Macaulay(Ca, la, x1, x2, x3, xa, ha, tsk, tsp, tst, hst, wst, nst, d1, d3, t
 	b[11] = -np.sin(theta) / (E * I_zz) * FIVEINTEGRAL - ha * np.cos(theta) / (2 * G * J) * TRIPLEINTEGRALPLUSZMINUSZSC - zsc * np.sin(theta) / (G * J) * TRIPLEINTEGRALPLUSZMINUSZSC;
 
 	# solve for x
-    x = np.linalg.solve(A,b)
+	x = np.linalg.solve(A,b)
 
-	Fy = x[0] + x[1] + x[2] + x[4]*np.sin(theta) - P*np.sin(theta)
+	Fy = x[0] + x[1] + x[2] + x[3]*np.sin(theta) - P*np.sin(theta)
 	Fz = x[3]*np.cos(theta) - P*np.cos(theta) + x[4] + x[5] + x[6]
+
 	return [Fy, Fz]
 
