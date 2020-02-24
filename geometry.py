@@ -146,15 +146,20 @@ class Geometry:
 		ax.scatter(x_boom, y_boom)
 		ax.scatter(self.SNx, self.SNy)
 		ax.scatter(self.centroid_z, self.centroid_y)
+		ax.scatter(self.shear_center_x,0)
 		ax.set_aspect(aspect=1)
 		plt.show()
 	
+	#MUltiply by the Area !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	def centroid(self):
-		centroid_z = 0
-		centroid_y = 0
-		for z in self.booms_z:
-			centroid_z = centroid_z + z 
-		return centroid_z/len(self.booms_z), centroid_y
+		centroid_z_area = 0
+		centroid_y_area = 0
+		total_area = 0
+		for i in range(0,len(self.booms_z)):
+			centroid_z_area = centroid_z_area + self.booms_z[i]*self.booms_area[i]
+			centroid_y_area = centroid_y_area + self.booms_y[i]*self.booms_area[i]
+			total_area = total_area + self.booms_area[i]
+		return centroid_z_area/total_area, centroid_y_area/total_area
 
 	def moments_of_inertia(self, z_boom, y_boom):
 		I_zz = 0
@@ -219,8 +224,8 @@ class Geometry:
 				shear_flow[i] = -1/self.I_zz * (5)
 				#The shear flows are wrong, they are only the integral component
 
-		#Now add the cte shear flow to close the cuts
 
+		#Add previous node shear flow. Change some qs01 for qs02 !!!!!!!!!!!!!!!!!!!
 		for i in range(0,len(self.SNx)):
 			print("Adding the constant closed cell shear flows q01 and q02 for node:", i)
 			qs01, qs02 = self.qs0(shear_flow_magnitude)
@@ -246,7 +251,7 @@ class Geometry:
 				shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow_magnitude[i]
 
 
-		shear_center_z = np.dot(shear_nodes_flow_z, shear_nodes_y) - np.dot(shear_nodes_flow_y, shear_nodes_z)
+		shear_center_z = np.dot(shear_nodes_flow_z, shear_nodes_y)/np.sum(shear_nodes_flow_z) - np.dot(shear_nodes_flow_y, shear_nodes_z)/np.sum(shear_nodes_flow_y)
 		return shear_center_z, 0
 
 
