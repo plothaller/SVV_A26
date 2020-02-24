@@ -26,9 +26,10 @@ TODO:
 
 class Geometry:
 
-	def __init__(self, height, skin_t, thickness_str, height_str, width_str, chord, number_str, booms_per_str):
+	def __init__(self, height, skin_t, spar_t, thickness_str, height_str, width_str, chord, number_str, booms_per_str):
 		self.height = height			#height of aileron
 		self.skin_thickness = skin_t	#Thickness of skin
+		self.spar_thickness = spar_t	#Thickness of spar
 		self.t_st = thickness_str		#thickness of stringer
 		self.h_st = height_str			#height of stringer
 		self.w_st = width_str			#width of stringer
@@ -189,9 +190,10 @@ class Geometry:
 
 		#First we compute the Delta shear flow in each section
 		for i in range(0,len(self.SNx)):
+			print("X: ",self.SNx, "Y: ",self.SNy)
 			if self.SNy[i] == 0:
 				shear_flow_magnitude[i] = 0
-				continue
+				print("*******************************************************************************DOING SHEAR FLOW = 0 for i:", i)
 			if -self.height/2 < self.SNx[i] < 0: #Cases 1 and 6
 				print("Doing open shear center for node:", i, "Case 1,6")
 				Delta_theta = Delta_theta + self.height/self.spacing
@@ -215,43 +217,47 @@ class Geometry:
 				print("Doing open shear center for node:", i, "Case 4")
 				Delta_lenght = Delta_lenght + self.spacing
 				#The shear flows are wrong, they are only the integral component
-				shear_flow_magnitude[i] = -1/self.I_zz -(math.pow(Delta_lenght,2)/2*(self.skin_thickness*self.height)/((self.perimeter - math.pi*self.height/2)/2))
+				shear_flow_magnitude[i] = -1/self.I_zz *((self.height/2*self.skin_thickness)*(x_to_s_region3*self.booms_z[i-1]-x_to_s_region3*self.booms_z[i])+skin_lenght_weighted_ratio*self.skin_thickness*(math.pow(x_to_s_region3*self.booms_z[i],2)-math.pow(x_to_s_region3*self.booms_z[i-1],2)))
 			else:
 				Delta_lenght = math.sqrt(math.pow(min(i for i in self.booms_z if i > 0),2)+math.pow(self.height/2 - self.booms_y[self.booms_z.index(min(i for i in self.booms_z if i > 0))],2))
-			if self.SNx[i] == 0 and self.SNy[i] == 0:
-				print("Doing open shear center for node:", i, "Case 2,5")
+			#if self.SNx[i] == 0 and self.SNy[i] > 0:
+			#	print("Doing open shear center for node:", i, "Case 2")
+			#	if self.Bottom_plate == 0:
+			#		self.Bottom_plate = i
+			#	shear_flow_magnitude[i] = -1/self.I_zz * (5)
+			if self.SNx[i] == 0:
+				print("Doing open shear center for node:", i, "Case 5,2")
 				if self.Bottom_plate == 0:
 					self.Bottom_plate = i
-				Delta_lenght = self.height/2
-				shear_flow[i] = -1/self.I_zz * (5)
+				shear_flow_magnitude[i] = -1/self.I_zz * (1/2*self.skin_thickness*(math.pow(self.booms_y[i],2)-math.pow(self.booms_y[i-1],2)))
+
+
 				#The shear flows are wrong, they are only the integral component
 
 
 		#Add previous node shear flow. Change some qs01 for qs02 !!!!!!!!!!!!!!!!!!!
 		#Add the previus node shear flow!!!!!!!!!!!!!!!!!!!!!!
 		for i in range(0,len(self.SNx)):
-			print("Adding the constant closed cell shear flows q01 and q02 for node:", i)
 			qs01, qs02 = self.qs0(shear_flow_magnitude)
+			print("Adding the constant closed cell shear flows q01 and q02 for node:", i, "	QS01:",qs01, "QS02:", qs02, "shear_flow_magnitude:", shear_flow_magnitude[i])
 			if i < self.Top_half:
-				shear_flow_magnitude[i] =shear_flow_magnitude[i] + qs01
-				shear_nodes_flow_z[i] = self.components(i)[0]*shear_flow_magnitude[i]
-				shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow_magnitude[i]
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] + qs01
 			if i < self.Top_plate:
-				shear_flow_magnitude[i] =shear_flow_magnitude[i] + qs01
-				shear_nodes_flow_z[i] = self.components(i)[0]*shear_flow_magnitude[i]
-				shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow_magnitude[i]
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] + qs01
 			if i < self.Bottom_half:
-				shear_flow_magnitude[i] =shear_flow_magnitude[i] - qs01
-				shear_nodes_flow_z[i] = self.components(i)[0]*shear_flow_magnitude[i]
-				shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow_magnitude[i]
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs01
 			if i < self.Bottom_plate:
-				shear_flow_magnitude[i] =shear_flow_magnitude[i] - qs01
-				shear_nodes_flow_z[i] = self.components(i)[0]*shear_flow_magnitude[i]
-				shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow_magnitude[i]
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs01
 			else:
-				shear_flow_magnitude[i] =shear_flow_magnitude[i] + qs01
-				shear_nodes_flow_z[i] = self.components(i)[0]*shear_flow_magnitude[i]
-				shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow_magnitude[i]
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] + qs01
+			if i == 0 or i == self.Top_half or i == self.Top_plate or i == self.Bottom_half or i == self.Bottom_plate:
+				shear_flow_magnitude[i] = 0
+			else:
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] + shear_flow_magnitude[i-1]
+			if abs(shear_flow_magnitude[i]) > 1:
+				print("Shear magnitude too big:", i)
+			shear_nodes_flow_z[i] = self.components(i)[0]*shear_flow_magnitude[i]
+			shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow_magnitude[i]
 
 		fig = plt.figure()
 		ax = fig.add_subplot(111)
@@ -262,18 +268,18 @@ class Geometry:
 		y_plate = self.height/2 - (self.height/2)/(self.chord-self.height/2) * x_plate
 		y_vplate = np.linspace(-self.height/2, self.height/2, 2)
 		x_vplate = y_vplate*0
-		ax.plot(x_circle, y_circle,'b')
-		ax.plot(x_circle, -y_circle,'b')
-		ax.plot(x_plate, y_plate,'b')
-		ax.plot(x_plate, -y_plate,'b')
-		ax.plot(x_vplate, y_vplate,'b')
-		ax.scatter(x_boom, y_boom)
+		#ax.plot(x_circle, y_circle,'b')
+		#ax.plot(x_circle, -y_circle,'b')
+		#ax.plot(x_plate, y_plate,'b')
+		#ax.plot(x_plate, -y_plate,'b')
+		#ax.plot(x_vplate, y_vplate,'b')
+		#ax.scatter(x_boom, y_boom)
 		ax.scatter(self.SNx, self.SNy)
 		ax.scatter(self.centroid_z, self.centroid_y)
 
 		for i in range(0,len(self.SNx)):
-			z_vect = [self.SNx[i], self.SNx[i] + shear_nodes_flow_z[i]]
-			y_vect = [self.SNy[i], self.SNy[i] + shear_nodes_flow_y[i]]
+			z_vect = [self.SNx[i], self.SNx[i] + shear_nodes_flow_z[i]*5000]
+			y_vect = [self.SNy[i], self.SNy[i] + shear_nodes_flow_y[i]*5000]
 			ax.plot(z_vect, y_vect,'r')
 
 
@@ -281,8 +287,8 @@ class Geometry:
 		plt.show()
 
 
-		#Is it actually divvided by np.sum(shear_nodes_flow_z) and np.sum(shear_nodes_flow_y)??????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-		shear_center_z = np.dot(shear_nodes_flow_z, shear_nodes_y)/np.sum(shear_nodes_flow_z) - np.dot(shear_nodes_flow_y, shear_nodes_z)/np.sum(shear_nodes_flow_y)
+		#Multiply by the skin lenght
+		shear_center_z = np.dot(shear_nodes_flow_z, shear_nodes_y) - np.dot(shear_nodes_flow_y, shear_nodes_z)
 		return shear_center_z, 0
 
 
@@ -313,7 +319,7 @@ class Geometry:
 		return qs01, qs02
 
 
-x = Geometry(10,1,6,7,8,40,29,1)
+x = Geometry(10,1,1,6,7,8,40,29,1)
 x.idealization()
 x_booms, y_booms = x.booms(x.spacing)[0], x.booms(x.spacing)[1] 
 print("str_area:", x.str_area)
