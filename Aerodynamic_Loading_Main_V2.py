@@ -67,10 +67,17 @@ def BilinearInterpolate(Q11, Q21, Q12, Q22, x_0, z_0, x_1, z_1, x, z, z_negative
     else:
         z = max(min(z_1, z), z_0)
     return (Q11*(x_1 - x)*(z_1 - z) + Q21*(x - x_0)*(z_1 - z) + Q12*(x_1 - x)*(z - z_0) + Q22*(x - x_0)*(z - z_0))/((x_1 - x_0)*(z_1 - z_0))
-    
+
+def LinearInterpolatePos(Q1, Q2, x_0, x_1, x): #if pos, returns the interpolated value at a set location, else it'll return the weights of interpolating function a + b *x
+    #inputs: Q1, Q2, x_0, x_1, x; values of function Q1, Q2 at points x0 and x1, respectively, and a location x where the interpolating function is to be evaluated
+    return Q1 + (Q2-Q1)/(x_1 - x_0)*x
+
+def LinearInterpolate(Q1, Q2, x_0, x_1):
+    #returns the weights a, b of the interpolating function a + b x
+    return np.array([[Q1 - x_0*(Q2 - Q1)/(x_1 - x_0)], [(Q2 - Q1)/(x_1 - x_0)]])
     
 
-def integrate(x_0, z_0, x_1, z_1, AeroLoad = AeroLoading):
+def integrate_2d(x_0, z_0, x_1, z_1, AeroLoad = AeroLoading):   #currently there's 2 methods for integration, I'm not sure if either is correct
     #Integrate from (x_0, z_0) to (x_1, z_1)
     index_x_0, index_z_0 = findIndex(x_0, z_0)
     index_x_1, index_z_1 = findIndex(x_1, z_1)
@@ -89,12 +96,31 @@ def integrate(x_0, z_0, x_1, z_1, AeroLoad = AeroLoading):
         z_lower = locationz(index_z)    #this is lower INDEX, not lower value
         z_upper = locationz(index_z+1)
         #Find the values of aero loading (estimated) at each of the corners of the SUB-AREA WE ARE INTERPOLATING, (not the section of aero data)
+            #p11, p12, ... should always be equal to Q11, Q12, ... UNLESS the edge of the area over which we interpolate is inside current section
         p11 = BilinearInterpolate(Q11, Q21, Q12, Q22, x_lower, z_lower, x_upper, z_upper, x_0, z_0)
         p12 = BilinearInterpolate(Q11, Q21, Q12, Q22, x_lower, z_lower, x_upper, z_upper, x_0, z_1)
         p21 = BilinearInterpolate(Q11, Q21, Q12, Q22, x_lower, z_lower, x_upper, z_upper, x_1, z_0)
         p22 = BilinearInterpolate(Q11, Q21, Q12, Q22, x_lower, z_lower, x_upper, z_upper, x_1, z_1)
+        #print(p11-AeroLoad[index_z, index_x]< 0.0005, p12 - AeroLoad[index_z+1, index_x] < 0.0005, p21 - AeroLoad[index_z, index_x + 1] < 0.0005, p22 - AeroLoad[index_z+1, index_x+1] < 0.0005)
         #integrate twice using the trapezoid rule
-        return (x_upper-x_lower)*(z_upper-z_lower)*(p11 + p12 + p21 + p22)/4
+        Volume = (x_upper-x_lower)*(z_upper-z_lower)*(p11 + p12 + p21 + p22)/4     #This is volume using the method that is not easily further integratable, can be used as a test value
+        #Alternative method; find components for s = w0 + w1*x +w2*z + w3*x*z
+        A = np.array([[1, x_lower, z_lower, x_lower*z_lower],[1, x_lower, z_upper, x_lower*z_upper], [1, x_upper, z_lower, x_upper*z_lower], [1, x_upper, z_upper, x_upper*z_upper]])
+        y = np.array([[p11],[p12],[p21],[p22]])
+        w = np.linalg.solve(A, y)
+
+        #integrate basis function once over x and once over z to find the 'volume' in the surface area
+        Volume1 = lambda w, x_lower, z_lower, x_upper, z_upper : w[0][0]*(x_upper-x_lower)*(z_upper-z_lower) + w[1][0]*(x_upper**2 - x_lower**2)*(z_upper - z_lower) + w[2][0]*(x_upper - x_lower)*(z_upper**2 - z_lower**2) + w[3][0]*(x_upper**2 - x_lower**2)*(z_upper**2 - z_lower**2)
+        
+        
+        
+        #assert (abs(Volume-Volume1(w, x_lower, z_lower, x_upper, z_upper)) <0.01)
+        
+        return Volume1(w, x_lower, z_lower, x_upper, z_upper)
+    
+    
+    
+    
     
     totalIntegrated = 0
     
@@ -104,6 +130,18 @@ def integrate(x_0, z_0, x_1, z_1, AeroLoad = AeroLoading):
             totalIntegrated += integrateComponent(index_x, index_z)
     return totalIntegrated * np.sign((index_x_1-index_x_0)*(index_z_1 - index_z_0))
 
+def integrate_1d(x, y):
+    #inputs: x; an array containing all the x-locations of the nodes and y; an array containing all the values of the nodes
+    total = 0
+    for i in range(len(x)-1):
+        total += (x[i+1] - x[i])*(y[i] + y[i+1])/2
+    return total
+        
+        
+        
+        
+        
+        
 
 
 
