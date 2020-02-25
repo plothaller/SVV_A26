@@ -138,25 +138,177 @@ Stresses_2_case3['S12_avg']=avg_2_case3_S12
 
 #Find maximum stresses:
 #Case 1
-case1_1_max_misses=np.max(Stresses_1_case1.Mises_avg)
-case1_1_max_s12=np.max(Stresses_1_case1.S12_avg)
-case1_2_max_misses=np.max(Stresses_2_case1.Mises_avg)
-case1_2_max_s12=np.max(Stresses_2_case1.S12_avg)
+case1_1_max_misses=Stresses_1_case1['Mises_avg'].max()
+case1_1_max_misses_element=Stresses_1_case1.loc[Stresses_1_case1['Mises_avg'].idxmax(), 'Element']
+case1_1_max_misses_nodes=Element_based_on_Nodes.loc[case1_1_max_misses_element-1,:]
+case1_1_max_misses_node_1=case1_1_max_misses_nodes[1]
+case1_1_max_misses_node_2=case1_1_max_misses_nodes[2]
+case1_1_max_misses_node_3=case1_1_max_misses_nodes[3]
+case1_1_max_misses_node_4=case1_1_max_misses_nodes[4]
+case1_1_max_misses_X=(Nodes_Initial_pos.loc[case1_1_max_misses_node_1-1,'X']+Nodes_Initial_pos.loc[case1_1_max_misses_node_2-1,'X']+Nodes_Initial_pos.loc[case1_1_max_misses_node_3-1,'X']+Nodes_Initial_pos.loc[case1_1_max_misses_node_4-1,'X'])/4
+case1_1_max_misses_Y=(Nodes_Initial_pos.loc[case1_1_max_misses_node_1-1,'Y']+Nodes_Initial_pos.loc[case1_1_max_misses_node_2-1,'Y']+Nodes_Initial_pos.loc[case1_1_max_misses_node_3-1,'Y']+Nodes_Initial_pos.loc[case1_1_max_misses_node_4-1,'Y'])/4
+case1_1_max_misses_Z=(Nodes_Initial_pos.loc[case1_1_max_misses_node_1-1,'Z']+Nodes_Initial_pos.loc[case1_1_max_misses_node_2-1,'Z']+Nodes_Initial_pos.loc[case1_1_max_misses_node_3-1,'Z']+Nodes_Initial_pos.loc[case1_1_max_misses_node_4-1,'Z'])/4
+case1_1_max_s12=Stresses_1_case1['S12_avg'].max()
+case1_1_max_s12_element=Stresses_1_case1.loc[Stresses_1_case1['S12_avg'].idxmax(), 'Element']
+case1_1_max_s12_nodes=Element_based_on_Nodes.loc[case1_1_max_s12_element-1,:]
+case1_1_max_s12_node_1=case1_1_max_s12_nodes[1]
+case1_1_max_s12_node_2=case1_1_max_s12_nodes[2]
+case1_1_max_s12_node_3=case1_1_max_s12_nodes[3]
+case1_1_max_s12_node_4=case1_1_max_s12_nodes[4]
+case1_1_max_s12_X=(Nodes_Initial_pos.loc[case1_1_max_s12_node_1-1,'X']+Nodes_Initial_pos.loc[case1_1_max_s12_node_2-1,'X']+Nodes_Initial_pos.loc[case1_1_max_s12_node_3-1,'X']+Nodes_Initial_pos.loc[case1_1_max_s12_node_4-1,'X'])/4
+case1_1_max_s12_Y=(Nodes_Initial_pos.loc[case1_1_max_s12_node_1-1,'Y']+Nodes_Initial_pos.loc[case1_1_max_s12_node_2-1,'Y']+Nodes_Initial_pos.loc[case1_1_max_s12_node_3-1,'Y']+Nodes_Initial_pos.loc[case1_1_max_s12_node_4-1,'Y'])/4
+case1_1_max_s12_Z=(Nodes_Initial_pos.loc[case1_1_max_s12_node_1-1,'Z']+Nodes_Initial_pos.loc[case1_1_max_s12_node_2-1,'Z']+Nodes_Initial_pos.loc[case1_1_max_s12_node_3-1,'Z']+Nodes_Initial_pos.loc[case1_1_max_s12_node_4-1,'Z'])/4
+case1_2_max_misses=Stresses_2_case1['Mises_avg'].max()
+case1_2_max_misses_element=Stresses_2_case1.loc[Stresses_2_case1['Mises_avg'].idxmax(), 'Element']
+case1_2_max_misses_nodes=Element_based_on_Nodes.loc[case1_2_max_misses_element-1,:]
+case1_2_max_misses_node_1=case1_2_max_misses_nodes[1]
+case1_2_max_misses_node_2=case1_2_max_misses_nodes[2]
+case1_2_max_misses_node_3=case1_2_max_misses_nodes[3]
+case1_2_max_misses_node_4=case1_2_max_misses_nodes[4]
+case1_2_max_misses_X=(Nodes_Initial_pos.loc[case1_2_max_misses_node_1-1,'X']+Nodes_Initial_pos.loc[case1_2_max_misses_node_2-1,'X']+Nodes_Initial_pos.loc[case1_2_max_misses_node_3-1,'X']+Nodes_Initial_pos.loc[case1_2_max_misses_node_4-1,'X'])/4
+case1_2_max_misses_Y=(Nodes_Initial_pos.loc[case1_2_max_misses_node_1-1,'Y']+Nodes_Initial_pos.loc[case1_2_max_misses_node_2-1,'Y']+Nodes_Initial_pos.loc[case1_2_max_misses_node_3-1,'Y']+Nodes_Initial_pos.loc[case1_2_max_misses_node_4-1,'Y'])/4
+case1_2_max_misses_Z=(Nodes_Initial_pos.loc[case1_2_max_misses_node_1-1,'Z']+Nodes_Initial_pos.loc[case1_2_max_misses_node_2-1,'Z']+Nodes_Initial_pos.loc[case1_2_max_misses_node_3-1,'Z']+Nodes_Initial_pos.loc[case1_2_max_misses_node_4-1,'Z'])/4
+case1_2_max_s12=Stresses_2_case1['S12_avg'].max()
+case1_2_max_s12_element=Stresses_2_case1.loc[Stresses_2_case1['S12_avg'].idxmax(), 'Element']
+case1_2_max_s12_nodes=Element_based_on_Nodes.loc[case1_2_max_s12_element-1,:]
+case1_2_max_s12_node_1=case1_2_max_s12_nodes[1]
+case1_2_max_s12_node_2=case1_2_max_s12_nodes[2]
+case1_2_max_s12_node_3=case1_2_max_s12_nodes[3]
+case1_2_max_s12_node_4=case1_2_max_s12_nodes[4]
+case1_2_max_s12_X=(Nodes_Initial_pos.loc[case1_2_max_s12_node_1-1,'X']+Nodes_Initial_pos.loc[case1_2_max_s12_node_2-1,'X']+Nodes_Initial_pos.loc[case1_2_max_s12_node_3-1,'X']+Nodes_Initial_pos.loc[case1_2_max_s12_node_4-1,'X'])/4
+case1_2_max_s12_Y=(Nodes_Initial_pos.loc[case1_2_max_s12_node_1-1,'Y']+Nodes_Initial_pos.loc[case1_2_max_s12_node_2-1,'Y']+Nodes_Initial_pos.loc[case1_2_max_s12_node_3-1,'Y']+Nodes_Initial_pos.loc[case1_2_max_s12_node_4-1,'Y'])/4
+case1_2_max_s12_Z=(Nodes_Initial_pos.loc[case1_2_max_s12_node_1-1,'Z']+Nodes_Initial_pos.loc[case1_2_max_s12_node_2-1,'Z']+Nodes_Initial_pos.loc[case1_2_max_s12_node_3-1,'Z']+Nodes_Initial_pos.loc[case1_2_max_s12_node_4-1,'Z'])/4
 #Case 2
-case2_1_max_misses=np.max(Stresses_1_case2.Mises_avg)
-case2_1_max_s12=np.max(Stresses_1_case2.S12_avg)
-case2_2_max_misses=np.max(Stresses_2_case2.Mises_avg)
-case2_2_max_s12=np.max(Stresses_2_case2.S12_avg)
+case2_1_max_misses=Stresses_1_case2['Mises_avg'].max()
+case2_1_max_misses_element=Stresses_1_case2.loc[Stresses_1_case2['Mises_avg'].idxmax(), 'Element']
+case2_1_max_misses_nodes=Element_based_on_Nodes.loc[case2_1_max_misses_element-1,:]
+case2_1_max_misses_node_1=case2_1_max_misses_nodes[1]
+case2_1_max_misses_node_2=case2_1_max_misses_nodes[2]
+case2_1_max_misses_node_3=case2_1_max_misses_nodes[3]
+case2_1_max_misses_node_4=case2_1_max_misses_nodes[4]
+case2_1_max_misses_X=(Nodes_Initial_pos.loc[case2_1_max_misses_node_1-1,'X']+Nodes_Initial_pos.loc[case2_1_max_misses_node_2-1,'X']+Nodes_Initial_pos.loc[case2_1_max_misses_node_3-1,'X']+Nodes_Initial_pos.loc[case2_1_max_misses_node_4-1,'X'])/4
+case2_1_max_misses_Y=(Nodes_Initial_pos.loc[case2_1_max_misses_node_1-1,'Y']+Nodes_Initial_pos.loc[case2_1_max_misses_node_2-1,'Y']+Nodes_Initial_pos.loc[case2_1_max_misses_node_3-1,'Y']+Nodes_Initial_pos.loc[case2_1_max_misses_node_4-1,'Y'])/4
+case2_1_max_misses_Z=(Nodes_Initial_pos.loc[case2_1_max_misses_node_1-1,'Z']+Nodes_Initial_pos.loc[case2_1_max_misses_node_2-1,'Z']+Nodes_Initial_pos.loc[case2_1_max_misses_node_3-1,'Z']+Nodes_Initial_pos.loc[case2_1_max_misses_node_4-1,'Z'])/4
+case2_1_max_s12=Stresses_1_case2['S12_avg'].max()
+case2_1_max_s12_element=Stresses_1_case2.loc[Stresses_1_case2['S12_avg'].idxmax(), 'Element']
+case2_1_max_s12_nodes=Element_based_on_Nodes.loc[case2_1_max_s12_element-1,:]
+case2_1_max_s12_node_1=case2_1_max_s12_nodes[1]
+case2_1_max_s12_node_2=case2_1_max_s12_nodes[2]
+case2_1_max_s12_node_3=case2_1_max_s12_nodes[3]
+case2_1_max_s12_node_4=case2_1_max_s12_nodes[4]
+case2_1_max_s12_X=(Nodes_Initial_pos.loc[case2_1_max_s12_node_1-1,'X']+Nodes_Initial_pos.loc[case2_1_max_s12_node_2-1,'X']+Nodes_Initial_pos.loc[case2_1_max_s12_node_3-1,'X']+Nodes_Initial_pos.loc[case2_1_max_s12_node_4-1,'X'])/4
+case2_1_max_s12_Y=(Nodes_Initial_pos.loc[case2_1_max_s12_node_1-1,'Y']+Nodes_Initial_pos.loc[case2_1_max_s12_node_2-1,'Y']+Nodes_Initial_pos.loc[case2_1_max_s12_node_3-1,'Y']+Nodes_Initial_pos.loc[case2_1_max_s12_node_4-1,'Y'])/4
+case2_1_max_s12_Z=(Nodes_Initial_pos.loc[case2_1_max_s12_node_1-1,'Z']+Nodes_Initial_pos.loc[case2_1_max_s12_node_2-1,'Z']+Nodes_Initial_pos.loc[case2_1_max_s12_node_3-1,'Z']+Nodes_Initial_pos.loc[case2_1_max_s12_node_4-1,'Z'])/4
+case2_2_max_misses=Stresses_2_case2['Mises_avg'].max()
+case2_2_max_misses_element=Stresses_2_case2.loc[Stresses_2_case2['Mises_avg'].idxmax(), 'Element']
+case2_2_max_misses_nodes=Element_based_on_Nodes.loc[case2_2_max_misses_element-1,:]
+case2_2_max_misses_node_1=case2_2_max_misses_nodes[1]
+case2_2_max_misses_node_2=case2_2_max_misses_nodes[2]
+case2_2_max_misses_node_3=case2_2_max_misses_nodes[3]
+case2_2_max_misses_node_4=case2_2_max_misses_nodes[4]
+case2_2_max_misses_X=(Nodes_Initial_pos.loc[case2_2_max_misses_node_1-1,'X']+Nodes_Initial_pos.loc[case2_2_max_misses_node_2-1,'X']+Nodes_Initial_pos.loc[case2_2_max_misses_node_3-1,'X']+Nodes_Initial_pos.loc[case2_2_max_misses_node_4-1,'X'])/4
+case2_2_max_misses_Y=(Nodes_Initial_pos.loc[case2_2_max_misses_node_1-1,'Y']+Nodes_Initial_pos.loc[case2_2_max_misses_node_2-1,'Y']+Nodes_Initial_pos.loc[case2_2_max_misses_node_3-1,'Y']+Nodes_Initial_pos.loc[case2_2_max_misses_node_4-1,'Y'])/4
+case2_2_max_misses_Z=(Nodes_Initial_pos.loc[case2_2_max_misses_node_1-1,'Z']+Nodes_Initial_pos.loc[case2_2_max_misses_node_2-1,'Z']+Nodes_Initial_pos.loc[case2_2_max_misses_node_3-1,'Z']+Nodes_Initial_pos.loc[case2_2_max_misses_node_4-1,'Z'])/4
+case2_2_max_s12=Stresses_2_case2['S12_avg'].max()
+case2_2_max_s12_element=Stresses_2_case2.loc[Stresses_2_case2['S12_avg'].idxmax(), 'Element']
+case2_2_max_s12_nodes=Element_based_on_Nodes.loc[case2_2_max_s12_element-1,:]
+case2_2_max_s12_node_1=case2_2_max_s12_nodes[1]
+case2_2_max_s12_node_2=case2_2_max_s12_nodes[2]
+case2_2_max_s12_node_3=case2_2_max_s12_nodes[3]
+case2_2_max_s12_node_4=case2_2_max_s12_nodes[4]
+case2_2_max_s12_X=(Nodes_Initial_pos.loc[case1_2_max_s12_node_1-1,'X']+Nodes_Initial_pos.loc[case1_2_max_s12_node_2-1,'X']+Nodes_Initial_pos.loc[case1_2_max_s12_node_3-1,'X']+Nodes_Initial_pos.loc[case1_2_max_s12_node_4-1,'X'])/4
+case2_2_max_s12_Y=(Nodes_Initial_pos.loc[case1_2_max_s12_node_1-1,'Y']+Nodes_Initial_pos.loc[case1_2_max_s12_node_2-1,'Y']+Nodes_Initial_pos.loc[case1_2_max_s12_node_3-1,'Y']+Nodes_Initial_pos.loc[case1_2_max_s12_node_4-1,'Y'])/4
+case2_2_max_s12_Z=(Nodes_Initial_pos.loc[case1_2_max_s12_node_1-1,'Z']+Nodes_Initial_pos.loc[case1_2_max_s12_node_2-1,'Z']+Nodes_Initial_pos.loc[case1_2_max_s12_node_3-1,'Z']+Nodes_Initial_pos.loc[case1_2_max_s12_node_4-1,'Z'])/4
 #Case 3
-case3_1_max_misses=np.max(Stresses_1_case3.Mises_avg)
-case3_1_max_s12=np.max(Stresses_1_case3.S12_avg)
-case3_2_max_misses=np.max(Stresses_2_case3.Mises_avg)
-case3_2_max_s12=np.max(Stresses_2_case3.S12_avg)
+case3_1_max_misses=Stresses_1_case3['Mises_avg'].max()
+case3_1_max_misses_element=Stresses_1_case3.loc[Stresses_1_case3['Mises_avg'].idxmax(), 'Element']
+case3_1_max_misses_nodes=Element_based_on_Nodes.loc[case3_1_max_misses_element-1,:]
+case3_1_max_misses_node_1=case3_1_max_misses_nodes[1]
+case3_1_max_misses_node_2=case3_1_max_misses_nodes[2]
+case3_1_max_misses_node_3=case3_1_max_misses_nodes[3]
+case3_1_max_misses_node_4=case3_1_max_misses_nodes[4]
+case3_1_max_misses_X=(Nodes_Initial_pos.loc[case3_1_max_misses_node_1-1,'X']+Nodes_Initial_pos.loc[case3_1_max_misses_node_2-1,'X']+Nodes_Initial_pos.loc[case3_1_max_misses_node_3-1,'X']+Nodes_Initial_pos.loc[case3_1_max_misses_node_4-1,'X'])/4
+case3_1_max_misses_Y=(Nodes_Initial_pos.loc[case3_1_max_misses_node_1-1,'Y']+Nodes_Initial_pos.loc[case3_1_max_misses_node_2-1,'Y']+Nodes_Initial_pos.loc[case3_1_max_misses_node_3-1,'Y']+Nodes_Initial_pos.loc[case3_1_max_misses_node_4-1,'Y'])/4
+case3_1_max_misses_Z=(Nodes_Initial_pos.loc[case3_1_max_misses_node_1-1,'Z']+Nodes_Initial_pos.loc[case3_1_max_misses_node_2-1,'Z']+Nodes_Initial_pos.loc[case3_1_max_misses_node_3-1,'Z']+Nodes_Initial_pos.loc[case3_1_max_misses_node_4-1,'Z'])/4
+case3_1_max_s12=Stresses_1_case3['S12_avg'].max()
+case3_1_max_s12_element=Stresses_1_case1.loc[Stresses_1_case3['S12_avg'].idxmax(), 'Element']
+case3_1_max_s12_nodes=Element_based_on_Nodes.loc[case3_1_max_s12_element-1,:]
+case3_1_max_s12_node_1=case3_1_max_s12_nodes[1]
+case3_1_max_s12_node_2=case3_1_max_s12_nodes[2]
+case3_1_max_s12_node_3=case3_1_max_s12_nodes[3]
+case3_1_max_s12_node_4=case3_1_max_s12_nodes[4]
+case3_1_max_s12_X=(Nodes_Initial_pos.loc[case3_1_max_s12_node_1-1,'X']+Nodes_Initial_pos.loc[case3_1_max_s12_node_2-1,'X']+Nodes_Initial_pos.loc[case3_1_max_s12_node_3-1,'X']+Nodes_Initial_pos.loc[case3_1_max_s12_node_4-1,'X'])/4
+case3_1_max_s12_Y=(Nodes_Initial_pos.loc[case3_1_max_s12_node_1-1,'Y']+Nodes_Initial_pos.loc[case3_1_max_s12_node_2-1,'Y']+Nodes_Initial_pos.loc[case3_1_max_s12_node_3-1,'Y']+Nodes_Initial_pos.loc[case3_1_max_s12_node_4-1,'Y'])/4
+case3_1_max_s12_Z=(Nodes_Initial_pos.loc[case3_1_max_s12_node_1-1,'Z']+Nodes_Initial_pos.loc[case3_1_max_s12_node_2-1,'Z']+Nodes_Initial_pos.loc[case3_1_max_s12_node_3-1,'Z']+Nodes_Initial_pos.loc[case3_1_max_s12_node_4-1,'Z'])/4
+case3_2_max_misses=Stresses_2_case3['Mises_avg'].max()
+case3_2_max_misses_element=Stresses_2_case3.loc[Stresses_2_case3['Mises_avg'].idxmax(), 'Element']
+case3_2_max_misses_nodes=Element_based_on_Nodes.loc[case3_2_max_misses_element-1,:]
+case3_2_max_misses_node_1=case3_2_max_misses_nodes[1]
+case3_2_max_misses_node_2=case3_2_max_misses_nodes[2]
+case3_2_max_misses_node_3=case3_2_max_misses_nodes[3]
+case3_2_max_misses_node_4=case3_2_max_misses_nodes[4]
+case3_2_max_misses_X=(Nodes_Initial_pos.loc[case3_2_max_misses_node_1-1,'X']+Nodes_Initial_pos.loc[case3_2_max_misses_node_2-1,'X']+Nodes_Initial_pos.loc[case3_2_max_misses_node_3-1,'X']+Nodes_Initial_pos.loc[case3_2_max_misses_node_4-1,'X'])/4
+case3_2_max_misses_Y=(Nodes_Initial_pos.loc[case3_2_max_misses_node_1-1,'Y']+Nodes_Initial_pos.loc[case3_2_max_misses_node_2-1,'Y']+Nodes_Initial_pos.loc[case3_2_max_misses_node_3-1,'Y']+Nodes_Initial_pos.loc[case3_2_max_misses_node_4-1,'Y'])/4
+case3_2_max_misses_Z=(Nodes_Initial_pos.loc[case3_2_max_misses_node_1-1,'Z']+Nodes_Initial_pos.loc[case3_2_max_misses_node_2-1,'Z']+Nodes_Initial_pos.loc[case3_2_max_misses_node_3-1,'Z']+Nodes_Initial_pos.loc[case3_2_max_misses_node_4-1,'Z'])/4
+case3_2_max_s12=Stresses_2_case3['S12_avg'].max()
+case3_2_max_s12_element=Stresses_2_case3.loc[Stresses_2_case3['S12_avg'].idxmax(), 'Element']
+case3_2_max_s12_nodes=Element_based_on_Nodes.loc[case3_2_max_s12_element-1,:]
+case3_2_max_s12_node_1=case3_2_max_s12_nodes[1]
+case3_2_max_s12_node_2=case3_2_max_s12_nodes[2]
+case3_2_max_s12_node_3=case3_2_max_s12_nodes[3]
+case3_2_max_s12_node_4=case3_2_max_s12_nodes[4]
+case3_2_max_s12_X=(Nodes_Initial_pos.loc[case3_2_max_s12_node_1-1,'X']+Nodes_Initial_pos.loc[case3_2_max_s12_node_2-1,'X']+Nodes_Initial_pos.loc[case3_2_max_s12_node_3-1,'X']+Nodes_Initial_pos.loc[case3_2_max_s12_node_4-1,'X'])/4
+case3_2_max_s12_Y=(Nodes_Initial_pos.loc[case3_2_max_s12_node_1-1,'Y']+Nodes_Initial_pos.loc[case3_2_max_s12_node_2-1,'Y']+Nodes_Initial_pos.loc[case3_2_max_s12_node_3-1,'Y']+Nodes_Initial_pos.loc[case3_2_max_s12_node_4-1,'Y'])/4
+case3_2_max_s12_Z=(Nodes_Initial_pos.loc[case3_2_max_s12_node_1-1,'Z']+Nodes_Initial_pos.loc[case3_2_max_s12_node_2-1,'Z']+Nodes_Initial_pos.loc[case3_2_max_s12_node_3-1,'Z']+Nodes_Initial_pos.loc[case3_2_max_s12_node_4-1,'Z'])/4
 #Case 1 + Case 3
-case13_1_max_misses=np.max(Stresses_1_case3.Mises_avg+Stresses_1_case1.Mises_avg)
-case13_1_max_s12=np.max(Stresses_1_case3.S12_avg+Stresses_1_case1.S12_avg)
-case13_2_max_misses=np.max(Stresses_2_case3.Mises_avg+Stresses_2_case1.Mises_avg)
-case13_2_max_s12=np.max(Stresses_2_case3.S12_avg+Stresses_2_case1.S12_avg)
+case13_misses_1_sum=Stresses_1_case3.Mises_avg+Stresses_1_case1.Mises_avg
+case13_s12_1_sum=Stresses_1_case3.S12_avg+Stresses_1_case1.S12_avg
+case13_misses_2_sum=Stresses_2_case3.Mises_avg+Stresses_2_case1.Mises_avg
+case13_s12_2_sum=Stresses_2_case3.S12_avg+Stresses_2_case1.S12_avg
+case13_1_max_misses=np.max(case13_misses_1_sum)
+case13_1_max_misses_element=case13_misses_1_sum[case13_misses_1_sum==np.max(case13_misses_1_sum)].index.values.astype(int)[0]
+case13_1_max_misses_element=Stresses_1_case1.loc[case13_1_max_misses_element, 'Element']
+case13_1_max_misses_nodes=Element_based_on_Nodes.loc[case13_1_max_misses_element-1,:]
+case13_1_max_misses_node_1=case13_1_max_misses_nodes[1]
+case13_1_max_misses_node_2=case13_1_max_misses_nodes[2]
+case13_1_max_misses_node_3=case13_1_max_misses_nodes[3]
+case13_1_max_misses_node_4=case13_1_max_misses_nodes[4]
+case13_1_max_misses_X=(Nodes_Initial_pos.loc[case13_1_max_misses_node_1-1,'X']+Nodes_Initial_pos.loc[case13_1_max_misses_node_2-1,'X']+Nodes_Initial_pos.loc[case13_1_max_misses_node_3-1,'X']+Nodes_Initial_pos.loc[case13_1_max_misses_node_4-1,'X'])/4
+case13_1_max_misses_Y=(Nodes_Initial_pos.loc[case13_1_max_misses_node_1-1,'Y']+Nodes_Initial_pos.loc[case13_1_max_misses_node_2-1,'Y']+Nodes_Initial_pos.loc[case13_1_max_misses_node_3-1,'Y']+Nodes_Initial_pos.loc[case13_1_max_misses_node_4-1,'Y'])/4
+case13_1_max_misses_Z=(Nodes_Initial_pos.loc[case13_1_max_misses_node_1-1,'Z']+Nodes_Initial_pos.loc[case13_1_max_misses_node_2-1,'Z']+Nodes_Initial_pos.loc[case13_1_max_misses_node_3-1,'Z']+Nodes_Initial_pos.loc[case13_1_max_misses_node_4-1,'Z'])/4
+case13_1_max_s12=np.max(case13_s12_1_sum)
+case13_1_max_s12_element=case13_s12_1_sum[case13_s12_1_sum==np.max(case13_s12_1_sum)].index.values.astype(int)[0]
+case13_1_max_s12_element=Stresses_1_case1.loc[case13_1_max_s12_element, 'Element']
+case13_1_max_s12_nodes=Element_based_on_Nodes.loc[case13_1_max_s12_element-1,:]
+case13_1_max_s12_node_1=case13_1_max_s12_nodes[1]
+case13_1_max_s12_node_2=case13_1_max_s12_nodes[2]
+case13_1_max_s12_node_3=case13_1_max_s12_nodes[3]
+case13_1_max_s12_node_4=case13_1_max_s12_nodes[4]
+case13_1_max_s12_X=(Nodes_Initial_pos.loc[case13_1_max_s12_node_1-1,'X']+Nodes_Initial_pos.loc[case13_1_max_s12_node_2-1,'X']+Nodes_Initial_pos.loc[case13_1_max_s12_node_3-1,'X']+Nodes_Initial_pos.loc[case13_1_max_s12_node_4-1,'X'])/4
+case13_1_max_s12_Y=(Nodes_Initial_pos.loc[case13_1_max_s12_node_1-1,'Y']+Nodes_Initial_pos.loc[case13_1_max_s12_node_2-1,'Y']+Nodes_Initial_pos.loc[case13_1_max_s12_node_3-1,'Y']+Nodes_Initial_pos.loc[case13_1_max_s12_node_4-1,'Y'])/4
+case13_1_max_s12_Z=(Nodes_Initial_pos.loc[case13_1_max_s12_node_1-1,'Z']+Nodes_Initial_pos.loc[case13_1_max_s12_node_2-1,'Z']+Nodes_Initial_pos.loc[case13_1_max_s12_node_3-1,'Z']+Nodes_Initial_pos.loc[case13_1_max_s12_node_4-1,'Z'])/4
+case13_2_max_misses=np.max(case13_misses_2_sum)
+case13_2_max_misses_element=case13_misses_2_sum[case13_misses_2_sum==np.max(case13_misses_2_sum)].index.values.astype(int)[0]
+case13_2_max_misses_element=Stresses_1_case1.loc[case13_2_max_misses_element, 'Element']
+case13_2_max_misses_nodes=Element_based_on_Nodes.loc[case13_2_max_misses_element-1,:]
+case13_2_max_misses_node_1=case13_2_max_misses_nodes[1]
+case13_2_max_misses_node_2=case13_2_max_misses_nodes[2]
+case13_2_max_misses_node_3=case13_2_max_misses_nodes[3]
+case13_2_max_misses_node_4=case13_2_max_misses_nodes[4]
+case13_2_max_misses_X=(Nodes_Initial_pos.loc[case13_2_max_misses_node_1-1,'X']+Nodes_Initial_pos.loc[case13_2_max_misses_node_2-1,'X']+Nodes_Initial_pos.loc[case13_2_max_misses_node_3-1,'X']+Nodes_Initial_pos.loc[case13_2_max_misses_node_4-1,'X'])/4
+case13_2_max_misses_Y=(Nodes_Initial_pos.loc[case13_2_max_misses_node_1-1,'Y']+Nodes_Initial_pos.loc[case13_2_max_misses_node_2-1,'Y']+Nodes_Initial_pos.loc[case13_2_max_misses_node_3-1,'Y']+Nodes_Initial_pos.loc[case13_2_max_misses_node_4-1,'Y'])/4
+case13_2_max_misses_Z=(Nodes_Initial_pos.loc[case13_2_max_misses_node_1-1,'Z']+Nodes_Initial_pos.loc[case13_2_max_misses_node_2-1,'Z']+Nodes_Initial_pos.loc[case13_2_max_misses_node_3-1,'Z']+Nodes_Initial_pos.loc[case13_2_max_misses_node_4-1,'Z'])/4
+case13_2_max_s12=np.max(case13_s12_2_sum)
+case13_2_max_s12_element=case13_s12_2_sum[case13_s12_2_sum==np.max(case13_s12_2_sum)].index.values.astype(int)[0]
+case13_2_max_s12_element=Stresses_1_case1.loc[case13_2_max_s12_element, 'Element']
+case13_2_max_s12_nodes=Element_based_on_Nodes.loc[case13_2_max_s12_element-1,:]
+case13_2_max_s12_node_1=case13_2_max_s12_nodes[1]
+case13_2_max_s12_node_2=case13_2_max_s12_nodes[2]
+case13_2_max_s12_node_3=case13_2_max_s12_nodes[3]
+case13_2_max_s12_node_4=case13_2_max_s12_nodes[4]
+case13_2_max_s12_X=(Nodes_Initial_pos.loc[case13_2_max_s12_node_1-1,'X']+Nodes_Initial_pos.loc[case13_2_max_s12_node_2-1,'X']+Nodes_Initial_pos.loc[case13_2_max_s12_node_3-1,'X']+Nodes_Initial_pos.loc[case13_2_max_s12_node_4-1,'X'])/4
+case13_2_max_s12_Y=(Nodes_Initial_pos.loc[case13_2_max_s12_node_1-1,'Y']+Nodes_Initial_pos.loc[case13_2_max_s12_node_2-1,'Y']+Nodes_Initial_pos.loc[case13_2_max_s12_node_3-1,'Y']+Nodes_Initial_pos.loc[case13_2_max_s12_node_4-1,'Y'])/4
+case13_2_max_s12_Z=(Nodes_Initial_pos.loc[case13_2_max_s12_node_1-1,'Z']+Nodes_Initial_pos.loc[case13_2_max_s12_node_2-1,'Z']+Nodes_Initial_pos.loc[case13_2_max_s12_node_3-1,'Z']+Nodes_Initial_pos.loc[case13_2_max_s12_node_4-1,'Z'])/4
 
 #Find deflection at the hinge line:
 Nodes_Spar_position_initial=Spar_Nodes
@@ -452,143 +604,143 @@ twist_case3_min=np.degrees(np.arctan(vect_case3_min[1]/vect_case3_min[2]))
 twist_case3_max=np.degrees(np.arctan(vect_case3_max[1]/vect_case3_max[2]))
 
 #All plots:
-#plot original nodes
-fig = plt.figure()
-initial_plot = plt.axes(projection='3d')
-plt.ylim(-300,300 )
-initial_plot.set_xlabel('X Label')
-initial_plot.set_ylabel('Y Label')
-initial_plot.set_zlabel('Z Label')
-zdata = np.array(Nodes_Initial_pos.Z)
-xdata = np.array(Nodes_Initial_pos.X)
-ydata = np.array(Nodes_Initial_pos.Y)
-plt.title('Initial Position Nodes')
-initial_plot.scatter3D(xdata, ydata, zdata);
-#plot displaced nodes case 1
-fig = plt.figure()
-case1_plt = plt.axes(projection='3d')
-plt.ylim(-300,300 )
-case1_plt.set_xlabel('X Label')
-case1_plt.set_ylabel('Y Label')
-case1_plt.set_zlabel('Z Label')
-plt.title('Case 1 Position Nodes')
-zdata1 = np.array(Displacement_case1.Z_Disp+Nodes_Initial_pos.Z)
-xdata1 = np.array(Displacement_case1.X_Disp+Nodes_Initial_pos.X)
-ydata1 = np.array(Displacement_case1.Y_Disp+Nodes_Initial_pos.Y)
-case1_plt.scatter3D(xdata1, ydata1, zdata1);
-#plot displaced nodes case 2
-fig = plt.figure()
-case2_plt = plt.axes(projection='3d')
-plt.ylim(-300,300 )
-case2_plt.set_xlabel('X Label')
-case2_plt.set_ylabel('Y Label')
-case2_plt.set_zlabel('Z Label')
-plt.title('Case 2 Position Nodes')
-zdata2 = np.array(Displacement_case2.Z_Disp+Nodes_Initial_pos.Z)
-xdata2 = np.array(Displacement_case2.X_Disp+Nodes_Initial_pos.X)
-ydata2 = np.array(Displacement_case2.Y_Disp+Nodes_Initial_pos.Y)
-case2_plt.scatter3D(xdata2, ydata2, zdata2);
-#plot displaced nodes case 3
-fig = plt.figure()
-case3_plt = plt.axes(projection='3d')
-plt.ylim(-300,300 )
-case3_plt.set_xlabel('X Label')
-case3_plt.set_ylabel('Y Label')
-case3_plt.set_zlabel('Z Label')
-plt.title('Case 3 Position Nodes')
-zdata3 = np.array(Displacement_case3.Z_Disp+Nodes_Initial_pos.Z)
-xdata3 = np.array(Displacement_case3.X_Disp+Nodes_Initial_pos.X)
-ydata3 = np.array(Displacement_case3.Y_Disp+Nodes_Initial_pos.Y)
-case3_plt.scatter3D(xdata3, ydata3, zdata3);
-#plot initial nodes position Spar
-fig = plt.figure()
-case_spar_plt = plt.axes(projection='3d')
-#case2_spar_plt.set_xlim3d(-3000,3000)
-case_spar_plt.set_ylim3d(-300,300)
-case_spar_plt.set_zlim3d(-300,300)
-case_spar_plt.set_xlabel('X Label')
-case_spar_plt.set_ylabel('Y Label')
-case_spar_plt.set_zlabel('Z Label')
-plt.title('Initial position nodes Hinge Line')
-zdata_spar = np.array(Nodes_Hinge_position_Z_initial)
-xdata_spar = np.array(Nodes_Hinge_position_X_initial)
-ydata_spar = np.array(Nodes_Hinge_position_Y_initial)
-case_spar_plt.scatter3D(xdata_spar, ydata_spar, zdata_spar);
-#plot displaced nodes case 1 Spar
-fig = plt.figure()
-case1_spar_plt = plt.axes(projection='3d')
-#case2_spar_plt.set_xlim3d(-3000,3000)
-case1_spar_plt.set_ylim3d(-300,300)
-case1_spar_plt.set_zlim3d(-300,300)
-case1_spar_plt.set_xlabel('X Label')
-case1_spar_plt.set_ylabel('Y Label')
-case1_spar_plt.set_zlabel('Z Label')
-plt.title('Case 1 Hinge Line')
-zdata1_spar = np.array(Nodes_Hinge_position_Z_case1)
-xdata1_spar = np.array(Nodes_Hinge_position_X_case1)
-ydata1_spar = np.array(Nodes_Hinge_position_Y_case1)
-case1_spar_plt.scatter3D(xdata1_spar, ydata1_spar, zdata1_spar);
-#plot displaced nodes case 2 Spar
-fig = plt.figure()
-case2_spar_plt = plt.axes(projection='3d')
-#case2_spar_plt.set_xlim3d(-3000,3000)
-case2_spar_plt.set_ylim3d(-300,300)
-case2_spar_plt.set_zlim3d(-300,300)
-case2_spar_plt.set_xlabel('X Label')
-case2_spar_plt.set_ylabel('Y Label')
-case2_spar_plt.set_zlabel('Z Label')
-plt.title('Case 2 Hinge Line')
-zdata2_spar = np.array(Nodes_Hinge_position_Z_case2)
-xdata2_spar = np.array(Nodes_Hinge_position_X_case2)
-ydata2_spar = np.array(Nodes_Hinge_position_Y_case2)
-case2_spar_plt.scatter3D(xdata2_spar, ydata2_spar, zdata2_spar);
-#plot displaced nodes case 3 Spar
-fig = plt.figure()
-case3_spar_plt = plt.axes(projection='3d')
-#case2_spar_plt.set_xlim3d(-3000,3000)
-case3_spar_plt.set_ylim3d(-300,300)
-case3_spar_plt.set_zlim3d(-300,300)
-case3_spar_plt.set_xlabel('X Label')
-case3_spar_plt.set_ylabel('Y Label')
-case3_spar_plt.set_zlabel('Z Label')
-plt.title('Case 3 Hinge Line')
-zdata3_spar = np.array(Nodes_Hinge_position_Z_case3)
-xdata3_spar = np.array(Nodes_Hinge_position_X_case3)
-ydata3_spar = np.array(Nodes_Hinge_position_Y_case3)
-case3_spar_plt.scatter3D(xdata3_spar, ydata3_spar, zdata3_spar);
-#plot case 1 displacement
-fig = plt.figure()
-plt.subplot(2, 1, 1)
-plt.plot(Nodes_Hinge_position_X_case1, Nodes_Hinge_position_Y_case1,'.')
-plt.title('Case 1 Deflections')
-plt.ylabel('Y Deflection')
-plt.subplot(2, 1, 2)
-plt.plot(Nodes_Hinge_position_X_case1, Nodes_Hinge_position_Z_case1,'.')
-plt.xlabel('X Position')
-plt.ylabel('Z Deflection')
-plt.show()
-#plot case 2 displacement
-fig = plt.figure()
-plt.subplot(2, 1, 1)
-plt.plot(Nodes_Hinge_position_X_case2, Nodes_Hinge_position_Y_case2,'.')
-plt.title('Case 2 Deflections')
-plt.ylabel('Y Deflection')
-plt.subplot(2, 1, 2)
-plt.plot(Nodes_Hinge_position_X_case2, Nodes_Hinge_position_Z_case2,'.')
-plt.xlabel('X Position')
-plt.ylabel('Z Deflection')
-plt.show()
-#plot case 3 displacement
-fig = plt.figure()
-plt.subplot(2, 1, 1)
-plt.plot(Nodes_Hinge_position_X_case3, Nodes_Hinge_position_Y_case3,'.')
-plt.title('Case 3 Deflections')
-plt.ylabel('Y Deflection')
-plt.subplot(2, 1, 2)
-plt.plot(Nodes_Hinge_position_X_case3, Nodes_Hinge_position_Z_case3,'.')
-plt.xlabel('X Position')
-plt.ylabel('Z Deflection')
-plt.show()
+##plot original nodes
+#fig = plt.figure()
+#initial_plot = plt.axes(projection='3d')
+#plt.ylim(-300,300 )
+#initial_plot.set_xlabel('X Label')
+#initial_plot.set_ylabel('Y Label')
+#initial_plot.set_zlabel('Z Label')
+#zdata = np.array(Nodes_Initial_pos.Z)
+#xdata = np.array(Nodes_Initial_pos.X)
+#ydata = np.array(Nodes_Initial_pos.Y)
+#plt.title('Initial Position Nodes')
+#initial_plot.scatter3D(xdata, ydata, zdata);
+##plot displaced nodes case 1
+#fig = plt.figure()
+#case1_plt = plt.axes(projection='3d')
+#plt.ylim(-300,300 )
+#case1_plt.set_xlabel('X Label')
+#case1_plt.set_ylabel('Y Label')
+#case1_plt.set_zlabel('Z Label')
+#plt.title('Case 1 Position Nodes')
+#zdata1 = np.array(Displacement_case1.Z_Disp+Nodes_Initial_pos.Z)
+#xdata1 = np.array(Displacement_case1.X_Disp+Nodes_Initial_pos.X)
+#ydata1 = np.array(Displacement_case1.Y_Disp+Nodes_Initial_pos.Y)
+#case1_plt.scatter3D(xdata1, ydata1, zdata1);
+##plot displaced nodes case 2
+#fig = plt.figure()
+#case2_plt = plt.axes(projection='3d')
+#plt.ylim(-300,300 )
+#case2_plt.set_xlabel('X Label')
+#case2_plt.set_ylabel('Y Label')
+#case2_plt.set_zlabel('Z Label')
+#plt.title('Case 2 Position Nodes')
+#zdata2 = np.array(Displacement_case2.Z_Disp+Nodes_Initial_pos.Z)
+#xdata2 = np.array(Displacement_case2.X_Disp+Nodes_Initial_pos.X)
+#ydata2 = np.array(Displacement_case2.Y_Disp+Nodes_Initial_pos.Y)
+#case2_plt.scatter3D(xdata2, ydata2, zdata2);
+##plot displaced nodes case 3
+#fig = plt.figure()
+#case3_plt = plt.axes(projection='3d')
+#plt.ylim(-300,300 )
+#case3_plt.set_xlabel('X Label')
+#case3_plt.set_ylabel('Y Label')
+#case3_plt.set_zlabel('Z Label')
+#plt.title('Case 3 Position Nodes')
+#zdata3 = np.array(Displacement_case3.Z_Disp+Nodes_Initial_pos.Z)
+#xdata3 = np.array(Displacement_case3.X_Disp+Nodes_Initial_pos.X)
+#ydata3 = np.array(Displacement_case3.Y_Disp+Nodes_Initial_pos.Y)
+#case3_plt.scatter3D(xdata3, ydata3, zdata3);
+##plot initial nodes position Spar
+#fig = plt.figure()
+#case_spar_plt = plt.axes(projection='3d')
+##case2_spar_plt.set_xlim3d(-3000,3000)
+#case_spar_plt.set_ylim3d(-300,300)
+#case_spar_plt.set_zlim3d(-300,300)
+#case_spar_plt.set_xlabel('X Label')
+#case_spar_plt.set_ylabel('Y Label')
+#case_spar_plt.set_zlabel('Z Label')
+#plt.title('Initial position nodes Hinge Line')
+#zdata_spar = np.array(Nodes_Hinge_position_Z_initial)
+#xdata_spar = np.array(Nodes_Hinge_position_X_initial)
+#ydata_spar = np.array(Nodes_Hinge_position_Y_initial)
+#case_spar_plt.scatter3D(xdata_spar, ydata_spar, zdata_spar);
+##plot displaced nodes case 1 Spar
+#fig = plt.figure()
+#case1_spar_plt = plt.axes(projection='3d')
+##case2_spar_plt.set_xlim3d(-3000,3000)
+#case1_spar_plt.set_ylim3d(-300,300)
+#case1_spar_plt.set_zlim3d(-300,300)
+#case1_spar_plt.set_xlabel('X Label')
+#case1_spar_plt.set_ylabel('Y Label')
+#case1_spar_plt.set_zlabel('Z Label')
+#plt.title('Case 1 Hinge Line')
+#zdata1_spar = np.array(Nodes_Hinge_position_Z_case1)
+#xdata1_spar = np.array(Nodes_Hinge_position_X_case1)
+#ydata1_spar = np.array(Nodes_Hinge_position_Y_case1)
+#case1_spar_plt.scatter3D(xdata1_spar, ydata1_spar, zdata1_spar);
+##plot displaced nodes case 2 Spar
+#fig = plt.figure()
+#case2_spar_plt = plt.axes(projection='3d')
+##case2_spar_plt.set_xlim3d(-3000,3000)
+#case2_spar_plt.set_ylim3d(-300,300)
+#case2_spar_plt.set_zlim3d(-300,300)
+#case2_spar_plt.set_xlabel('X Label')
+#case2_spar_plt.set_ylabel('Y Label')
+#case2_spar_plt.set_zlabel('Z Label')
+#plt.title('Case 2 Hinge Line')
+#zdata2_spar = np.array(Nodes_Hinge_position_Z_case2)
+#xdata2_spar = np.array(Nodes_Hinge_position_X_case2)
+#ydata2_spar = np.array(Nodes_Hinge_position_Y_case2)
+#case2_spar_plt.scatter3D(xdata2_spar, ydata2_spar, zdata2_spar);
+##plot displaced nodes case 3 Spar
+#fig = plt.figure()
+#case3_spar_plt = plt.axes(projection='3d')
+##case2_spar_plt.set_xlim3d(-3000,3000)
+#case3_spar_plt.set_ylim3d(-300,300)
+#case3_spar_plt.set_zlim3d(-300,300)
+#case3_spar_plt.set_xlabel('X Label')
+#case3_spar_plt.set_ylabel('Y Label')
+#case3_spar_plt.set_zlabel('Z Label')
+#plt.title('Case 3 Hinge Line')
+#zdata3_spar = np.array(Nodes_Hinge_position_Z_case3)
+#xdata3_spar = np.array(Nodes_Hinge_position_X_case3)
+#ydata3_spar = np.array(Nodes_Hinge_position_Y_case3)
+#case3_spar_plt.scatter3D(xdata3_spar, ydata3_spar, zdata3_spar);
+##plot case 1 displacement
+#fig = plt.figure()
+#plt.subplot(2, 1, 1)
+#plt.plot(Nodes_Hinge_position_X_case1, Nodes_Hinge_position_Y_case1,'.')
+#plt.title('Case 1 Deflections')
+#plt.ylabel('Y Deflection')
+#plt.subplot(2, 1, 2)
+#plt.plot(Nodes_Hinge_position_X_case1, Nodes_Hinge_position_Z_case1,'.')
+#plt.xlabel('X Position')
+#plt.ylabel('Z Deflection')
+#plt.show()
+##plot case 2 displacement
+#fig = plt.figure()
+#plt.subplot(2, 1, 1)
+#plt.plot(Nodes_Hinge_position_X_case2, Nodes_Hinge_position_Y_case2,'.')
+#plt.title('Case 2 Deflections')
+#plt.ylabel('Y Deflection')
+#plt.subplot(2, 1, 2)
+#plt.plot(Nodes_Hinge_position_X_case2, Nodes_Hinge_position_Z_case2,'.')
+#plt.xlabel('X Position')
+#plt.ylabel('Z Deflection')
+#plt.show()
+##plot case 3 displacement
+#fig = plt.figure()
+#plt.subplot(2, 1, 1)
+#plt.plot(Nodes_Hinge_position_X_case3, Nodes_Hinge_position_Y_case3,'.')
+#plt.title('Case 3 Deflections')
+#plt.ylabel('Y Deflection')
+#plt.subplot(2, 1, 2)
+#plt.plot(Nodes_Hinge_position_X_case3, Nodes_Hinge_position_Z_case3,'.')
+#plt.xlabel('X Position')
+#plt.ylabel('Z Deflection')
+#plt.show()
 #plot all 3 deflections in the same plot
 fig = plt.figure()
 plt.subplot(2, 1, 1)
@@ -608,120 +760,136 @@ plt.xlabel('X Position')
 plt.ylabel('Z Deflection')
 plt.legend()
 plt.show()
-#plot twist lines:
-fig = plt.figure()
-twist_ref_plot = fig.gca(projection='3d')
-z_min = np.array([Z_initial_LE_min,Z_initial_TE_min])
-x_min = np.array([X_initial_LE_min,X_initial_TE_min])
-y_min = np.array([Y_initial_LE_min,Y_initial_TE_min])
-z_ref = np.array([Z_initial_LE_ref,Z_initial_TE_ref])
-x_ref = np.array([X_initial_LE_ref,X_initial_TE_ref])
-y_ref = np.array([Y_initial_LE_ref,Y_initial_TE_ref])
-z_max = np.array([Z_initial_LE_max,Z_initial_TE_max])
-x_max = np.array([X_initial_LE_max,X_initial_TE_max])
-y_max = np.array([Y_initial_LE_max,Y_initial_TE_max])
-twist_ref_plot.set_ylim3d(-300,300)
-twist_ref_plot.set_zlim3d(-500,100)
-twist_ref_plot.set_xlabel('X Label')
-twist_ref_plot.set_ylabel('Y Label')
-twist_ref_plot.set_zlabel('Z Label')
-plt.title('Reference Twist')
-twist_ref_plot.plot(x_min, y_min, z_min)
-twist_ref_plot.plot(x_ref, y_ref, z_ref)
-twist_ref_plot.plot(x_max, y_max, z_max)
-plt.show()
-#Case 1 twist
-fig = plt.figure()
-twist_case1_plot = fig.gca(projection='3d')
-z_min_case1 = np.array([Z_case1_LE_min,Z_case1_TE_min])
-x_min_case1 = np.array([X_case1_LE_min,X_case1_TE_min])
-y_min_case1 = np.array([Y_case1_LE_min,Y_case1_TE_min])
-z_ref_case1 = np.array([Z_case1_LE_ref,Z_case1_TE_ref])
-x_ref_case1 = np.array([X_case1_LE_ref,X_case1_TE_ref])
-y_ref_case1 = np.array([Y_case1_LE_ref,Y_case1_TE_ref])
-z_max_case1 = np.array([Z_case1_LE_max,Z_case1_TE_max])
-x_max_case1 = np.array([X_case1_LE_max,X_case1_TE_max])
-y_max_case1 = np.array([Y_case1_LE_max,Y_case1_TE_max])
-twist_case1_plot.set_ylim3d(-300,300)
-twist_case1_plot.set_zlim3d(-500,100)
-twist_case1_plot.set_xlabel('X Label')
-twist_case1_plot.set_ylabel('Y Label')
-twist_case1_plot.set_zlabel('Z Label')
-plt.title('Case 1 twist')
-twist_case1_plot.plot(x_min_case1, y_min_case1, z_min_case1)
-twist_case1_plot.plot(x_ref_case1, y_ref_case1, z_ref_case1)
-twist_case1_plot.plot(x_max_case1, y_max_case1, z_max_case1)
-plt.show()
-#Case 2 twist
-fig = plt.figure()
-twist_case2_plot = fig.gca(projection='3d')
-z_min_case2 = np.array([Z_case2_LE_min,Z_case2_TE_min])
-x_min_case2 = np.array([X_case2_LE_min,X_case2_TE_min])
-y_min_case2 = np.array([Y_case2_LE_min,Y_case2_TE_min])
-z_ref_case2 = np.array([Z_case2_LE_ref,Z_case2_TE_ref])
-x_ref_case2 = np.array([X_case2_LE_ref,X_case2_TE_ref])
-y_ref_case2 = np.array([Y_case2_LE_ref,Y_case2_TE_ref])
-z_max_case2 = np.array([Z_case2_LE_max,Z_case2_TE_max])
-x_max_case2 = np.array([X_case2_LE_max,X_case2_TE_max])
-y_max_case2 = np.array([Y_case2_LE_max,Y_case2_TE_max])
-twist_case2_plot.set_ylim3d(-300,300)
-twist_case2_plot.set_zlim3d(-500,100)
-twist_case2_plot.set_xlabel('X Label')
-twist_case2_plot.set_ylabel('Y Label')
-twist_case2_plot.set_zlabel('Z Label')
-plt.title('Case 2 twist')
-twist_case2_plot.plot(x_min_case2, y_min_case2, z_min_case2)
-twist_case2_plot.plot(x_ref_case2, y_ref_case2, z_ref_case2)
-twist_case2_plot.plot(x_max_case2, y_max_case2, z_max_case2)
-plt.show()
-#Case 3 twist
-fig = plt.figure()
-twist_case3_plot = fig.gca(projection='3d')
-z_min_case3 = np.array([Z_case3_LE_min,Z_case3_TE_min])
-x_min_case3 = np.array([X_case3_LE_min,X_case3_TE_min])
-y_min_case3 = np.array([Y_case3_LE_min,Y_case3_TE_min])
-z_ref_case3 = np.array([Z_case3_LE_ref,Z_case3_TE_ref])
-x_ref_case3 = np.array([X_case3_LE_ref,X_case3_TE_ref])
-y_ref_case3 = np.array([Y_case3_LE_ref,Y_case3_TE_ref])
-z_max_case3 = np.array([Z_case3_LE_max,Z_case3_TE_max])
-x_max_case3 = np.array([X_case3_LE_max,X_case3_TE_max])
-y_max_case3 = np.array([Y_case3_LE_max,Y_case3_TE_max])
-twist_case3_plot.set_ylim3d(-300,300)
-twist_case3_plot.set_zlim3d(-500,100)
-twist_case3_plot.set_xlabel('X Label')
-twist_case3_plot.set_ylabel('Y Label')
-twist_case3_plot.set_zlabel('Z Label')
-plt.title('Case 3 twist')
-twist_case3_plot.plot(x_min_case3, y_min_case3, z_min_case3)
-twist_case3_plot.plot(x_ref_case3, y_ref_case3, z_ref_case3)
-twist_case3_plot.plot(x_max_case3, y_max_case3, z_max_case3)
-plt.show()
+##plot twist lines:
+#fig = plt.figure()
+#twist_ref_plot = fig.gca(projection='3d')
+#z_min = np.array([Z_initial_LE_min,Z_initial_TE_min])
+#x_min = np.array([X_initial_LE_min,X_initial_TE_min])
+#y_min = np.array([Y_initial_LE_min,Y_initial_TE_min])
+#z_ref = np.array([Z_initial_LE_ref,Z_initial_TE_ref])
+#x_ref = np.array([X_initial_LE_ref,X_initial_TE_ref])
+#y_ref = np.array([Y_initial_LE_ref,Y_initial_TE_ref])
+#z_max = np.array([Z_initial_LE_max,Z_initial_TE_max])
+#x_max = np.array([X_initial_LE_max,X_initial_TE_max])
+#y_max = np.array([Y_initial_LE_max,Y_initial_TE_max])
+#twist_ref_plot.set_ylim3d(-300,300)
+#twist_ref_plot.set_zlim3d(-500,100)
+#twist_ref_plot.set_xlabel('X Label')
+#twist_ref_plot.set_ylabel('Y Label')
+#twist_ref_plot.set_zlabel('Z Label')
+#plt.title('Reference Twist')
+#twist_ref_plot.plot(x_min, y_min, z_min)
+#twist_ref_plot.plot(x_ref, y_ref, z_ref)
+#twist_ref_plot.plot(x_max, y_max, z_max)
+#plt.show()
+##Case 1 twist
+#fig = plt.figure()
+#twist_case1_plot = fig.gca(projection='3d')
+#z_min_case1 = np.array([Z_case1_LE_min,Z_case1_TE_min])
+#x_min_case1 = np.array([X_case1_LE_min,X_case1_TE_min])
+#y_min_case1 = np.array([Y_case1_LE_min,Y_case1_TE_min])
+#z_ref_case1 = np.array([Z_case1_LE_ref,Z_case1_TE_ref])
+#x_ref_case1 = np.array([X_case1_LE_ref,X_case1_TE_ref])
+#y_ref_case1 = np.array([Y_case1_LE_ref,Y_case1_TE_ref])
+#z_max_case1 = np.array([Z_case1_LE_max,Z_case1_TE_max])
+#x_max_case1 = np.array([X_case1_LE_max,X_case1_TE_max])
+#y_max_case1 = np.array([Y_case1_LE_max,Y_case1_TE_max])
+#twist_case1_plot.set_ylim3d(-300,300)
+#twist_case1_plot.set_zlim3d(-500,100)
+#twist_case1_plot.set_xlabel('X Label')
+#twist_case1_plot.set_ylabel('Y Label')
+#twist_case1_plot.set_zlabel('Z Label')
+#plt.title('Case 1 twist')
+#twist_case1_plot.plot(x_min_case1, y_min_case1, z_min_case1)
+#twist_case1_plot.plot(x_ref_case1, y_ref_case1, z_ref_case1)
+#twist_case1_plot.plot(x_max_case1, y_max_case1, z_max_case1)
+#plt.show()
+##Case 2 twist
+#fig = plt.figure()
+#twist_case2_plot = fig.gca(projection='3d')
+#z_min_case2 = np.array([Z_case2_LE_min,Z_case2_TE_min])
+#x_min_case2 = np.array([X_case2_LE_min,X_case2_TE_min])
+#y_min_case2 = np.array([Y_case2_LE_min,Y_case2_TE_min])
+#z_ref_case2 = np.array([Z_case2_LE_ref,Z_case2_TE_ref])
+#x_ref_case2 = np.array([X_case2_LE_ref,X_case2_TE_ref])
+#y_ref_case2 = np.array([Y_case2_LE_ref,Y_case2_TE_ref])
+#z_max_case2 = np.array([Z_case2_LE_max,Z_case2_TE_max])
+#x_max_case2 = np.array([X_case2_LE_max,X_case2_TE_max])
+#y_max_case2 = np.array([Y_case2_LE_max,Y_case2_TE_max])
+#twist_case2_plot.set_ylim3d(-300,300)
+#twist_case2_plot.set_zlim3d(-500,100)
+#twist_case2_plot.set_xlabel('X Label')
+#twist_case2_plot.set_ylabel('Y Label')
+#twist_case2_plot.set_zlabel('Z Label')
+#plt.title('Case 2 twist')
+#twist_case2_plot.plot(x_min_case2, y_min_case2, z_min_case2)
+#twist_case2_plot.plot(x_ref_case2, y_ref_case2, z_ref_case2)
+#twist_case2_plot.plot(x_max_case2, y_max_case2, z_max_case2)
+#plt.show()
+##Case 3 twist
+#fig = plt.figure()
+#twist_case3_plot = fig.gca(projection='3d')
+#z_min_case3 = np.array([Z_case3_LE_min,Z_case3_TE_min])
+#x_min_case3 = np.array([X_case3_LE_min,X_case3_TE_min])
+#y_min_case3 = np.array([Y_case3_LE_min,Y_case3_TE_min])
+#z_ref_case3 = np.array([Z_case3_LE_ref,Z_case3_TE_ref])
+#x_ref_case3 = np.array([X_case3_LE_ref,X_case3_TE_ref])
+#y_ref_case3 = np.array([Y_case3_LE_ref,Y_case3_TE_ref])
+#z_max_case3 = np.array([Z_case3_LE_max,Z_case3_TE_max])
+#x_max_case3 = np.array([X_case3_LE_max,X_case3_TE_max])
+#y_max_case3 = np.array([Y_case3_LE_max,Y_case3_TE_max])
+#twist_case3_plot.set_ylim3d(-300,300)
+#twist_case3_plot.set_zlim3d(-500,100)
+#twist_case3_plot.set_xlabel('X Label')
+#twist_case3_plot.set_ylabel('Y Label')
+#twist_case3_plot.set_zlabel('Z Label')
+#plt.title('Case 3 twist')
+#twist_case3_plot.plot(x_min_case3, y_min_case3, z_min_case3)
+#twist_case3_plot.plot(x_ref_case3, y_ref_case3, z_ref_case3)
+#twist_case3_plot.plot(x_max_case3, y_max_case3, z_max_case3)
+#plt.show()
 
 #Outputs
 #Print max stresses for all cases
 print('Case 1 Maximum Streeses:')
-print('Case 1 Region 1 max Mises: ', np.around(case1_1_max_misses,decimals=4), 'Pa')
-print('Case 1 Region 2 max Mises: ', np.around(case1_2_max_misses,decimals=4), 'Pa')
-print('Case 1 Region 1 max S12: ', np.around(case1_1_max_s12,decimals=4), 'Pa')
-print('Case 1 Region 2 max S12: ', np.around(case1_2_max_s12,decimals=4), 'Pa')
+print('Case 1 Region 1 max Mises:', np.around(case1_1_max_misses,decimals=4), 'Pa')
+print('At Element ', case1_1_max_misses_element, 'X=',np.around(case1_1_max_misses_X,decimals=2), 'Y=',np.around(case1_1_max_misses_Y,decimals=2),'Z=',np.around(case1_1_max_misses_Z,decimals=2))
+print('Case 1 Region 2 max Mises:', np.around(case1_2_max_misses,decimals=4), 'Pa')
+print('At Element ', case1_2_max_misses_element, 'X=',np.around(case1_2_max_misses_X,decimals=2), 'Y=',np.around(case1_2_max_misses_Y,decimals=2),'Z=',np.around(case1_2_max_misses_Z,decimals=2))
+print('Case 1 Region 1 max S12:', np.around(case1_1_max_s12,decimals=4), 'Pa')
+print('At Element ', case1_1_max_s12_element, 'X=',np.around(case1_1_max_s12_X,decimals=2), 'Y=',np.around(case1_1_max_s12_Y,decimals=2),'Z=',np.around(case1_1_max_s12_Z,decimals=2))
+print('Case 1 Region 2 max S12:', np.around(case1_2_max_s12,decimals=4), 'Pa')
+print('At Element ', case1_2_max_s12_element, 'X=',np.around(case1_2_max_s12_X,decimals=2), 'Y=',np.around(case1_2_max_s12_Y,decimals=2),'Z=',np.around(case1_2_max_s12_Z,decimals=2))
 print()
 print('Case 2 Maximum Streeses:')
 print('Case 2 Region 1 max Mises: ', np.around(case2_1_max_misses,decimals=4), 'Pa')
+print('At Element ', case2_1_max_misses_element, 'X=',np.around(case2_1_max_misses_X,decimals=2), 'Y=',np.around(case2_1_max_misses_Y,decimals=2),'Z=',np.around(case2_1_max_misses_Z,decimals=2))
 print('Case 2 Region 2 max Mises: ', np.around(case2_2_max_misses,decimals=4), 'Pa')
+print('At Element ', case2_2_max_misses_element, 'X=',np.around(case2_2_max_misses_X,decimals=2), 'Y=',np.around(case2_2_max_misses_Y,decimals=2),'Z=',np.around(case2_2_max_misses_Z,decimals=2))
 print('Case 2 Region 1 max S12: ', np.around(case2_1_max_s12,decimals=4), 'Pa')
+print('At Element ', case2_1_max_s12_element, 'X=',np.around(case2_1_max_s12_X,decimals=2), 'Y=',np.around(case2_1_max_s12_Y,decimals=2),'Z=',np.around(case2_1_max_s12_Z,decimals=2))
 print('Case 2 Region 2 max S12: ', np.around(case2_2_max_s12,decimals=4), 'Pa')
+print('At Element ', case2_2_max_s12_element, 'X=',np.around(case2_2_max_s12_X,decimals=2), 'Y=',np.around(case2_2_max_s12_Y,decimals=2),'Z=',np.around(case2_2_max_s12_Z,decimals=2))
 print()
 print('Case 3 Maximum Streeses:')
 print('Case 3 Region 1 max Mises: ', np.around(case3_1_max_misses,decimals=4), 'Pa')
+print('At Element ', case3_1_max_misses_element, 'X=',np.around(case3_1_max_misses_X,decimals=2), 'Y=',np.around(case3_1_max_misses_Y,decimals=2),'Z=',np.around(case3_1_max_misses_Z,decimals=2))
 print('Case 3 Region 2 max Mises: ', np.around(case3_2_max_misses,decimals=4), 'Pa')
+print('At Element ', case3_2_max_misses_element, 'X=',np.around(case3_2_max_misses_X,decimals=2), 'Y=',np.around(case3_2_max_misses_Y,decimals=2),'Z=',np.around(case3_2_max_misses_Z,decimals=2))
 print('Case 3 Region 1 max S12: ', np.around(case3_1_max_s12,decimals=4), 'Pa')
+print('At Element ', case3_1_max_s12_element, 'X=',np.around(case3_1_max_s12_X,decimals=2), 'Y=',np.around(case3_1_max_s12_Y,decimals=2),'Z=',np.around(case3_1_max_s12_Z,decimals=2))
 print('Case 3 Region 2 max S12: ', np.around(case3_2_max_s12,decimals=4), 'Pa')
+print('At Element ', case3_2_max_s12_element, 'X=',np.around(case3_2_max_s12_X,decimals=2), 'Y=',np.around(case3_2_max_s12_Y,decimals=2),'Z=',np.around(case3_2_max_s12_Z,decimals=2))
 print()
 print('Case 1 + Case 3 Maximum Streeses:')
 print('Case 1 + Case 3 Region 1 max Mises: ', np.around(case13_1_max_misses,decimals=4), 'Pa')
+print('At Element ', case13_1_max_misses_element, 'X=',np.around(case13_1_max_misses_X,decimals=2), 'Y=',np.around(case13_1_max_misses_Y,decimals=2),'Z=',np.around(case13_1_max_misses_Z,decimals=2))
 print('Case 1 + Case 3 Region 2 max Mises: ', np.around(case13_2_max_misses,decimals=4), 'Pa')
+print('At Element ', case13_2_max_misses_element, 'X=',np.around(case13_2_max_misses_X,decimals=2), 'Y=',np.around(case13_2_max_misses_Y,decimals=2),'Z=',np.around(case13_2_max_misses_Z,decimals=2))
 print('Case 1 + Case 3 Region 1 max S12: ', np.around(case13_1_max_s12,decimals=4), 'Pa')
+print('At Element ', case13_1_max_s12_element, 'X=',np.around(case13_1_max_s12_X,decimals=2), 'Y=',np.around(case13_1_max_s12_Y,decimals=2),'Z=',np.around(case13_1_max_s12_Z,decimals=2))
 print('Case 1 + Case 3 Region 2 max S12: ', np.around(case13_2_max_s12,decimals=4), 'Pa')
+print('At Element ', case13_2_max_s12_element, 'X=',np.around(case13_2_max_s12_X,decimals=2), 'Y=',np.around(case13_2_max_s12_Y,decimals=2),'Z=',np.around(case13_2_max_s12_Z,decimals=2))
 print()
 #Print hinge line deflection for all cases
 print('Bending Results Case 1:')
