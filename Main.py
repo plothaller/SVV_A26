@@ -4,6 +4,7 @@ Group A26 SVV
 import numpy as np
 from macaulay import *
 from deflections import *
+from geometry import *
 
 aircraft = "CRJ700" # Write either A320, F100, CRJ700 or Do228 (bear in mind capitals); this is used for aerodynamic loading
 Ca = 0.484 #m
@@ -26,6 +27,10 @@ theta = np.radians(26)  # rad
 P = 0
 E = 73.1*10**9 #N/m2
 G = 28*10**9 #N/m2
+
+#Retireving Geometry data
+geometry = Geometry(ha, tsk, tsp, tst, hst, wst, Ca, nst, 1)
+print("this is:",geometry.I_yy)
 
 #Entering numbers from verification model
 I_zz = 5.81593895759915e-06

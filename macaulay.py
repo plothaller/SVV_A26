@@ -1,4 +1,5 @@
 import numpy as np
+import Aerodynamic_Loading_Main_V3 as AV3
 
 def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy):
 
@@ -30,6 +31,9 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
 	b = np.zeros((12, 1))
 
 	#intergral placeholders
+	w_bar = AV3.make_w_bar()
+	x, z = AV3.make_x_and_z()
+	
 	DOUBLEINTEGRAL = 0
 	DOULBEINTEGRALPLUSZMINUSZSC = 0
 	TRIPLEINTEGRALPLUSZMINUSZSC = 0

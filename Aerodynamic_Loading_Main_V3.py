@@ -132,15 +132,18 @@ def integrate_1d_list(x, y, x_max):
 # =============================================================================
     
 #Making two arrays with all the x, z locationx
-x = []
-z = []
-for i in range(0, 41):
-    x.append(locationx(i))
-for i in range(0, 81):
-    z.append(locationz(i))
-z = z[::-1] #so it goes from -C to 0 instead of 0 to -C
-    
+def make_x_and_z():
+    x = []
+    z = []
+    for i in range(0, 41):
+        x.append(locationx(i))
+    for i in range(0, 81):
+        z.append(locationz(i))
+    z = z[::-1] #so it goes from -C to 0 instead of 0 to -C
+    return x, z
 #Define w_bar
-w_bar = []
-for index in range(len(x)):
-    w_bar = [integrate_1d(z, AeroLoading[:,index], z[-1])] + w_bar
+def make_w_bar():
+    w_bar = []
+    for index in range(len(x)):
+        w_bar = [integrate_1d(z, AeroLoading[:,index], z[-1])] + w_bar
+    return w_bar
