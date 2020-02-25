@@ -1,5 +1,4 @@
 import numpy as np
-import Aerodynamic_Loading_Main_V3 as AV3
 
 def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy):
 
@@ -47,6 +46,11 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
     x_max_five_4 = 0     #INPUT X_MAX FOR THE FIVEINTEGRAL HERE
     
     y_three_plus_minus_zsc_2, x_three_plus_minus_zsc_2 = AV3.integrate_1d_list(x, tau, x_max_three_plus_minus_zsc_1)   
+	#intergral placeholders
+	DOUBLEINTEGRAL = 0
+	DOULBEINTEGRALPLUSZMINUSZSC = 0
+	TRIPLEINTEGRALPLUSZMINUSZSC = 0
+	FIVEINTEGRAL = 0
 
     y_five_2, x_five_2 = AV3.integrate_1d_list(x, w_bar, x_max_five_1)
     y_five_3, x_five_3 = AV3.integrate_1d_list(x_five_2, y_five_2, x_max_five_2)

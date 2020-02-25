@@ -29,8 +29,8 @@ E = 73.1*10**9 #N/m2
 G = 28*10**9 #N/m2
 
 #Retireving Geometry data
-geometry = Geometry(ha, tsk, tsp, tst, hst, wst, Ca, nst, 1)
-print("this is:",geometry.I_yy)
+#geometry = Geometry(ha, tsk, tsp, tst, hst, wst, Ca, nst, 1)
+#print("this is:",geometry.I_yy)
 
 #Entering numbers from verification model
 I_zz = 5.81593895759915e-06
@@ -49,28 +49,56 @@ x_1, y_1 = v_deflection(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, c1,
 x_2, y_2 = w_deflection(la, F_I, F_1z, F_2z, F_3z, x1, x2, x3, xa, theta, P, c3, c4, E, I_yy)
 x_3, y_3 = internal_moment_z(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P)
 x_4, y_4 = internal_moment_y(la, F_I, F_1z, F_2z, F_3z, x1, x2, x3, xa, theta, P)
+x_5, y_5 = shear_z(la, F_I, F_1z, F_2z, F_3z, x1, x2, x3, xa, theta, P)
+x_6, y_6 = shear_y(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P)
+x_7, y_7 = torque(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, zsc, ha)
+x_8, y_8 = Twist(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, c5, G, J, zsc, ha)
 
-plt.subplot(2, 2, 1)
+plt.subplot(3, 3, 1)
 plt.plot(x_1, y_1, 'r')
 plt.title('Deflection in y')
 plt.xlabel('x (m)')
 plt.ylabel('v(x)')
 
-plt.subplot(2, 2, 2)
+plt.subplot(3, 3, 2)
 plt.plot(x_2, y_2, 'g')
 plt.title('Deflection in z')
 plt.xlabel('x (m)')
 plt.ylabel('w(x)')
 
-plt.subplot(2, 2, 3)
+plt.subplot(3, 3, 3)
 plt.plot(x_3, y_3, 'b')
 plt.title('Internal Moment around z')
 plt.xlabel('x (m)')
 plt.ylabel('M_z(x)')
 
-plt.subplot(2, 2, 4)
+plt.subplot(3, 3, 4)
 plt.plot(x_4, y_4, 'm')
 plt.title('Internal moment around y')
 plt.xlabel('x (m)')
 plt.ylabel('M_y(x)')
+
+plt.subplot(3, 3, 5)
+plt.plot(x_5, y_5, 'y')
+plt.title('Shear force in z')
+plt.xlabel('x (m)')
+plt.ylabel('S_z(x)')
+
+plt.subplot(3, 3, 6)
+plt.plot(x_6, y_6, 'k')
+plt.title('Shear force in y')
+plt.xlabel('x (m)')
+plt.ylabel('S_y(x)')
+
+plt.subplot(3, 3, 7)
+plt.plot(x_7, y_7, 'c')
+plt.title('Torque')
+plt.xlabel('x (m)')
+plt.ylabel('T(x)')
+
+plt.subplot(3, 3, 8)
+plt.plot(x_8, y_8, 'c')
+plt.title('Twist')
+plt.xlabel('x (m)')
+plt.ylabel('T(x)')
 plt.show()
