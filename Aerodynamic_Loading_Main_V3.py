@@ -30,17 +30,18 @@ def locationx(idx):
     x_prime = 0.5*(l_a/2*(1 - np.cos(theta_x(idx))) + l_a/2*(1 - np.cos(theta_x(idx+1))))
     return x_prime
 
-with open(r"C:\Users\Max van Huffelen\Desktop\Quick Access\University\SVV\aerodynamicloadcrj700.dat") as aerodynamicloadcrj700:
-    #Generate a matrix containing all the data poitns from aerodyanmicloadcrj700
-    def MapAeroLoading(file):
+def MapAeroLoading(filename):
+    with open(filename) as aerodynamicloadcrj700:
+        #Generate a matrix containing all the data poitns from aerodyanmicloadcrj700
         AeroLoading = np.zeros([81, 41])
         i = 0
         for line in aerodynamicloadcrj700.readlines():
             line = line.strip().split(',')
-            AeroLoading[i] = np.float_(line)
+            AeroLoading[i,:] = np.float_(line)
             i += 1
         return AeroLoading
-    AeroLoading = MapAeroLoading(aerodynamicloadcrj700)
+    
+AeroLoading = MapAeroLoading(r"C:\Users\Max van Huffelen\Desktop\Quick Access\University\SVV\aerodynamicloadcrj700.dat")
     
 def findIndex(loc_x, loc_z):
     #input: x, z; location of a point on the aileron surface
