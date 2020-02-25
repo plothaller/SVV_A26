@@ -37,9 +37,12 @@ class Geometry:
 		self.chord = chord				#chord length
 		self.n_str = number_str			#number of stringers
 		self.str_area = width_str * thickness_str + height_str * thickness_str
+		print("The stringer area is:", self.str_area)
 		self.perimeter = math.pi*height/2 + 2*math.sqrt(math.pow(height/2,2) + math.pow(chord - height/2,2))
 		self.spacing = (math.pi*height/2 + 2*math.sqrt(math.pow(height/2,2) + math.pow(chord - height/2,2)))/(number_str)
+		print("The spacing is:", self.spacing)
 		self.lenght_skin = np.sqrt(math.pow(self.height/2,2)+math.pow(self.chord - self.height/2,2))
+		print("The skin lenght is:", self.lenght_skin)
 		self.spacing_extra_booms = self.spacing/booms_per_str
 		self.booms_per_str = booms_per_str
 		self.a1 = math.pi*math.pow(self.height/2,2)
@@ -50,7 +53,9 @@ class Geometry:
 		self.centroid_z = self.centroid()[0]
 		self.centroid_y = self.centroid()[1]
 		self.I_zz = self.moments_of_inertia(self.booms_z, self.booms_y)[0]
+		print("The I_zz is:", self.I_zz)
 		self.I_yy = self.moments_of_inertia(self.booms_z, self.booms_y)[1]
+		print("The I_yy is:", self.I_yy)
 
 		self.shear_center_z = self.shear_center()
 
@@ -110,30 +115,33 @@ class Geometry:
 		if self.plane == "CRJ700":		  #Check 16,17
 			self.shear_flow_magnitude[0] = -0.431/self.I_zz * self.skin_thickness*math.pow(self.height/2,2)
 			self.shear_flow_magnitude[1] = -1/self.I_zz * (self.skin_thickness*math.pow(self.height/2,2) + 0.0711*self.str_area) 
-			self.shear_flow_magnitude[15] = 0.431/self.I_zz * self.skin_thickness*math.pow(self.height/2,2)
-			self.shear_flow_magnitude[14] = -1/self.I_zz * (-self.skin_thickness*math.pow(self.height/2,2) - 0.0711*self.str_area)
-			self.shear_flow_magnitude[16] = 1/self.I_zz * self.skin_thickness*math.pow(self.height/2,2)
-			self.shear_flow_magnitude[17] = -1/self.I_zz * self.skin_thickness*math.pow(self.height/2,2)
-			self.shear_flow_magnitude[2] = -1/self.I_zz *((self.skin_thickness * (-self.height/4)/(self.lenght_skin)*math.pow(self.spacing*(2) - math.pi*self.height/4,2))) + self.shear_flow_magnitude[1] + self.shear_flow_magnitude[17]
-			print("Doing Q&++++++++++++++++++")
-			self.shear_flow_magnitude[7] = -1/self.I_zz *((self.skin_thickness * (-self.height/4)/(self.lenght_skin)*math.pow(self.spacing*(6.5) - math.pi*self.height/4,2))+self.sum_booms_SC(2,6)) + self.shear_flow_magnitude[1] + self.shear_flow_magnitude[17]
-			print(self.shear_flow_magnitude[7])
-			self.shear_flow_magnitude[7] = -1/self.I_zz *((self.skin_thickness * (-self.height/4)/(self.lenght_skin)*math.pow(self.spacing*(4.5),2))+self.sum_booms_SC(2,6)) + self.shear_flow_magnitude[2]
-			print(self.shear_flow_magnitude[7])
-			self.shear_flow_magnitude[8] = -1/self.I_zz *((self.skin_thickness * (-self.height/4)/(self.lenght_skin)*math.pow(self.spacing*(0.5),2))) + self.shear_flow_magnitude[7]
+			self.shear_flow_magnitude[15] = -0.431/self.I_zz * self.skin_thickness*math.pow(self.height/2,2)
+			self.shear_flow_magnitude[14] = -1/self.I_zz * (self.skin_thickness*math.pow(self.height/2,2) + 0.0711*self.str_area)
+			self.shear_flow_magnitude[16] = -1/self.I_zz * 0.5*self.skin_thickness*math.pow(self.height/2,2)
+			self.shear_flow_magnitude[17] = -1/self.I_zz * 0.5*self.skin_thickness*math.pow(self.height/2,2)
+			c = self.spacing*(2) - math.pi*self.height/4
+			print("sdsdsdssdssd", self.spacing*(4) - math.pi*self.height/4)
+			self.shear_flow_magnitude[2] = -1/self.I_zz *((self.skin_thickness *(self.height/2*c+ (-self.height/4)/(self.lenght_skin)*math.pow(c,2)))) + self.shear_flow_magnitude[1] + self.shear_flow_magnitude[17]
+			c = self.lenght_skin
+			print("DOING 7+++++++++++++++++++++++++++++++++++")
+			self.shear_flow_magnitude[7] = -1/self.I_zz *((self.skin_thickness *(self.height/2*c+ (-self.height/4)/(self.lenght_skin)*math.pow(c,2)))+self.sum_booms_SC(2,6)) + self.shear_flow_magnitude[1] + self.shear_flow_magnitude[17] 
+			self.shear_flow_magnitude[8] = self.shear_flow_magnitude[7]
 			for i in range(3,7):
-				self.shear_flow_magnitude[i] = -1/self.I_zz *((self.skin_thickness * (-self.height/4)/(self.lenght_skin)*math.pow(self.spacing*(i+1) - math.pi*self.height/4,2))+self.sum_booms_SC(2,i-1)) + self.shear_flow_magnitude[2]
-			for i in range(9,13):
-				self.shear_flow_magnitude[i] = -1/self.I_zz *((self.skin_thickness * (-self.height/4)/(self.lenght_skin)*math.pow(self.spacing*(i+1) - self.spacing*(7-3) - math.pi*self.height/4,2))+self.sum_booms_SC(7,i-2)) + self.shear_flow_magnitude[8]	#check the sign
+				print("Doing flow:", i)
+				c = self.spacing*(i) - math.pi*self.height/4
+				self.shear_flow_magnitude[i] = -1/self.I_zz *((self.skin_thickness * (self.height/2*c+ (-self.height/4)/(self.lenght_skin)*math.pow(c,2))) +self.sum_booms_SC(2,i-1)) + self.shear_flow_magnitude[1] + self.shear_flow_magnitude[17]
+			for i in range(9,13):	#Q11 should be -23.75
+				print("Doing flow:", i)
+				c = self.spacing*(i-1) - self.spacing*6.5
+				self.shear_flow_magnitude[i] = -1/self.I_zz *((self.skin_thickness * (-self.height/4)/(self.lenght_skin)*math.pow(c,2))+self.sum_booms_SC(7,i-2)) + self.shear_flow_magnitude[7]	#check the sign
+			print("Doing flow:", 13)
 			self.shear_flow_magnitude[13] = -1/self.I_zz *((self.skin_thickness * (-self.height/4)/(self.lenght_skin)*math.pow(self.spacing*(2) - math.pi*self.height/4,2))+self.sum_booms_SC(11,11)) + self.shear_flow_magnitude[12]
 			
 		print("Base shear flow magnitude:", self.shear_flow_magnitude)
-		print("1	", -1/self.I_zz *((self.skin_thickness * (-self.height/4)/(self.lenght_skin)*math.pow(self.spacing*(6+1) - math.pi*self.height/4,2))+self.sum_booms_SC(2,6-1)) + self.shear_flow_magnitude[2])
-		print("2	",(self.skin_thickness * (-self.height/4)/(self.lenght_skin)*math.pow(self.spacing*(6+1) - math.pi*self.height/4,2)))
 		return
 	def actual_shear_flow(self):
 		self.base_shear_flow()
-		qs01, qs02 = self.qs0()[0],  self.qs0()[1]
+		qs01, qs02 = - self.qs0()[0], - self.qs0()[1]
 		print("shear flow magnitude:", self.shear_flow_magnitude)
 		if self.plane == "CRJ700":
 			self.shear_flow_magnitude[0] = self.shear_flow_magnitude[0] - qs01
@@ -168,6 +176,7 @@ class Geometry:
 		if end > len(self.booms_y):
 			raise ValueError('Sum_boom_areas. End point is greater than the number of y_booms')
 		if start == end:
+			print("Summing booms for:", start)
 			return self.booms_y[start] * self.str_area 
 		for i in range(start, end+1):
 			print("Summing booms for:", i)
@@ -181,6 +190,7 @@ class Geometry:
 		length_straight_skin = 2*self.lenght_skin
 		if self.plane == "CRJ700": 
 			sum_shearflow_through_arc = self.spacing*(self.shear_flow_magnitude[0]+self.shear_flow_magnitude[15]) + (math.pi*self.height/4-self.spacing)*(self.shear_flow_magnitude[1]+self.shear_flow_magnitude[14])
+			print("Shearflow through the arc:", sum_shearflow_through_arc)
 			sum_shearflow_through_straightskin = (2*self.spacing-math.pi*self.height/4)*(self.shear_flow_magnitude[2]+self.shear_flow_magnitude[13]) + self.spacing/2*(self.shear_flow_magnitude[7]+self.shear_flow_magnitude[8])
 			for i in range(3,7):
 				sum_shearflow_through_straightskin = sum_shearflow_through_straightskin	+ self.shear_flow_magnitude[i]*self.spacing
@@ -194,7 +204,7 @@ class Geometry:
 		else:
 			raise ValueError('Plane is neither B737 nor CRJ700')
 		
-		A = np.matrix([[np.pi*self.height/self.skin_thickness + self.height/self.spar_thickness, - self.height/self.spar_thickness],
+		A = np.matrix([[np.pi*self.height/2/self.skin_thickness + self.height/self.spar_thickness, - self.height/self.spar_thickness],
                                [- self.height/self.spar_thickness, length_straight_skin/self.skin_thickness + self.height/self.spar_thickness]])
 		B = np.matrix([[sum_shearflow_through_arc/self.skin_thickness - shearflow_spar/self.spar_thickness],
                                [sum_shearflow_through_straightskin/self.skin_thickness + shearflow_spar/self.spar_thickness]])
