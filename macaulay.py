@@ -1,4 +1,5 @@
 import numpy as np
+import Aerodynamic_Loading_Main_V3 as AV3
 
 def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy):
 
@@ -30,6 +31,11 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
 	b = np.zeros((12, 1))
 
 	#intergral placeholders
+	w_bar = AV3.make_w_bar()
+	x, z = AV3.make_x_and_z()
+	AeroLoading = AV3.MapAeroLoading(r"C:\Users\Max van Huffelen\Desktop\Quick Access\University\SVV\aerodynamicloadcrj700.dat")
+    
+    
 	DOUBLEINTEGRAL = 0
 	DOULBEINTEGRALPLUSZMINUSZSC = 0
 	TRIPLEINTEGRALPLUSZMINUSZSC = 0
@@ -127,7 +133,6 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
 
 	# solve for x
 	x = np.linalg.solve(A, b)
-	print(A)
 
 	Fy = x[0] + x[1] + x[2] + x[3]*np.sin(theta) - P*np.sin(theta)
 	Fz = x[3]*np.cos(theta) - P*np.cos(theta) + x[4] + x[5] + x[6]
