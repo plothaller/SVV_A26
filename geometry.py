@@ -13,7 +13,7 @@ TODO:
 -Fix boom spacing
 -What happens when the boom is exactly in the vertical plate and leading edge and trailing edge plate joint?????????
 -Trailing edge shear element is not considered
--Aliron height is the full spar or only half the spar?????
+-Aileron height is the full spar or only half the spar?????
 -Shear flow cases 2,5 (spar) are yet not implemented
 -Do we want to implement skin into the booms with a large number of booms (10k-100k) ????
 -Shear flows are wrong, they are just the integral component

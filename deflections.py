@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 #The deflections.py file contains the functions that produce the different deflection plots
 
@@ -33,6 +32,19 @@ def internal_moment_z(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P):
 
     for i in x:
         y.append(-F_1y*macaulay(i, x1, 1) - F_I*np.sin(theta)*macaulay(i, xi1, 1) - F_2y * macaulay(i, x2, 1) + P*np.sin(theta)*macaulay(i, xi2, 1) - F_3y*macaulay(i, x3, 1) + triple_int)
+
+    return x, y
+
+def torque(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, zsc, ha):
+    # Temporary variables:
+    xi1 = x2 - xa / 2
+    xi2 = x2 + xa / 2
+    x = np.linspace(0, la, 500)
+    y = []
+    triple_int = 0
+
+    for i in x:
+        y.append((zsc*F_1y*macaulay(i, x1, 0) + (ha/2)*F_I*np.cos(theta)*macaulay(i, xi1, 0) + zsc*F_I*np.sin(theta)*macaulay(i, xi1, 0) + zsc* F_2y*macaulay(i, x2, 0) - zsc*P*np.sin(theta)*macaulay(i, xi2, 0) + zsc*F_3y*macaulay(i, x3, 0)))
 
     return x, y
 
@@ -76,9 +88,7 @@ def shear_z(la, F_I, F_1z, F_2z, F_3z, x1, x2, x3, xa, theta, P):
     for i in x:
         y.append(-F_1z*macaulay(i, x1, 0) - F_I*np.cos(theta)*macaulay(i, xi1, 0) - F_2z*macaulay(i, x2, 0) + P*np.cos(theta)*macaulay(i, xi2, 0) - F_3z*macaulay(i, x3, 0))
 
-    plt.plot(x, y, 'b')
-    plt.show()
-    return
+    return x, y
 
 def shear_y(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P):
     #Printing without aeroload
@@ -92,8 +102,21 @@ def shear_y(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P):
     for i in x:
         y.append(-F_1y*macaulay(i, x1, 0) - F_I*np.sin(theta)*macaulay(i, xi1, 0) - F_2y*macaulay(i, x2, 0) + P*np.sin(theta)*macaulay(i, xi2, 0) - F_3y*macaulay(i, x3, 0) + DOUBLEINTEGRAL)
 
-    plt.plot(x, y, 'b')
-    plt.show()
-    return
+    return x, y
 
-#Plotting graphs
+
+def Twist(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, c5, G, J, zsc, ha):
+    xi1 = x2 - xa / 2  # points where the actuators act
+    xi2 = x2 + xa / 2
+    k = 1 / (G * J)
+    x = np.linspace(0, la, 500)
+    y = []
+    triple_int_z_zsc = 0
+
+    for i in x:
+        y.append((k*((F_1y*zsc)*macaulay(i, x1, 1) + (F_2y*zsc)*macaulay(i, x2, 1) + (F_I*(ha/2)*np.cos(theta))*macaulay(i, xi1, 1) + (F_I*zsc*np.sin(theta))*macaulay(i, xi2, 1) + (F_3y*zsc)*macaulay(i, x3, 1)) - P*(ha/2)*np.cos(theta)*macaulay(i, xi2, 1) - P*zsc*np.sin(theta)*macaulay(i, xi2, 1) + triple_int_z_zsc) + c5)
+
+
+    return x, y
+
+
