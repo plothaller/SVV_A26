@@ -217,13 +217,13 @@ class Geometry:
 				print("Doing open shear center for node:", i, "Case 4")
 				Delta_lenght = Delta_lenght + self.spacing
 				#The shear flows are wrong, they are only the integral component
-				shear_flow_magnitude[i] = -1/self.I_zz *((self.height/2*self.skin_thickness)*(x_to_s_region3*self.booms_z[i]-x_to_s_region3*self.booms_z[i+1])+skin_lenght_weighted_ratio*self.skin_thickness*(math.pow(x_to_s_region3*self.booms_z[i+1],2)-math.pow(x_to_s_region3*self.booms_z[i],2)))
+				shear_flow_magnitude[i] = 1/self.I_zz *((self.height/2*self.skin_thickness)*(x_to_s_region3*self.booms_z[i]-x_to_s_region3*self.booms_z[i+1])+skin_lenght_weighted_ratio*self.skin_thickness*(math.pow(x_to_s_region3*self.booms_z[i+1],2)-math.pow(x_to_s_region3*self.booms_z[i],2)))
 			else:
 				Delta_lenght = math.sqrt(math.pow(min(i for i in self.booms_z if i > 0),2)+math.pow(self.height/2 - self.booms_y[self.booms_z.index(min(i for i in self.booms_z if i > 0))],2))
 			if self.SNx[i] == 0:
 				print("Doing open shear center for node:", i, "Case 5,2")
 				if self.Bottom_plate == 0:
-					self.Bottom_plate = i
+					self.Bottom_plate = i+1
 				shear_flow_magnitude[i] = -1/self.I_zz * (1/2*self.skin_thickness*(math.pow(self.booms_y[i],2)-math.pow(self.booms_y[i-1],2)))
 
 
@@ -252,20 +252,22 @@ class Geometry:
 				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs02
 			elif i < self.Bottom_half:
 				print("HACIENDO LA PRIMERA DEL CIRC ABAJO:", i)
-				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs01
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs01 #- shear_flow_magnitude[self.Top_half-1]
 			elif i < self.Bottom_plate:
-				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs01
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] + qs02
 			else:
-				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs02
-			#This next condition is wrong. SF at Top_half != 0. Apply the correct boundary condition!!!!!!!!!!!!!!!!!!!!!!!!
-			#if i == self.Top_plate or i == self.Bottom_plate:
-			#	shear_flow_magnitude[i] = 0
-			#elif i != 0 or i != self.Top_plate:
-			#	shear_flow_magnitude[i] = shear_flow_magnitude[i] + shear_flow_magnitude[i-1]
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs02 + qs01
+			#This next condition is wrong. SF at Top_half != 0. Apply the correct boundary condition!!!!!!!!!!!!!!!!!!!!!!!!  DO the shear in the vertical plate is equal to the sum of the shears and then the shear in the plate is the other stuff
+			if i == self.Top_plate+1 :#or i == self.Bottom_plate:
+				shear_flow_magnitude[i] = 0
+			elif i != 0 or i != self.Top_plate:
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] + shear_flow_magnitude[i-1]
 			if abs(shear_flow_magnitude[i]) > 1:
 				print("Shear magnitude too big:", i)
 			if self.SNy[i] == 0:
 				shear_flow_magnitude[i] = 0
+
+
 			shear_nodes_flow_z[i] = self.components(i)[0]*shear_flow_magnitude[i]
 			shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow_magnitude[i]
 
@@ -289,13 +291,19 @@ class Geometry:
 		#ax.scatter(x_boom, y_boom)
 		ax.scatter(self.SNx, self.SNy)
 		ax.scatter(self.SNx[0], self.SNy[0])
-		ax.scatter(self.SNx[self.Top_plate], self.SNy[self.Top_plate])
+		#ax.scatter(self.SNx[self.Top_plate], self.SNy[self.Top_plate])
+		#ax.scatter(self.SNx[self.Top_half], self.SNy[self.Top_half])
+		#ax.scatter(self.SNx[self.Bottom_half], self.SNy[self.Bottom_half])
+		#ax.scatter(self.SNx[self.Bottom_plate], self.SNy[self.Bottom_plate])
+		ax.scatter(self.booms_z[self.Bottom_plate], self.booms_y[self.Bottom_plate])
+		ax.scatter(self.booms_z[self.Bottom_plate-1], self.booms_y[self.Bottom_plate-1])
+		ax.scatter(self.booms_z[self.Bottom_plate+1], self.booms_y[self.Bottom_plate+1])
 
 		ax.scatter(self.centroid_z, self.centroid_y)
 
 		for i in range(0,len(self.SNx)):
-			z_vect = [self.SNx[i], self.SNx[i] + shear_nodes_flow_z[i]*750]
-			y_vect = [self.SNy[i], self.SNy[i] + shear_nodes_flow_y[i]*750]
+			z_vect = [self.SNx[i], self.SNx[i] + shear_nodes_flow_z[i]*250]
+			y_vect = [self.SNy[i], self.SNy[i] + shear_nodes_flow_y[i]*250]
 			print("For index: ", i,"We have: ", z_vect, y_vect, "SF magnitude:", shear_flow_magnitude[i])
 			ax.plot(z_vect, y_vect,'r')
 		print("Boundaries:")
