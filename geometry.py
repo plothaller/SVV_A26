@@ -189,6 +189,7 @@ class Geometry:
 		skin_lenght_weighted_ratio = self.height/(4*math.sqrt(math.pow(self.chord-self.height/2,2)+math.pow(self.height/2,2)))
 		x_to_s_region3 = (math.sqrt(math.pow(self.chord-self.height/2,2)+math.pow(self.height/2,2)))/(self.chord-self.height/2)
 
+
 		#First we compute the Delta shear flow in each section
 		for i in range(0,len(self.SNx)):
 			print("X: ",self.SNx, "Y: ",self.SNy)
@@ -223,16 +224,15 @@ class Geometry:
 			if self.SNx[i] == 0:
 				print("Doing open shear center for node:", i, "Case 5,2")
 				if self.Bottom_plate == 0:
-					self.Bottom_plate = i+1
+					self.Bottom_plate = i
 				shear_flow_magnitude[i] = -1/self.I_zz * (1/2*self.skin_thickness*(math.pow(self.booms_y[i],2)-math.pow(self.booms_y[i-1],2)))
 
 
 				#The shear flows are wrong, they are only the integral component
-		#self.SNx = np.delete(self.SNx, self.Top_plate)
-		#self.SNy = np.delete(self.SNy, self.Top_plate)
-		#shear_flow_magnitude = np.delete(shear_flow_magnitude, self.Top_plate)
-		#shear_nodes_flow_y = np.delete(shear_nodes_flow_y, self.Top_plate)
-		#shear_nodes_flow_z = np.delete(shear_nodes_flow_z, self.Top_plate)
+		#self.booms_z = np.delete(self.booms_z, self.Top_plate)
+		#self.booms_y = np.delete(self.booms_y, self.Top_plate)
+
+
 
 		#self.SNx = np.delete(self.SNx, self.Bottom_plate)
 		#self.SNy = np.delete(self.SNy, self.Bottom_plate)
@@ -251,25 +251,31 @@ class Geometry:
 			elif i < self.Top_plate:
 				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs02
 			elif i < self.Bottom_half:
+				self.booms_z[self.Top_plate+1] = self.SNx[self.Top_plate]
+				self.booms_y[self.Top_plate+1] = self.SNy[self.Top_plate]
 				print("HACIENDO LA PRIMERA DEL CIRC ABAJO:", i)
-				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs01 #- shear_flow_magnitude[self.Top_half-1]
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] + qs01 #- shear_flow_magnitude[self.Top_half-1]
 			elif i < self.Bottom_plate:
 				shear_flow_magnitude[i] = shear_flow_magnitude[i] + qs02
 			else:
-				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs02 + qs01
+				print("BOT: ",shear_flow_magnitude[self.Bottom_plate-3], "	TOP:",shear_flow_magnitude[self.Top_plate-1])
+				difference =  shear_flow_magnitude[self.Bottom_plate-3] + shear_flow_magnitude[self.Top_plate-1]
+				print("DIF:", difference)
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs02 + qs01	+ difference + shear_flow_magnitude[self.Bottom_half-1]
+				shear_nodes_flow_z[i] = 0
+				shear_nodes_flow_y[i] = shear_flow_magnitude[i]
 			#This next condition is wrong. SF at Top_half != 0. Apply the correct boundary condition!!!!!!!!!!!!!!!!!!!!!!!!  DO the shear in the vertical plate is equal to the sum of the shears and then the shear in the plate is the other stuff
-			if i == self.Top_plate+1 :#or i == self.Bottom_plate:
+			if i == self.Top_plate:
 				shear_flow_magnitude[i] = 0
-			elif i != 0 or i != self.Top_plate:
+			elif i != 0 and i != self.Top_plate and i != self.Bottom_half and i != self.Bottom_plate:
 				shear_flow_magnitude[i] = shear_flow_magnitude[i] + shear_flow_magnitude[i-1]
 			if abs(shear_flow_magnitude[i]) > 1:
 				print("Shear magnitude too big:", i)
 			if self.SNy[i] == 0:
 				shear_flow_magnitude[i] = 0
-
-
-			shear_nodes_flow_z[i] = self.components(i)[0]*shear_flow_magnitude[i]
-			shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow_magnitude[i]
+			if shear_nodes_flow_y[i] == 0:
+				shear_nodes_flow_z[i] = self.components(i)[0]*shear_flow_magnitude[i]
+				shear_nodes_flow_y[i] = self.components(i)[1]*shear_flow_magnitude[i]
 
 
 
@@ -291,13 +297,12 @@ class Geometry:
 		#ax.scatter(x_boom, y_boom)
 		ax.scatter(self.SNx, self.SNy)
 		ax.scatter(self.SNx[0], self.SNy[0])
-		#ax.scatter(self.SNx[self.Top_plate], self.SNy[self.Top_plate])
+		ax.scatter(self.SNx[self.Top_plate], self.SNy[self.Top_plate])
 		#ax.scatter(self.SNx[self.Top_half], self.SNy[self.Top_half])
 		#ax.scatter(self.SNx[self.Bottom_half], self.SNy[self.Bottom_half])
-		#ax.scatter(self.SNx[self.Bottom_plate], self.SNy[self.Bottom_plate])
-		ax.scatter(self.booms_z[self.Bottom_plate], self.booms_y[self.Bottom_plate])
-		ax.scatter(self.booms_z[self.Bottom_plate-1], self.booms_y[self.Bottom_plate-1])
-		ax.scatter(self.booms_z[self.Bottom_plate+1], self.booms_y[self.Bottom_plate+1])
+		ax.scatter(self.booms_z[self.Top_plate], self.booms_y[self.Top_plate])
+		#ax.scatter(self.booms_z[self.Bottom_plate-1], self.booms_y[self.Bottom_plate-1])
+		ax.scatter(self.booms_z[self.Top_plate+1], self.booms_y[self.Top_plate+1])
 
 		ax.scatter(self.centroid_z, self.centroid_y)
 
@@ -321,6 +326,7 @@ class Geometry:
 		#Multiply by the skin lenght
 		shear_center_z = np.dot(shear_nodes_flow_z, shear_nodes_y) - np.dot(shear_nodes_flow_y, shear_nodes_z)
 		print("The shear center is located at z:", shear_center_z)
+		self.booms_z, self.booms_y, self.booms_area = self.booms(self.booms_per_str, True)[0], self.booms(self.booms_per_str, True)[1], self.booms(self.booms_per_str, True)[2]
 		return shear_center_z, 0
 
 
