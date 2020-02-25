@@ -122,7 +122,54 @@ def integrate_1d_list(x, y, x_max):
     return int_list, x_new
 
 
+def integrate_1d_tau(x, y, x_max, x_sc):
+    #inputs: x; an array containing all the x-locationx of the points. y; an array containing all the y values of the points. x_i; the value of x to where we integrate.
+    #outputs int_x; the total integrated value until x_i.
+    
+    #assert len(x) == len(y) #both arrays must have the same size
+    
+    if x_max > x[-1]:   #if x_max is outside of the range covered by input, we return the total integral of what we can integrate over
+        x_max = x[-1]
+    if x_max < x[0]:    #if x_max is lower than the lowest x_value, return 0
+        return 0
+    
+    total = 0
+    i = 1
+    while x[i] < x_max:
+        total += (x[i] - x[i-1])*(y[i]+y[i-1])/2 * ((x[i] + x[i-1])*0.5 - x_sc)
+        print(((x[i] + x[i-1])*0.5 - x_sc))
+        #print(x[i-1], x[i], total)
+        i += 1
+    i -= 1
+    if x_max > x[i]:
+        total += (x_max - x[i])*(LinearInterpolatePos(y[i], y[i+1], x[i], x[i+1], x_max) + y[i])/2* ((x[i] + x_max)*0.5 - x_sc)
+        print((x[i] + x_max)*0.5 - x_sc)
+        #print(x[i], x_max, total)
+    return total
 
+
+def integrate_1d_list_tau(x, y, x_max, x_sc):
+      #inputs: x, y; lists containing the locations and values of all data points. x_max; the maximum location until which we integrate
+    #outputs: x_new; a list containing all the data locatations up to x_max, and x_max if that is not already in the list. int_list; a list containing the integrated values at each location in x_new
+    int_list = []
+    x_new = []
+    i = 1
+    if x_max > x[-1]:
+        x_max = x[-1]
+    if x_max < x[0]:
+        return 0
+    int_list.append(0)
+    x_new.append(x[0])
+    while x[i] < x_max:
+        int_list.append(integrate_1d_tau(x, y, x[i], x_sc))
+        x_new.append(x[i])
+        i += 1
+    i -= 1
+    if x_max > x[i]:
+        int_list.append(integrate_1d_tau(x, y, x_max, x_sc))
+        x_new.append(x_max)
+
+    return int_list, x_new 
 
 
 
@@ -143,9 +190,16 @@ def make_x_and_z():
     z = z[::-1] #so it goes from -C to 0 instead of 0 to -C
     return x, z
 #Define w_bar
-def make_w_bar(AeroLoading = AeroLoading):
+def make_w_bar(x_sc, AeroLoading = AeroLoading):
     x, z = make_x_and_z()
     w_bar = []
     for index in range(len(x)):
-        w_bar = [integrate_1d(z, AeroLoading[:,index], z[-1])] + w_bar
+        w_bar = [integrate_1d(z, AeroLoading[:,index], z[-1], x_sc)] + w_bar
     return w_bar
+
+def make_tau(x_sc, AeroLoading = AeroLoading):
+    x, z = make_x_and_z()
+    tau = []
+    for index in range(len(x)):
+        tau = [integrate_1d_tau(z, AeroLoading[:,index], z[-1], x_sc)] + tau
+    return tau
