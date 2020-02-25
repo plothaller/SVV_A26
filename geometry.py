@@ -25,7 +25,6 @@ TODO:
 
 
 class Geometry:
-
 	def __init__(self, height, skin_t, spar_t, thickness_str, height_str, width_str, chord, number_str, booms_per_str):
 		self.height = height			#height of aileron
 		self.skin_thickness = skin_t	#Thickness of skin
@@ -38,6 +37,7 @@ class Geometry:
 		self.str_area = width_str * thickness_str + height_str * thickness_str
 		self.perimeter = math.pi*height/2 + 2*math.sqrt(math.pow(height/2,2) + math.pow(chord - height/2,2))
 		self.spacing = (math.pi*height/2 + 2*math.sqrt(math.pow(height/2,2) + math.pow(chord - height/2,2)))/(number_str)
+		self.spacing_extra_booms = self.spacing/booms_per_str
 		self.booms_per_str = booms_per_str
 		self.booms_z, self.booms_y, self.booms_area = self.booms(self.booms_per_str, True)[0], self.booms(self.booms_per_str, True)[1], self.booms(self.booms_per_str, True)[2]
 		self.SNx = np.array(self.booms(self.booms_per_str*2)[0][1::2]) #np.append(self.booms(self.booms_per_str*2)[0][1::2], np.array([0, 0, (self.chord - self.height/2) - 1/4 * self.spacing, (self.chord - self.height/2) - 1/4 * self.spacing ]))
@@ -51,6 +51,7 @@ class Geometry:
 		self.Bottom_half = 0	#Assign values in shear center computation
 		self.Bottom_plate = 0	#Assign values in shear center computation
 		self.shear_center_x = self.shear_center()[0]
+		print("The booms are located in:", self.booms_z, self.booms_y)
 
 
 	def idealization(self):
@@ -150,8 +151,9 @@ class Geometry:
 		ax.scatter(x_boom, y_boom)
 		ax.scatter(self.SNx, self.SNy)
 		ax.scatter(self.centroid_z, self.centroid_y)
-		ax.scatter(self.shear_center_x,0)
+		#ax.scatter(self.shear_center_x,0)
 		ax.set_aspect(aspect=1)
+		print("The booms are located in		X: ", self.booms_z, "	Y:",self.booms_y)
 		plt.show()
 	
 	def centroid(self):
@@ -246,29 +248,29 @@ class Geometry:
 		for i in range(0,len(self.SNx)):
 			print("Adding the constant closed cell shear flows q01 and q02 for node:", i, "	QS01:",qs01, "QS02:", qs02, "shear_flow_magnitude:", shear_flow_magnitude[i], "En eje z:", self.components(i)[0]*shear_flow_magnitude[i])
 			if i < self.Top_half:
-				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs01
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] #- qs01
 				print("AFTER DOING SMTH IT IS:",shear_flow_magnitude[i] )
 			elif i < self.Top_plate:
-				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs02
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] #- qs02
 			elif i < self.Bottom_half:
 				self.booms_z[self.Top_plate+1] = self.SNx[self.Top_plate]
 				self.booms_y[self.Top_plate+1] = self.SNy[self.Top_plate]
 				print("HACIENDO LA PRIMERA DEL CIRC ABAJO:", i)
-				shear_flow_magnitude[i] = shear_flow_magnitude[i] + qs01 #- shear_flow_magnitude[self.Top_half-1]
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] #+ qs01 #- shear_flow_magnitude[self.Top_half-1]
 			elif i < self.Bottom_plate:
-				shear_flow_magnitude[i] = shear_flow_magnitude[i] + qs02
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] #+ qs02
 			else:
 				print("BOT: ",shear_flow_magnitude[self.Bottom_plate-3], "	TOP:",shear_flow_magnitude[self.Top_plate-1])
 				difference =  shear_flow_magnitude[self.Bottom_plate-3] + shear_flow_magnitude[self.Top_plate-1]
 				print("DIF:", difference)
-				shear_flow_magnitude[i] = shear_flow_magnitude[i] - qs02 + qs01	+ difference + shear_flow_magnitude[self.Bottom_half-1]
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] + difference + shear_flow_magnitude[self.Bottom_half-1] #- qs02 + qs01	
 				shear_nodes_flow_z[i] = 0
 				shear_nodes_flow_y[i] = shear_flow_magnitude[i]
 			#This next condition is wrong. SF at Top_half != 0. Apply the correct boundary condition!!!!!!!!!!!!!!!!!!!!!!!!  DO the shear in the vertical plate is equal to the sum of the shears and then the shear in the plate is the other stuff
 			if i == self.Top_plate:
 				shear_flow_magnitude[i] = 0
 			elif i != 0 and i != self.Top_plate and i != self.Bottom_half and i != self.Bottom_plate:
-				shear_flow_magnitude[i] = shear_flow_magnitude[i] + shear_flow_magnitude[i-1]
+				shear_flow_magnitude[i] = shear_flow_magnitude[i] -1/self.I_zz *shear_flow_magnitude[i-1]
 			if abs(shear_flow_magnitude[i]) > 1:
 				print("Shear magnitude too big:", i)
 			if self.SNy[i] == 0:
@@ -307,8 +309,8 @@ class Geometry:
 		ax.scatter(self.centroid_z, self.centroid_y)
 
 		for i in range(0,len(self.SNx)):
-			z_vect = [self.SNx[i], self.SNx[i] + shear_nodes_flow_z[i]*250]
-			y_vect = [self.SNy[i], self.SNy[i] + shear_nodes_flow_y[i]*250]
+			z_vect = [self.SNx[i], self.SNx[i] + shear_nodes_flow_z[i]/100000000000]
+			y_vect = [self.SNy[i], self.SNy[i] + shear_nodes_flow_y[i]/100000000000]
 			print("For index: ", i,"We have: ", z_vect, y_vect, "SF magnitude:", shear_flow_magnitude[i])
 			ax.plot(z_vect, y_vect,'r')
 		print("Boundaries:")
@@ -317,6 +319,12 @@ class Geometry:
 		print("Bottom_half:", self.Bottom_half)
 		print("Bottom_plate:", self.Bottom_plate)
 		print("Lenght:", len(self.SNx))
+		#print("Shear_flow_magnitude i=3", shear_flow_magnitude[3])
+		#print("Shear_flow_magnitude i=4", shear_flow_magnitude[4])
+		#print("Shear_flow_magnitude i=17", shear_flow_magnitude[17])
+		#print("Shear_flow_magnitude i=18", shear_flow_magnitude[18])
+		#print("Shear_flow_magnitude i=29", shear_flow_magnitude[29])
+		#print("Shear_flow_magnitude i=30", shear_flow_magnitude[30])
 
 
 		ax.set_aspect(aspect=1)
@@ -355,31 +363,31 @@ class Geometry:
 		sum_shearflow_through_straightskin = 0
 		shearflow_spar = 0
 		for i in range(0,self.Top_half-1):
-			effective_spacing = self.spacing
-			if (i+1)*self.spacing > math.pi*self.height/4:
-				effective_spacing = math.pi*self.height/4 - self.spacing
+			effective_spacing = self.spacing_extra_booms
+			if (i+1)*self.spacing_extra_booms > math.pi*self.height/4:
+				effective_spacing = math.pi*self.height/4 - self.spacing_extra_booms
 			if effective_spacing < 0:
 				raise ValueError('effective lenght < 0 (arc, qs0)')
 			sum_shearflow_through_arc = sum_shearflow_through_arc + shear_flow_magnitude[i] * effective_spacing
 		for i in range(self.Top_plate,self.Bottom_half-1):
-			effective_spacing = self.spacing
-			if (i+1)*self.spacing > math.pi*self.height/4:
-				effective_spacing = math.pi*self.height/4 - self.spacing
+			effective_spacing = self.spacing_extra_booms
+			if (i+1)*self.spacing_extra_booms > math.pi*self.height/4:
+				effective_spacing = math.pi*self.height/4 - self.spacing_extra_booms
 			if effective_spacing < 0:
 				raise ValueError('effective lenght < 0 (arc, qs0)')
 			sum_shearflow_through_arc = sum_shearflow_through_arc + shear_flow_magnitude[i] * effective_spacing 
 		#sum_shearflow_through_arc = #multiply the shearflows with the distance they act over and sum them all for the arc part of the aileron (difficult if you get close to spar). Read the book, sent from my htc
 		for i in range(self.Top_half, self.Top_plate-1):
-			effective_lenght = self.spacing
+			effective_lenght = self.spacing_extra_booms
 			if self.SNx[i-1] < 0:
-				effective_lenght = i*self.spacing - math.pi*self.height/4
+				effective_lenght = i*self.spacing_extra_booms - math.pi*self.height/4
 			if effective_spacing < 0:
 				raise ValueError('effective lenght < 0 (arc, qs0)')
 			sum_shearflow_through_straightskin = sum_shearflow_through_straightskin + shear_flow_magnitude[i] * effective_spacing
 		for i in range(self.Bottom_half, self.Bottom_plate-1):
-			effective_lenght = self.spacing
+			effective_lenght = self.spacing_extra_booms
 			if self.SNx[i-1] < 0:
-				effective_lenght = i*self.spacing - math.pi*self.height/4
+				effective_lenght = i*self.spacing_extra_booms - math.pi*self.height/4
 			if effective_spacing < 0:
 				raise ValueError('effective lenght < 0 (arc, qs0)')
 			sum_shearflow_through_straightskin = sum_shearflow_through_straightskin + shear_flow_magnitude[i] * effective_spacing
@@ -407,7 +415,7 @@ class Geometry:
 	#	return qs01, qs02
 
 
-x = Geometry(10,1,1,6,7,8,40,29,1)
+x = Geometry(17.3/100,1.1/1000,2.5/1000,1.2/1000,1.4/100,1.4/100,0.484,13,1)
 x.idealization()
 x_booms, y_booms = x.booms(x.spacing)[0], x.booms(x.spacing)[1] 
 print("str_area:", x.str_area)
