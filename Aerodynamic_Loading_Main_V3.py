@@ -143,7 +143,8 @@ def make_x_and_z():
     z = z[::-1] #so it goes from -C to 0 instead of 0 to -C
     return x, z
 #Define w_bar
-def make_w_bar():
+def make_w_bar(AeroLoading = AeroLoading):
+    x, z = make_x_and_z()
     w_bar = []
     for index in range(len(x)):
         w_bar = [integrate_1d(z, AeroLoading[:,index], z[-1])] + w_bar

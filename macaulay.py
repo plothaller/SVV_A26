@@ -33,7 +33,9 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
 	#intergral placeholders
 	w_bar = AV3.make_w_bar()
 	x, z = AV3.make_x_and_z()
-	
+	AeroLoading = AV3.MapAeroLoading(r"C:\Users\Max van Huffelen\Desktop\Quick Access\University\SVV\aerodynamicloadcrj700.dat")
+    
+    
 	DOUBLEINTEGRAL = 0
 	DOULBEINTEGRALPLUSZMINUSZSC = 0
 	TRIPLEINTEGRALPLUSZMINUSZSC = 0
