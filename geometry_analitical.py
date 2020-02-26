@@ -204,63 +204,57 @@ class Geometry:
 		return summation
 	
 	def integrate_shear_flows(self):
+		#Region	1:
+			self.shear_flow_integrated[0] = -1/self.I_zz*	((-math.sin(self.spacing/(self.height/2))+math.sin(0))*self.skin_thickness*math.pow(self.height/2,3)) 
+			self.shear_flow_integrated[1] = -1/self.I_zz*	(self.skin_thickness*math.pow(self.height/2,3)*(-math.sin(math.pi/2)+math.sin(self.spacing/(self.height/2)))+self.sum_booms_SC(1,1)*(math.pi-self.spacing/(self.height/2)))+self.shear_flow_magnitude[0]*(math.pi-self.spacing/(self.height/2))
+			self.int1 = self.shear_flow_integrated[0] + self.shear_flow_integrated[1]
+		#Region 2:
+			self.shear_flow_integrated[17] = 1/self.I_zz *0.5*self.spar_thickness*math.pow(self.height/2,3)/3
+			self.int2 = self.shear_flow_integrated[17] 
+		#Region 3:
+			self.shear_flow_integrated[2] = -1/self.I_zz*	(self.skin_thickness*self.height/2*(0.5*math.pow(2*self.spacing-math.pi*self.height/4,2) - 1/6 * math.pow(2*self.spacing-math.pi*self.height/4,3)/self.lenght_skin))+(self.shear_flow_magnitude[1]+self.shear_flow_magnitude[17])*(2*self.spacing-math.pi*self.height/4)
+			self.shear_flow_integrated[3] = -1/self.I_zz*	(self.skin_thickness*self.height/2*(0.5*math.pow(3*self.spacing-math.pi*self.height/4,2) - 1/6 * math.pow(3*self.spacing-math.pi*self.height/4,3)/self.lenght_skin - (0.5*math.pow(2*self.spacing-math.pi*self.height/4,2) - 1/6 * math.pow(2*self.spacing-math.pi*self.height/4,3)/self.lenght_skin)) + self.sum_booms_SC(2,2)*self.spacing) + self.shear_flow_magnitude[2]*self.spacing
+			self.shear_flow_integrated[4] = -1/self.I_zz*	(self.skin_thickness*self.height/2*(0.5*math.pow(4*self.spacing-math.pi*self.height/4,2) - 1/6 * math.pow(4*self.spacing-math.pi*self.height/4,3)/self.lenght_skin - (0.5*math.pow(3*self.spacing-math.pi*self.height/4,2) - 1/6 * math.pow(3*self.spacing-math.pi*self.height/4,3)/self.lenght_skin)) + self.sum_booms_SC(3,3)*self.spacing) + self.shear_flow_magnitude[3]*self.spacing
+			self.shear_flow_integrated[5] = -1/self.I_zz*	(self.skin_thickness*self.height/2*(0.5*math.pow(5*self.spacing-math.pi*self.height/4,2) - 1/6 * math.pow(5*self.spacing-math.pi*self.height/4,3)/self.lenght_skin - (0.5*math.pow(4*self.spacing-math.pi*self.height/4,2) - 1/6 * math.pow(4*self.spacing-math.pi*self.height/4,3)/self.lenght_skin)) + self.sum_booms_SC(4,4)*self.spacing) + self.shear_flow_magnitude[4]*self.spacing
+			self.shear_flow_integrated[6] = -1/self.I_zz*	(self.skin_thickness*self.height/2*(0.5*math.pow(6*self.spacing-math.pi*self.height/4,2) - 1/6 * math.pow(6*self.spacing-math.pi*self.height/4,3)/self.lenght_skin - (0.5*math.pow(5*self.spacing-math.pi*self.height/4,2) - 1/6 * math.pow(5*self.spacing-math.pi*self.height/4,3)/self.lenght_skin)) + self.sum_booms_SC(5,5)*self.spacing) + self.shear_flow_magnitude[5]*self.spacing
+			self.shear_flow_integrated[7] = -1/self.I_zz*	(self.skin_thickness*self.height/2*(0.5*math.pow(6.5*self.spacing-math.pi*self.height/4,2) - 1/6 * math.pow(6.5*self.spacing-math.pi*self.height/4,3)/self.lenght_skin - (0.5*math.pow(6*self.spacing-math.pi*self.height/4,2) - 1/6 * math.pow(6*self.spacing-math.pi*self.height/4,3)/self.lenght_skin)) + self.sum_booms_SC(6,6)*0.5*self.spacing) + self.shear_flow_magnitude[6]*0.5*self.spacing
+			self.int3 = self.shear_flow_integrated[2] + self.shear_flow_integrated[3] + self.shear_flow_integrated[4] + self.shear_flow_integrated[5] + self.shear_flow_integrated[6] + self.shear_flow_integrated[7]
 
-		#Region 1
-			self.shear_flow_integrated[0] = -1/self.I_zz*	((-math.cos(self.spacing/(self.height/2))+math.cos(0))*self.skin_thickness*math.pow(self.height/2,2))
-			self.shear_flow_integrated[1] = -1/self.I_zz*	((-math.cos(math.pi/2)+math.cos(self.spacing/(self.height/2)))* self.skin_thickness*math.pow(self.height/2,2) + 0.0711*self.str_area) + self.shear_flow_magnitude[0]
-		#Region 2
-			self.shear_flow_integrated[17] = -1/self.I_zz*	(0.5*self.spar_thickness*math.pow(self.height/2,2))
-		#Region 3
-			c = self.spacing*(2) - math.pi*self.height/4
-			self.shear_flow_integrated[2] = -1/self.I_zz*	((self.skin_thickness*self.height *(1/2*c -1/(4*self.lenght_skin)*math.pow(c,2)))) + self.shear_flow_magnitude[1] + self.shear_flow_magnitude[17] 
-			for i in range(3,7):
-				c = self.spacing*(i) - math.pi*self.height/4
-				self.shear_flow_integrated[i] = -1/self.I_zz*	((self.skin_thickness * (self.height/2*c+ (-self.height/4)/(self.lenght_skin)*math.pow(c,2))) +self.sum_booms_SC(2,i-1)) + self.shear_flow_magnitude[1] + self.shear_flow_magnitude[17]
-			c = self.lenght_skin
-			self.shear_flow_integrated[7] = -1/self.I_zz*	((self.skin_thickness*self.height *(1/2*c -1/(4*self.lenght_skin)*math.pow(c,2)))+self.sum_booms_SC(2,6)) + self.shear_flow_magnitude[1] + self.shear_flow_magnitude[17]
-		#Region 4
-			c = self.spacing*(7) - self.spacing*(6.5)
-			self.shear_flow_integrated[8] = -1/self.I_zz*	(self.skin_thickness*self.height * -1/(4*self.lenght_skin)*math.pow(c,2)) + self.shear_flow_magnitude[7]
-			for i in range(9,13):
-				c = self.spacing*(i-1) - self.spacing*6.5
-				self.shear_flow_integrated[i] = -1/self.I_zz*	((self.skin_thickness*self.height * -1/(4*self.lenght_skin)*math.pow(c,2))+self.sum_booms_SC(7,i-2)) + self.shear_flow_magnitude[7]
-			c = self.lenght_skin
-			self.shear_flow_integrated[13] = -1/self.I_zz *	((self.skin_thickness*self.height * -1/(4*self.lenght_skin)*math.pow(c,2))+self.sum_booms_SC(7,11)) + self.shear_flow_magnitude[7]
-		#Region 5
-			self.shear_flow_integrated[16] = -1/self.I_zz*	 (0.5*self.spar_thickness*math.pow(self.height/2,2))
-		#Region 6
-			self.shear_flow_integrated[14] = -1/self.I_zz*	((-math.cos(-self.spacing/(self.height/2))+math.cos(-math.pi/2))*self.skin_thickness*math.pow(self.height/2,2)) + self.shear_flow_magnitude[13] - self.shear_flow_magnitude[16]
-			self.shear_flow_integrated[15] = -1/self.I_zz*	((-math.cos(0)+math.cos(-self.spacing/(self.height/2)))*self.skin_thickness*math.pow(self.height/2,2)+self.sum_booms_SC(12,12)) + self.shear_flow_magnitude[14] 
+		#Region 4:
+			self.shear_flow_integrated[8] = -1/self.I_zz*	(self.skin_thickness*self.height/2/self.lenght_skin*-1/6*math.pow(0.5*self.spacing,3)) + self.shear_flow_magnitude[7]*0.5*self.spacing
+			self.shear_flow_integrated[9] = -1/self.I_zz*	(self.skin_thickness*self.height/2/self.lenght_skin*-1/6*(math.pow(1.5*self.spacing,3) - math.pow(0.5*self.spacing,3)) + self.sum_booms_SC(7,7))*self.spacing + self.shear_flow_magnitude[8]*self.spacing
+			self.shear_flow_integrated[10] = -1/self.I_zz*	(self.skin_thickness*self.height/2/self.lenght_skin*-1/6*(math.pow(2.5*self.spacing,3) - math.pow(1.5*self.spacing,3)) + self.sum_booms_SC(8,8))*self.spacing + self.shear_flow_magnitude[9]*self.spacing
+			self.shear_flow_integrated[11] = -1/self.I_zz*	(self.skin_thickness*self.height/2/self.lenght_skin*-1/6*(math.pow(3.5*self.spacing,3) - math.pow(2.5*self.spacing,3)) + self.sum_booms_SC(9,9))*self.spacing + self.shear_flow_magnitude[10]*self.spacing
+			self.shear_flow_integrated[12] = -1/self.I_zz*	(self.skin_thickness*self.height/2/self.lenght_skin*-1/6*(math.pow(4.5*self.spacing,3) - math.pow(3.5*self.spacing,3)) + self.sum_booms_SC(10,10))*self.spacing + self.shear_flow_magnitude[11]*self.spacing
+			self.shear_flow_integrated[13] = -1/self.I_zz*	(self.skin_thickness*self.height/2/self.lenght_skin*-1/6*(math.pow(self.lenght_skin,3) - math.pow(4.5*self.spacing,3)) + self.sum_booms_SC(11,11))*(self.lenght_skin-4.5*self.spacing) + self.shear_flow_magnitude[12]*(self.lenght_skin-4.5*self.spacing)
+			self.int4 = self.shear_flow_integrated[8] + self.shear_flow_integrated[9] + self.shear_flow_integrated[10] + self.shear_flow_integrated[11] + self.shear_flow_integrated[12] + self.shear_flow_integrated[13] 
+		#Region 5:
+			self.shear_flow_integrated[16] = 1/self.I_zz *0.5*self.spar_thickness*math.pow(self.height/2,3)/3
+			self.int5 = self.shear_flow_integrated[16]
+			
+		#Region 6:
+			self.shear_flow_integrated[14] = -1/self.I_zz*	((-math.sin(-self.spacing/(self.height/2))+math.sin(-math.pi/2))*self.skin_thickness*math.pow(self.height/2,3)) + (self.shear_flow_magnitude[13]-self.shear_flow_magnitude[16])*(-self.spacing/(self.height/2)+math.pi/2)
+			self.shear_flow_integrated[15] = -1/self.I_zz*	((-math.sin(0)+math.sin(-self.spacing/(self.height/2)))*self.skin_thickness*math.pow(self.height/2,3)+self.sum_booms_SC(12,12)*(self.spacing/(self.height/2)))+self.shear_flow_magnitude[14]*(self.spacing/(self.height/2))
+			self.int6 = self.shear_flow_integrated[14] + self.shear_flow_integrated[15]
 
+			
 	def qs0(self):#in this part of the code the only thing that needs to be added is the sum of the shear flows through the arc, sum of the shear flows through the straight part of the skin and the shear flow through the spar
+		self.integrate_shear_flows()
 		radius_arc = self.height/2 #defining the radius of the front section
-		length_straight_skin = 2*self.lenght_skin
-		if self.plane == "CRJ700": 
-			sum_shearflow_through_arc = self.spacing*(self.shear_flow_magnitude[0]+self.shear_flow_magnitude[15]) + (math.pi*self.height/4-self.spacing)*(self.shear_flow_magnitude[1]+self.shear_flow_magnitude[14])
-			print("Shearflow through the arc:", sum_shearflow_through_arc)
-			sum_shearflow_through_straightskin = (2*self.spacing-math.pi*self.height/4)*(self.shear_flow_magnitude[2]+self.shear_flow_magnitude[13]) + self.spacing/2*(self.shear_flow_magnitude[7]+self.shear_flow_magnitude[8])
-			for i in range(3,7):
-				sum_shearflow_through_straightskin = sum_shearflow_through_straightskin	+ self.shear_flow_magnitude[i]*self.spacing
-			for i in range(8,13):
-				sum_shearflow_through_straightskin = sum_shearflow_through_straightskin	+ self.shear_flow_magnitude[i]*self.spacing
-			shearflow_spar = (self.shear_flow_magnitude[15]+self.shear_flow_magnitude[16])*self.height/2
-		elif self.plane == "B737":
-			sum_shearflow_through_arc = 0
-			sum_shearflow_through_straightskin = 0
-			shearflow_spar = 0
-		else:
-			raise ValueError('Plane is neither B737 nor CRJ700')
+		length_straight_skin = 2*self.lenght_skin 
+		sum_shearflow_through_arc = self.int1 + self.int6
+		sum_shearflow_through_straightskin = self.int3 + self.int4
+		shearflow_spar = self.int2 + self.int5
 		
 		A = np.matrix([[np.pi*self.height/2/self.skin_thickness + self.height/self.spar_thickness, - self.height/self.spar_thickness],
                                [- self.height/self.spar_thickness, length_straight_skin/self.skin_thickness + self.height/self.spar_thickness]])
 		B = np.matrix([[sum_shearflow_through_arc/self.skin_thickness - shearflow_spar/self.spar_thickness],
                                [sum_shearflow_through_straightskin/self.skin_thickness + shearflow_spar/self.spar_thickness]])
 		qs0 = np.linalg.solve(A,B)
-		qs01 = qs0[0]
-		qs02 = qs0[1]
+		qs01 = -qs0[0]
+		qs02 = -qs0[1]
 		print("QS01:", qs01, "QS02:", qs02)
 		return qs01, qs01
-
 
 
 x = Geometry(17.3/100,1.1/1000,2.5/1000,1.2/1000,1.4/100,1.8/100,0.484,13,1, "CRJ700")
