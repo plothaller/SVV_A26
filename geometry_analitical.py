@@ -100,26 +100,27 @@ class Geometry:
 	
 	def centroid(self):
 		#centroid_z_area = (2*self.height)/(3*math.pi) * math.pi*self.height/2*self.skin_thickness + 2*((self.skin_thickness*self.lenght_skin) * ((self.chord-self.height/2)/2)) + 0*(self.height*self.skin_thickness)
-		centroid_z_area = - math.pi*self.height/2*self.skin_thickness*(self.height/math.pi) + 2*self.lenght_skin*self.skin_thickness*(self.chord-self.height/2)/2
+		centroid_z_area = math.pi*self.height/2*self.skin_thickness*(-self.height/math.pi) + 2*self.lenght_skin*self.skin_thickness*(self.chord-self.height/2)/2
 		#centroid measured from middle plate: component semi-circular area: pi*r * (-2*pi/r) ; component plate: 0 ; component rear plates: 2*(self.lenght_skin*self.thickness)(self.chord-self.height/2)/2
 		centroid_y_area = 0
 		total_area = math.pi*self.height/2*self.skin_thickness + 2*(self.skin_thickness*self.lenght_skin) + (self.height*self.skin_thickness)
 		for i in range(0,len(self.booms_z)):
-			centroid_z_area = centroid_z_area + self.booms_z[i]*self.str_area
-			centroid_y_area = centroid_y_area + self.booms_y[i]*self.str_area
+			centroid_z_area += self.booms_z[i]*self.str_area
+			centroid_y_area += self.booms_y[i]*self.str_area
 			total_area = total_area + self.str_area
 		print("Centroid Z:", centroid_z_area/total_area)
 		return centroid_z_area/total_area, centroid_y_area/total_area
 
 	def moments_of_inertia(self, z_boom, y_boom):
-		I_zz = 0
-		I_yy = 0
 		beta = -math.acos((self.chord-self.height/2)/(self.lenght_skin))
-		I_zz = 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/(12) + (self.lenght_skin*self.skin_thickness)*math.pow(self.height/4,2)) + (self.skin_thickness*math.pow(self.height,3))/12 + (math.pi*math.pow(self.height/2,3)*self.skin_thickness)/2
+		I_zz = 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/12 + (self.lenght_skin*self.skin_thickness)*math.pow(self.height/4,2)) + (self.spar_thickness*math.pow(self.height,3))/12 + (math.pi/8 * ((self.height/2 + self.skin_thickness/2)**4 - (self.height/2 - self.skin_thickness/2)**4)) 	#(math.pi*math.pow(self.height/2,3)*self.skin_thickness)/2 #; alternative method for calculating the MoI of the semi-circular arc
+		I_yy = (math.pi/8*math.pow(self.height/2,3)*self.skin_thickness)/2 + (math.pi*self.height/2*self.skin_thickness*(self.centroid_z+(self.height/math.pi))**2) + (self.height*self.spar_thickness**3/12) + (self.height*self.spar_thickness*self.centroid_z**2) + 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/(12) + (self.lenght_skin*self.skin_thickness) * (self.chord-self.height/2 -self.centroid_z)**2)
+		
 		for z in z_boom:
 			I_yy = I_yy + math.pow(abs(z-self.centroid_z),2) * self.str_area
 		for y in y_boom:
 			I_zz = I_zz + math.pow(abs(y-self.centroid_y),2) * self.str_area
+		print("Found I_ZZ is: ", I_zz)
 		I_zz = 5.8159389575991465 * math.pow(10,-6)
 		print("I_ZZ is:", I_zz)
 		return I_zz, I_yy
