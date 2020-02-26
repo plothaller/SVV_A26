@@ -4,8 +4,8 @@ Group A26 SVV
 import numpy as np
 from macaulay import *
 from deflections import *
-from geometry import *
-
+#from geometry import *
+import matplotlib.pyplot as plt
 aircraft = "CRJ700" # Write either A320, F100, CRJ700 or Do228 (bear in mind capitals); this is used for aerodynamic loading
 Ca = 0.484 #m
 la = 1.691  # m
@@ -23,8 +23,8 @@ nst = 13  # -
 d1 = 0.681/100  # m
 d3 = 2.030/100  # m
 theta = np.radians(26)  # rad
-#P = 37.9*1000  # N
-P = 0
+P = 37.9*1000  # N
+
 E = 73.1*10**9 #N/m2
 G = 28*10**9 #N/m2
 
