@@ -95,7 +95,9 @@ class Geometry:
 		plt.show()
 	
 	def centroid(self):
-		centroid_z_area = (2*self.height)/(3*math.pi) * math.pi*self.height/2*self.skin_thickness + 2*((self.skin_thickness*self.lenght_skin) * ((self.chord-self.height/2)/2)) + 0*(self.height*self.skin_thickness)
+		#centroid_z_area = (2*self.height)/(3*math.pi) * math.pi*self.height/2*self.skin_thickness + 2*((self.skin_thickness*self.lenght_skin) * ((self.chord-self.height/2)/2)) + 0*(self.height*self.skin_thickness)
+		centroid_z_area = - math.pi*self.height/2*self.skin_thickness*(self.height/math.pi) + 2*self.lenght_skin*self.skin_thickness*(self.chord-self.height/2)/2
+		#centroid measured from middle plate: component semi-circular area: pi*r * (-2*pi/r) ; component plate: 0 ; component rear plates: 2*(self.lenght_skin*self.thickness)(self.chord-self.height/2)/2
 		centroid_y_area = 0
 		total_area = math.pi*self.height/2*self.skin_thickness + 2*(self.skin_thickness*self.lenght_skin) + (self.height*self.skin_thickness)
 		for i in range(0,len(self.booms_z)):
