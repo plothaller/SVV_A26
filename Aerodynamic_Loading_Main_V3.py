@@ -203,3 +203,47 @@ def make_tau(x_sc, AeroLoading = AeroLoading):
     for index in range(len(x)):
         tau = [integrate_1d_tau(z, AeroLoading[:,index], z[-1], x_sc)] + tau
     return tau
+
+
+
+def DoubleIntegral(x_max):
+    x = make_x_and_z()[0]
+    w_bar = make_w_bar()
+    
+    return integrate_1d(x, w_bar, x_max)
+
+def FiveIntegral(x_max):
+    x = make_x_and_z()[0]
+    #Integration 1
+    w_bar = make_w_bar()
+    
+    #Integration 2
+    int_list_2, x_list_2 = integrate_1d_list(x, w_bar, x_max)
+    
+    #Integration 3
+    int_list_3, x_list_3 = integrate_1d_list(x_list_2, int_list_2, x_max)
+    
+    #Integratioan 4
+    int_list_4, x_list_4 = integrate_1d_list(x_list_3, int_list_3, x_max)
+    
+    #Integration 5
+    return integrate_1d(x_list_4, int_list_4, x_max)
+
+def DoubleIntegralZSC(x_max, z_sc):
+    x = make_x_and_z()[0]
+    tau = make_tau(z_sc)
+    return integrate_1d(x, tau, x_max)
+
+def TripleIntegralZSC(x_max, z_sc):
+    x = make_x_and_z()[0]
+    
+    #Make Tau (integration 1)
+    tau = make_tau(z_sc)
+    
+    #Integration 2
+    int_list_2, x_list_2 = integrate_1d_list(x, tau, x_max)
+    
+    #Integration 3
+    return integrate_1d(x_list_2, int_list_2, x_max)
+    
+    
