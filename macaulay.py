@@ -32,10 +32,11 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
     b = np.zeros((12, 1))
 
     #intergral placeholders
-    
+    print("a")
     x, z = AV3.make_x_and_z()
     AeroLoading = AV3.MapAeroLoading(r"C:\Users\Guille\Documents\GitHub\SVV_A26\aerodynamicloadcrj700.dat")   #INPUT FILE LOCATION FOR AERO LOADING HERE
     w_bar = AV3.make_w_bar(AeroLoading)
+    input("ojdlfkldkfddf")
 # =============================================================================
 #     x_max_double_integral_plus_minus_zsc = 0    #INPUT X_MAX FOR THE DOUBLE INTEGRAL PLUSMINUS Z_SC HERE
 #     z_sc = 0        #INPUT SHEAR CENTRE LOCATION HERE

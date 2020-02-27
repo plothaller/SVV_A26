@@ -42,20 +42,21 @@ J = 0.00018782860610613963
 
 
 #Calculating Reaction forces
-
-#x, A, b = Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
-#F_1y, F_2y, F_3y, F_I, F_1z, F_2z, F_3z, c1, c2, c3, c4, c5 = x[0][0][0], x[0][1][0], x[0][2][0], x[0][3][0], x[0][4][0], x[0][5][0], x[0][6][0], x[0][7][0], x[0][8][0], x[0][9][0], x[0][10][0], x[0][11][0]
+print("macauly")
+x, A, b = Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
+F_1y, F_2y, F_3y, F_I, F_1z, F_2z, F_3z, c1, c2, c3, c4, c5 = x[0][0][0], x[0][1][0], x[0][2][0], x[0][3][0], x[0][4][0], x[0][5][0], x[0][6][0], x[0][7][0], x[0][8][0], x[0][9][0], x[0][10][0], x[0][11][0]
+input("Continue")
 
 
 #Plotting deflections
 x_1, y_1 = v_deflection(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, c1, c2,  E, I_zz)
-x_2, y_2 = w_deflection(la, F_I, F_1z, F_2z, F_3z, x1, x2, x3, xa, theta, P, c3, c4, E, I_yy)
-x_3, y_3 = internal_moment_z(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, zsc)
-x_4, y_4 = internal_moment_y(la, F_I, F_1z, F_2z, F_3z, x1, x2, x3, xa, theta, P)
-x_5, y_5 = shear_z(la, F_I, F_1z, F_2z, F_3z, x1, x2, x3, xa, theta, P)
-x_6, y_6 = shear_y(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P)
-x_7, y_7 = torque(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, zsc, ha)
-x_8, y_8 = Twist(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, c5, G, J, zsc, ha)
+#x_2, y_2 = w_deflection(la, F_I, F_1z, F_2z, F_3z, x1, x2, x3, xa, theta, P, c3, c4, E, I_yy)
+#x_3, y_3 = internal_moment_z(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, zsc)
+#x_4, y_4 = internal_moment_y(la, F_I, F_1z, F_2z, F_3z, x1, x2, x3, xa, theta, P)
+#x_5, y_5 = shear_z(la, F_I, F_1z, F_2z, F_3z, x1, x2, x3, xa, theta, P)
+#x_6, y_6 = shear_y(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P)
+#x_7, y_7 = torque(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, zsc, ha)
+#x_8, y_8 = Twist(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, c5, G, J, zsc, ha)
 
 plt.subplot(3, 3, 1)
 plt.plot(x_1, y_1, 'r')

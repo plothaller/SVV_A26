@@ -179,7 +179,7 @@ class Geometry:
 			c = self.spacing*(i-1) - self.spacing*(6.5+self.plane_delta)
 			self.shear_flow_magnitude_y[i] = -1/self.I_zz*	((self.skin_thickness*self.height * -1/(4*self.length_skin)*math.pow(c,2))+self.sum_boom_SC_y(7+self.plane_delta,i-2)) + self.shear_flow_magnitude_y[7+self.plane_delta]
 		c = self.length_skin
-		self.shear_flow_magnitude_y[13+2*self.plane_delta] = -1/self.I_zz *	((self.skin_thickness*self.height * -1/(4*self.length_skin)*math.pow(c,2))+self.sum_boom_SC_y(7+self.plane_delta,11+2*self.plane_delta)) + self.shear_flow_magnitude_y[7+self.plane_delta]
+		self.shear_flow_magnitude_y[13+2*self.plane_delta] = -1/self.I_zz*	((self.skin_thickness*self.height * -1/(4*self.length_skin)*math.pow(c,2))+self.sum_boom_SC_y(7+self.plane_delta,11+2*self.plane_delta)) + self.shear_flow_magnitude_y[7+self.plane_delta]
 	#Region Y 5
 		self.shear_flow_magnitude_y[16+2*self.plane_delta] = -1/self.I_zz*	 (0.5*self.spar_thickness*math.pow(self.height/2,2))
 	#Region Y 6
