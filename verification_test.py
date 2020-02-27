@@ -4,7 +4,7 @@ import numpy as np
 import deflections
 import math as m
 import numpy.testing as npt
-import geometry_analitical as geom
+import geometry_analytical as geom
 import Aerodynamic_Loading_Main_V3 as AV3
 #in node 1, shear flow goes to zero
 #test integrals
@@ -78,7 +78,7 @@ class Testdeflection(unittest.TestCase):
         assert y[-1] < y_new[-1]
 
     def test_hinge_boundary_conditions(self):
-        #Testing to see ifwhen no load is applied, boundary conditions are still adhered too
+        #Testing to see if when no load is applied, boundary conditions are still adhered too
         x, A, b = macaulay.Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
         F_1y, F_2y, F_3y, F_I, F_1z, F_2z, F_3z, c1, c2, c3, c4, c5 = x[0][0][0], x[0][1][0], x[0][2][0], x[0][3][0], \
                                                                       x[0][4][0], x[0][5][0], x[0][6][0], x[0][7][0], \
@@ -107,17 +107,31 @@ class Testdeflection(unittest.TestCase):
         x, y = deflections.v_deflection(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, 0, c1, c2, E, I_zz)
 
         assert min(y) == max(y) == 0
-		
-		
-# =============================================================================
-# class TestGeometricalProperties(self):
-# 	def __init__(self, Geometry_object):
-# 		self.obj = Geometry_object
-# 		
-# 	def test_boom_locations(self):
-# 		#test that the locations of all booms are where they're expected to be
-# 		(locations_z, locations_y) = (self.obj.booms_z, self.obj.booms_y)
-# 		(expected_locations_z, expected_locations_y) = 
+
+class TestGeometricalProperties(unittest.TestCase):
+
+    geometry = geom.Geometry(ha, tsk, tsp, tst, hst, wst, Ca, nst, 1)
+
+    def test_boom_locations(self):
+        #test that the locations of all booms are where they're expected to be
+        (locations_z, locations_y) = ((self.obj.booms_z + ha/2), self.obj.booms_y)
+        #(expected_locations_z, expected_locations_y) =
+
+        verification_location = [[-0.,  0.],
+        [-0.03725877,  0.07111646],
+        [-0.11689227,  0.07988634],
+        [-0.19847177,  0.06213382],
+        [-0.28005126,  0.0443813 ],
+        [-0.36163076,  0.02662878],
+        [-0.44321025,  0.00887626],
+        [-0.44321025, -0.00887626],
+        [-0.36163076, -0.02662878],
+        [-0.28005126, -0.0443813 ],
+        [-0.19847177, -0.06213382],
+        [-0.11689227, -0.07988634],
+        [-0.03725877, -0.07111646]]
+
+        print(verification_location)
 # 		assert 
 # 	def test_boom_areas(self):
 # 		

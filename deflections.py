@@ -95,10 +95,10 @@ def shear_y(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P):
     xi2 = x2 + xa/2
     x = np.linspace(0, la, 500)
     y = []
-    DOUBLEINTEGRAL = 0
+
 
     for i in x:
-        y.append(-F_1y*macaulay(i, x1, 0) - F_I*np.sin(theta)*macaulay(i, xi1, 0) - F_2y*macaulay(i, x2, 0) + P*np.sin(theta)*macaulay(i, xi2, 0) - F_3y*macaulay(i, x3, 0) + 0)
+        y.append(-F_1y*macaulay(i, x1, 0) - F_I*np.sin(theta)*macaulay(i, xi1, 0) - F_2y*macaulay(i, x2, 0) + P*np.sin(theta)*macaulay(i, xi2, 0) - F_3y*macaulay(i, x3, 0) + AV3.DoubleIntegral(i))
 
     return x, y
 

@@ -34,36 +34,8 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
     #intergral placeholders
     print("a")
     x, z = AV3.make_x_and_z()
-    AeroLoading = AV3.MapAeroLoading(r"C:\Users\Guille\Documents\GitHub\SVV_A26\aerodynamicloadcrj700.dat")   #INPUT FILE LOCATION FOR AERO LOADING HERE
+    AeroLoading = AV3.MapAeroLoading(r"C:\Users\lotha\SVV_A26\aerodynamicloadcrj700.dat")   #INPUT FILE LOCATION FOR AERO LOADING HERE
     w_bar = AV3.make_w_bar(AeroLoading)
-# =============================================================================
-#     x_max_double_integral_plus_minus_zsc = 0    #INPUT X_MAX FOR THE DOUBLE INTEGRAL PLUSMINUS Z_SC HERE
-#     z_sc = 0        #INPUT SHEAR CENTRE LOCATION HERE
-#     tau = AV3.make_tau(z_sc, AeroLoading)
-#     x_max_double_integral = 0   #IPUT X_MAX FOR THE DOUBLE INTEGRAL HERE
-#     x_max_three_plus_minus_zsc_1 = 0    #INPUT X_MAX FOR THE TRIPLE INTEGRAL PLUSMINUS Z_SC HERE
-#     x_max_three_plus_minus_zsc_2 = 0    #INPUT X_MAX FOR THE TRIPLE INTEGRAL PLUSMINUS Z_SC HERE
-#     x_max_five_1 = 0     #INPUT X_MAX FOR THE FIVEINTEGRAL HERE
-#     x_max_five_2 = 0     #INPUT X_MAX FOR THE FIVEINTEGRAL HERE
-#     x_max_five_3 = 0     #INPUT X_MAX FOR THE FIVEINTEGRAL HERE
-#     x_max_five_4 = 0     #INPUT X_MAX FOR THE FIVEINTEGRAL HERE
-#     
-#     y_three_plus_minus_zsc_2, x_three_plus_minus_zsc_2 = AV3.integrate_1d_list(x, tau, x_max_three_plus_minus_zsc_1)   
-# 	#intergral placeholders
-# 	DOUBLEINTEGRAL = 0
-# 	DOULBEINTEGRALPLUSZMINUSZSC = 0
-# 	TRIPLEINTEGRALPLUSZMINUSZSC = 0
-# 	FIVEINTEGRAL = 0
-# 
-#     y_five_2, x_five_2 = AV3.integrate_1d_list(x, w_bar, x_max_five_1)
-#     y_five_3, x_five_3 = AV3.integrate_1d_list(x_five_2, y_five_2, x_max_five_2)
-#     y_five_4, x_five_4 = AV3.integrate_1d_list(x_five_3, y_five_3, x_max_five_3)
-#     
-#     DOUBLEINTEGRAL = AV3.integrate_1d(x, w_bar, x_max_double_integral)
-#     DOULBEINTEGRALPLUSZMINUSZSC = AV3.integrate_1d(x, tau, x_max_double_integral_plus_minus_zsc)
-#     TRIPLEINTEGRALPLUSZMINUSZSC = AV3.integrate_1d(x_three_plus_minus_zsc_2, y_three_plus_minus_zsc_2, x_max_three_plus_minus_zsc_2)
-#     FIVEINTEGRAL = AV3.integrate_1d(x_five_4, y_five_4, x_max_five_4)
-# =============================================================================
 
     #A matrix:
     # row 0
@@ -161,7 +133,7 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
 
     # solve for x
     x = np.linalg.solve(A, b)
-    print(A)
-    print(b)
-    print(x)
+    # print(A)
+    # print(b)
+    # print(x)
     return [x], A, b
