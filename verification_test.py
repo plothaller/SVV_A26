@@ -4,7 +4,8 @@ import numpy as np
 import deflections
 import math as m
 import numpy.testing as npt
-
+import geometry_analitical as geom
+import Aerodynamic_Loading_Main_V3 as AV3
 #in node 1, shear flow goes to zero
 #test integrals
 #test moment of inertias and centroids
@@ -106,7 +107,78 @@ class Testdeflection(unittest.TestCase):
         x, y = deflections.v_deflection(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, 0, c1, c2, E, I_zz)
 
         assert min(y) == max(y) == 0
-
+		
+		
+# =============================================================================
+# class TestGeometricalProperties(self):
+# 	def __init__(self, Geometry_object):
+# 		self.obj = Geometry_object
+# 		
+# 	def test_boom_locations(self):
+# 		#test that the locations of all booms are where they're expected to be
+# 		(locations_z, locations_y) = (self.obj.booms_z, self.obj.booms_y)
+# 		(expected_locations_z, expected_locations_y) = 
+# 		assert 
+# 	def test_boom_areas(self):
+# 		
+# 	def test_centroid_location(self):
+# 		
+# 	def test_moment_of_intertia_booms(self):
+# 		
+# 	def test_moment_of_inertia_plate(self):
+# 	
+# 	def test_moment_of_inertia_spar(self):
+# 		
+# 	def test_moment_of_inertia_semicircle(self):
+# 		
+# 	
+# class TestShear(self):
+# 	
+# 	def test_base_shear_centre(self):
+# 		#assert that location of shear centre in [condition] is where it should be
+# 		
+# 		
+# 	def test_shear_stresses(self):
+# 		#assert that shear stresses in [condition] are what they should be 
+# =============================================================================
+		
+class TestInterpolation_Integration(unittest.TestCase):
+	def test_interpolation_1(self):
+		assert abs(AV3.LinearInterpolatePos(2, 4, 1, 2, 1.5) - 3) < 0.00001
+		
+	def test_interpolation_2(self):
+		assert abs(AV3.LinearInterpolatePos(5, 8, 4, 9, 6) - 6.2) < 0.00001
+		
+	def test_integration_linear_1(self):
+		#integrate the function y = 1 + x sampled at 0, 1, 3 until x = 3
+		assert abs(AV3.integrate_1d([0, 1, 3], [1, 2, 4], 3) - 7.5) < 0.00001
+		
+	def test_integration_linear_2(self):
+		#integrate the function y = 1 + x sampled at 0, 1, 3 until x = 2
+		assert abs(AV3.integrate_1d([0, 1, 3], [1, 2, 4], 2) - 4) < 0.00001
+		
+	def test_integration_cubic(self):
+		#Integrate the function y = -1 + 2x + x^3 until x = 2.5
+		assert abs(AV3.integrate_1d([0, 1, 2, 3, 4], [-1, 2, 11, 32, 71], 2.5) - 15.125) < 0.00001 #actual value of y integrated is 13.515625
+		
+	def test_double_integral(self):
+		#Integrate the function y = 2 - x twice over x 
+		y_new, x_new = AV3.integrate_1d_list([3, 5, 6], [-1, -3, -4], 5.2)
+		assert abs(AV3.integrate_1d(x_new, y_new, 5.2) - (-4.862)) < 0.00001
+		
+	def test_interpolate_plot(self):
+		points_x, points_y = [], []
+		data_points_x, data_points_y = [0, 3, 5], [2, 4.8, 3]
+		for x_i in np.arange(0, 5, 0.05):
+			points_x.append(x_i)
+			if x_i < 3:
+				points_y.append(AV3.LinearInterpolatePos(2, 4.8, 0, 3, x_i))
+			else:
+				points_y.append(AV3.LinearInterpolatePos(4.8, 3, 3, 5, x_i))
+		plt.figure(0)
+		plt.scatter(points_x, points_y, color = 'red', s = 10)
+		plt.scatter(data_points_x, data_points_y, color = 'blue', s = 60)
+		plt.show()
 
 if __name__ == '__main__':
     unittest.main()
