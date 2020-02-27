@@ -55,6 +55,8 @@ class Geometry:
 		self.shear_flow_magnitude_y = np.zeros(len(self.booms_z)+5)
 		self.shear_flow_integrated_y = np.zeros(len(self.booms_z)+5)
 		self.shear_flow_magnitude_z = np.zeros(len(self.booms_z)+5)
+		self.shear_stress_y = np.zeros(len(self.booms_z)+5)
+		self.shear_stress_z = np.zeros(len(self.booms_z)+5)
 		self.centroid_z = self.centroid()[0]
 		self.centroid_y = self.centroid()[1]
 		self.I_zz = self.moments_of_inertia()[0]
@@ -344,7 +346,24 @@ class Geometry:
 		self.qs0()
 		shear_center_z = (self.int1+self.int6)*self.height/2 + (self.int3+self.int4)* (self.height/2/self.lenght_skin) * (self.chord-self.height/2) + 2*self.a1*self.qs01 + 2*self.a2*self.qs02 - self.height/2
 		print(self.height/2)
-		return shear_center_z 
+		return shear_center_z
+	
+	def shear_stress(y_shear, z_shear):
+		base_shear_flow()
+		integrate_shear_flows()
+		qs0()
+		actual_shear_flow()
+		for i in range(0,len(self.shear_flow_magnitude_y)-2):
+			self.shear_stress_y[i] = shear_flow_magnitude_y[i]/self.skin_thickness*y_shear
+		self.shear_stress_y[len(self.shear_flow_magnitude_y)-1] = shear_flow_magnitude_y[len(self.shear_flow_magnitude_y)-1]/self.spar_thickness*y_shear
+		self.shear_stress_y[len(self.shear_flow_magnitude_y)] = shear_flow_magnitude_y[len(self.shear_flow_magnitude_y)]/self.spar_thickness*y_shear
+		for i in range(0,len(self.shear_flow_magnitude_z)-2):
+			self.shear_stress_z[i] = shear_flow_magnitude_z[i]/self.skin_thickness*z_shear
+		self.shear_stress_z[len(self.shear_flow_magnitude_z)-1] = shear_flow_magnitude_z[len(self.shear_flow_magnitude_z)-1]/self.spar_thickness*z_shear
+		self.shear_stress_z[len(self.shear_flow_magnitude_z)] = shear_flow_magnitude_z[len(self.shear_flow_magnitude_z)]/self.spar_thickness*z_shear
+		return self.shear_stress_y, self.shear_stress_z
+
+
 
 
 x = Geometry(17.3/100,1.1/1000,2.5/1000,1.2/1000,1.4/100,1.8/100,0.484,13,1, "CRJ700")
