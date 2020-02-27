@@ -6,7 +6,7 @@ Created on Tue Feb 25 14:01:53 2020
 """
 
 import numpy as np
-
+import os
 
 #global variables C_a and l_a for the chord and length of the aileron, respectively
 C_a = 0.484
@@ -41,7 +41,7 @@ def MapAeroLoading(filename):
             i += 1
         return AeroLoading
     
-AeroLoading = MapAeroLoading(r"C:\Users\lotha\SVV_A26\aerodynamicloadcrj700.dat")
+AeroLoading = MapAeroLoading("aerodynamicloadcrj700.dat")
     
 def findIndex(loc_x, loc_z):
     #input: x, z; location of a point on the aileron surface
@@ -85,7 +85,8 @@ def integrate_1d(x, y, x_max):
         x_max = x[-1]
     if x_max < x[0]:    #if x_max is lower than the lowest x_value, return 0
         return 0
-    
+    if len(x) < 2:
+        return 0    
     total = 0
     i = 1
     while x[i] < x_max:
@@ -107,7 +108,9 @@ def integrate_1d_list(x, y, x_max):
     if x_max > x[-1]:
         x_max = x[-1]
     if x_max < x[0]:
-        return 0
+        return [0], [x_max]
+    if len(x) < 2:
+        return [0], [x_max]
     int_list.append(0)
     x_new.append(x[0])
     while x[i] < x_max:
@@ -132,7 +135,8 @@ def integrate_1d_tau(x, y, x_max, x_sc):
         x_max = x[-1]
     if x_max < x[0]:    #if x_max is lower than the lowest x_value, return 0
         return 0
-    
+    if len(x) < 2:
+        return 0    
     total = 0
     i = 1
     while x[i] < x_max:
@@ -157,7 +161,9 @@ def integrate_1d_list_tau(x, y, x_max, x_sc):
     if x_max > x[-1]:
         x_max = x[-1]
     if x_max < x[0]:
-        return 0
+        return [0], [x_max]
+    if len(x) < 2:
+        return [0], [x_max]
     int_list.append(0)
     x_new.append(x[0])
     while x[i] < x_max:
@@ -189,6 +195,8 @@ def make_x_and_z():
         z.append(locationz(i))
     z = z[::-1] #so it goes from -C to 0 instead of 0 to -C
     return x, z
+
+x, z = make_x_and_z()
 #Define w_bar
 def make_w_bar(AeroLoading = AeroLoading):
     x, z = make_x_and_z()
@@ -196,6 +204,7 @@ def make_w_bar(AeroLoading = AeroLoading):
     for index in range(len(x)):
         w_bar = [integrate_1d(z, AeroLoading[:,index], z[-1])] + w_bar
     return w_bar
+w_bar = make_w_bar()
 
 def make_tau(x_sc, AeroLoading = AeroLoading):
     x, z = make_x_and_z()
