@@ -120,15 +120,8 @@ class Geometry:
 		print("The booms are located in		X: ", self.booms_z, "	Y:",self.booms_y)
 		print("The angles are for node 1:", 180/math.pi*math.acos(-self.booms_z[1]/(self.height/2)))
 		plt.show()
-		
+	
 	def centroid(self):
-<<<<<<< HEAD:geometry_analytical.py
-		#centroid_z_area = (2*self.height)/(3*math.pi) * math.pi*self.height/2*self.skin_thickness + 2*((self.skin_thickness*self.length_skin) * ((self.chord-self.height/2)/2)) + 0*(self.height*self.skin_thickness)
-		centroid_z_area = math.pi*self.height/2*self.skin_thickness*(-self.height/math.pi) + 2*self.length_skin*self.skin_thickness*(self.chord-self.height/2)/2
-		#centroid measured from middle plate: component semi-circular area: pi*r * (-2*pi/r) ; component plate: 0 ; component rear plates: 2*(self.length_skin*self.thickness)(self.chord-self.height/2)/2
-		centroid_y_area = 0
-		total_area = math.pi*self.height/2*self.skin_thickness + 2*(self.skin_thickness*self.length_skin) + (self.height*self.skin_thickness)
-=======
 		#centroid_z_area = (2*self.height)/(3*math.pi) * math.pi*self.height/2*self.skin_thickness + 2*((self.skin_thickness*self.lenght_skin) * ((self.chord-self.height/2)/2)) + 0*(self.height*self.skin_thickness)
 		#centroid_z_area = math.pi*self.height/2*self.skin_thickness*(-self.height/math.pi) + 2*self.lenght_skin*self.skin_thickness*(self.chord-self.height/2)/2
 		total_area = math.pi*self.height/2*self.skin_thickness + self.height*self.spar_thickness + 2*self.lenght_skin*self.skin_thickness
@@ -136,13 +129,10 @@ class Geometry:
 		centroid_z_spar = self.height*self.spar_thickness * 0
 		centroid_z_plate = self.lenght_skin*self.skin_thickness * (self.chord-self.height/2)/2
 		centroid_z_area = centroid_z_semicircle + centroid_z_spar + 2*centroid_z_plate
-		
-		
-		
+	
 		
 		#centroid measured from middle plate: component semi-circular area: pi*r * (-2*pi/r) ; component plate: 0 ; component rear plates: 2*(self.lenght_skin*self.thickness)(self.chord-self.height/2)/2
 		centroid_y_area = 0
->>>>>>> stuff:geometry_analitical.py
 		for i in range(0,len(self.booms_z)):
 			centroid_z_area += self.booms_z[i]*self.str_area
 			centroid_y_area += self.booms_y[i]*self.str_area
@@ -153,13 +143,13 @@ class Geometry:
 	def moments_of_inertia(self):
 		z_boom = self.booms_z
 		y_boom = self.booms_y
-		beta = math.acos((self.chord-self.height/2)/(self.length_skin))
-		I_zz = 2*((math.pow(self.length_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/12 + (self.length_skin*self.skin_thickness)*math.pow(self.height/4,2)) + (self.spar_thickness*math.pow(self.height,3))/12 + (math.pi/8 * ((self.height/2 + self.skin_thickness/2)**4 - (self.height/2 - self.skin_thickness/2)**4)) 	#(math.pi*math.pow(self.height/2,3)*self.skin_thickness)/2 #; alternative method for calculating the MoI of the semi-circular arc
-		#I_yy = (math.pi/8*math.pow(self.height,3)*self.skin_thickness)/2 + (math.pi*self.height/2*self.skin_thickness*(self.centroid_z+(self.height/math.pi))**2) + ((self.height*self.spar_thickness**3)/12) + (self.height*self.spar_thickness*self.centroid_z**2) + 2*((math.pow(self.length_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/(12) + (self.length_skin*self.skin_thickness) * ((self.chord-self.height/2)/2 -self.centroid_z)**2)
-		#I_yy =  + 				# 2*((math.pow(self.length_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/(12) + (self.length_skin*self.skin_thickness) * ((self.chord-self.height/2)/2 -self.centroid_z)**2)
+		beta = math.acos((self.chord-self.height/2)/(self.lenght_skin))
+		I_zz = 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/12 + (self.lenght_skin*self.skin_thickness)*math.pow(self.height/4,2)) + (self.spar_thickness*math.pow(self.height,3))/12 + (math.pi/8 * ((self.height/2 + self.skin_thickness/2)**4 - (self.height/2 - self.skin_thickness/2)**4)) 	#(math.pi*math.pow(self.height/2,3)*self.skin_thickness)/2 #; alternative method for calculating the MoI of the semi-circular arc
+		#I_yy = (math.pi/8*math.pow(self.height,3)*self.skin_thickness)/2 + (math.pi*self.height/2*self.skin_thickness*(self.centroid_z+(self.height/math.pi))**2) + ((self.height*self.spar_thickness**3)/12) + (self.height*self.spar_thickness*self.centroid_z**2) + 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/(12) + (self.lenght_skin*self.skin_thickness) * ((self.chord-self.height/2)/2 -self.centroid_z)**2)
+		#I_yy =  + 				# 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/(12) + (self.lenght_skin*self.skin_thickness) * ((self.chord-self.height/2)/2 -self.centroid_z)**2)
 		I_yy_semi_circular = ((math.pi/8 - 8/(9*math.pi))*((self.height/2+self.skin_thickness/2)**4 - (self.height/2 - self.skin_thickness/2)**4)) + (self.height/2*math.pi*self.skin_thickness*(self.centroid_z+self.height/math.pi)**2)
 		I_yy_spar = ((self.height*self.spar_thickness**3)/12) + (self.height*self.spar_thickness*self.centroid_z**2)
-		I_yy_plates = 2*(self.skin_thickness*(self.length_skin)**3 * math.cos(beta)**2/12) + ((self.chord-self.height/2)/2 - self.centroid_z)**2 * self.skin_thickness*self.length_skin*2
+		I_yy_plates = 2*(self.skin_thickness*(self.lenght_skin)**3 * math.cos(beta)**2/12) + ((self.chord-self.height/2)/2 - self.centroid_z)**2 * self.skin_thickness*self.lenght_skin*2
 		I_yy = I_yy_semi_circular + I_yy_spar + I_yy_plates
 		for z in z_boom:
 			I_yy = I_yy + math.pow(abs(z-self.centroid_z),2) * self.str_area
