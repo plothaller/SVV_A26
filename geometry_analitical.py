@@ -57,9 +57,9 @@ class Geometry:
 		self.shear_flow_magnitude_z = np.zeros(len(self.booms_z)+5)
 		self.centroid_z = self.centroid()[0]
 		self.centroid_y = self.centroid()[1]
-		self.I_zz = self.moments_of_inertia(self.booms_z, self.booms_y)[0]
+		self.I_zz = self.moments_of_inertia()[0]
 		print("The I_zz is:", self.I_zz)
-		self.I_yy = self.moments_of_inertia(self.booms_z, self.booms_y)[1]
+		self.I_yy = self.moments_of_inertia()[1]
 		print("The I_yy is:", self.I_yy)
 		if self.plane == "CRJ700":
 			self.plane_delta = 0
@@ -120,31 +120,39 @@ class Geometry:
 		print("The angles are for node 1:", 180/math.pi*math.acos(-self.booms_z[1]/(self.height/2)))
 		plt.show()
 	
+	
 	def centroid(self):
 		#centroid_z_area = (2*self.height)/(3*math.pi) * math.pi*self.height/2*self.skin_thickness + 2*((self.skin_thickness*self.lenght_skin) * ((self.chord-self.height/2)/2)) + 0*(self.height*self.skin_thickness)
-		centroid_z_area = - math.pi*self.height/2*self.skin_thickness*(self.height/math.pi) + 2*self.lenght_skin*self.skin_thickness*(self.chord-self.height/2)/2
+		centroid_z_area = math.pi*self.height/2*self.skin_thickness*(-self.height/math.pi) + 2*self.lenght_skin*self.skin_thickness*(self.chord-self.height/2)/2
 		#centroid measured from middle plate: component semi-circular area: pi*r * (-2*pi/r) ; component plate: 0 ; component rear plates: 2*(self.lenght_skin*self.thickness)(self.chord-self.height/2)/2
 		centroid_y_area = 0
 		total_area = math.pi*self.height/2*self.skin_thickness + 2*(self.skin_thickness*self.lenght_skin) + (self.height*self.skin_thickness)
 		for i in range(0,len(self.booms_z)):
-			centroid_z_area = centroid_z_area + self.booms_z[i]*self.str_area
-			centroid_y_area = centroid_y_area + self.booms_y[i]*self.str_area
+			centroid_z_area += self.booms_z[i]*self.str_area
+			centroid_y_area += self.booms_y[i]*self.str_area
 			total_area = total_area + self.str_area
 		print("Centroid Z:", centroid_z_area/total_area)
 		return centroid_z_area/total_area, centroid_y_area/total_area
 
-	def moments_of_inertia(self, z_boom, y_boom):
-		I_zz = 0
-		I_yy = 0
-		beta = -math.acos((self.chord-self.height/2)/(self.lenght_skin))
-		I_zz = 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/(12) + (self.lenght_skin*self.skin_thickness)*math.pow(self.height/4,2)) + (self.skin_thickness*math.pow(self.height,3))/12 + (math.pi*math.pow(self.height/2,3)*self.skin_thickness)/2
+	def moments_of_inertia(self):
+		z_boom = self.booms_z
+		y_boom = self.booms_y
+		beta = math.acos((self.chord-self.height/2)/(self.lenght_skin))
+		I_zz = 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/12 + (self.lenght_skin*self.skin_thickness)*math.pow(self.height/4,2)) + (self.spar_thickness*math.pow(self.height,3))/12 + (math.pi/8 * ((self.height/2 + self.skin_thickness/2)**4 - (self.height/2 - self.skin_thickness/2)**4)) 	#(math.pi*math.pow(self.height/2,3)*self.skin_thickness)/2 #; alternative method for calculating the MoI of the semi-circular arc
+		#I_yy = (math.pi/8*math.pow(self.height,3)*self.skin_thickness)/2 + (math.pi*self.height/2*self.skin_thickness*(self.centroid_z+(self.height/math.pi))**2) + ((self.height*self.spar_thickness**3)/12) + (self.height*self.spar_thickness*self.centroid_z**2) + 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/(12) + (self.lenght_skin*self.skin_thickness) * ((self.chord-self.height/2)/2 -self.centroid_z)**2)
+		#I_yy =  + 				# 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/(12) + (self.lenght_skin*self.skin_thickness) * ((self.chord-self.height/2)/2 -self.centroid_z)**2)
+		I_yy_semi_circular = ((math.pi/8 - 8/(9*math.pi))*((self.height/2+self.skin_thickness/2)**4 - (self.height/2 - self.skin_thickness/2)**4)) + (self.height/2*math.pi*self.skin_thickness*(self.centroid_z+self.height/math.pi)**2)
+		I_yy_spar = ((self.height*self.spar_thickness**3)/12) + (self.height*self.spar_thickness*self.centroid_z**2)
+		I_yy_plates = 2*(self.skin_thickness*(self.lenght_skin)**3 * math.cos(beta)**2/12) + ((self.chord-self.height/2)/2 - self.centroid_z)**2 * self.skin_thickness*self.lenght_skin*2
+		I_yy = I_yy_semi_circular + I_yy_spar + I_yy_plates
 		for z in z_boom:
 			I_yy = I_yy + math.pow(abs(z-self.centroid_z),2) * self.str_area
 		for y in y_boom:
 			I_zz = I_zz + math.pow(abs(y-self.centroid_y),2) * self.str_area
-		I_zz = 5.8159389575991465 * math.pow(10,-6)
-		I_yy = 4.3632767 * math.pow(10,-5)
-		print("I_ZZ is:", I_zz)
+		print("Found I_ZZ is: ", I_zz)
+		#I_zz = 5.8159389575991465 * math.pow(10,-6)
+		print(" I_zz is: \t\t", I_zz, "\n reference I_zz: \t 5.8159389575991465e-06 \n percentage difference; ", (I_zz - 5.8159389575991465e-06)/(5.8159389575991465e-08), "%")
+		print(" I_yy is: \t\t", I_yy, "\n reference I_yy: \t 4.363276766019503e-05 \n percentage difference; ", (I_yy - 4.363276766019503e-05)/(4.363276766019503e-07), "%")
 		return I_zz, I_yy
 
 	def base_shear_flow(self):
@@ -267,8 +275,6 @@ class Geometry:
 		self.shear_flow_integrated_y[15+2*self.plane_delta] = -1/self.I_zz*	((-math.sin(0)+math.sin(-self.spacing/(self.height/2)))*self.skin_thickness*math.pow(self.height/2,3)+self.sum_booms_SC(12+2*self.plane_delta,12+2*self.plane_delta)*(self.spacing/(self.height/2)))+self.shear_flow_magnitude_y[14+2*self.plane_delta]*(self.spacing/(self.height/2))
 		self.int6 = self.shear_flow_integrated_y[14+2*self.plane_delta] + self.shear_flow_integrated_y[15+2*self.plane_delta]
 		return
-
-
 			
 	def qs0(self):#in this part of the code the only thing that needs to be added is the sum of the shear flows through the arc, sum of the shear flows through the straight part of the skin and the shear flow through the spar
 		self.integrate_shear_flows()
@@ -328,4 +334,3 @@ b737.base_shear_flow()
 #	z2.append(-a-b737.height/2)
 #print("THE LIST Z2 IS:", z2)
 #print("Shear center location is:", x.shear_center())
-
