@@ -6,7 +6,6 @@ Created on Tue Feb 25 14:01:53 2020
 """
 
 import numpy as np
-import os
 
 #global variables C_a and l_a for the chord and length of the aileron, respectively
 C_a = 0.484

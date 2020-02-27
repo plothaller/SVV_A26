@@ -122,11 +122,27 @@ class Geometry:
 		plt.show()
 		
 	def centroid(self):
+<<<<<<< HEAD:geometry_analytical.py
 		#centroid_z_area = (2*self.height)/(3*math.pi) * math.pi*self.height/2*self.skin_thickness + 2*((self.skin_thickness*self.length_skin) * ((self.chord-self.height/2)/2)) + 0*(self.height*self.skin_thickness)
 		centroid_z_area = math.pi*self.height/2*self.skin_thickness*(-self.height/math.pi) + 2*self.length_skin*self.skin_thickness*(self.chord-self.height/2)/2
 		#centroid measured from middle plate: component semi-circular area: pi*r * (-2*pi/r) ; component plate: 0 ; component rear plates: 2*(self.length_skin*self.thickness)(self.chord-self.height/2)/2
 		centroid_y_area = 0
 		total_area = math.pi*self.height/2*self.skin_thickness + 2*(self.skin_thickness*self.length_skin) + (self.height*self.skin_thickness)
+=======
+		#centroid_z_area = (2*self.height)/(3*math.pi) * math.pi*self.height/2*self.skin_thickness + 2*((self.skin_thickness*self.lenght_skin) * ((self.chord-self.height/2)/2)) + 0*(self.height*self.skin_thickness)
+		#centroid_z_area = math.pi*self.height/2*self.skin_thickness*(-self.height/math.pi) + 2*self.lenght_skin*self.skin_thickness*(self.chord-self.height/2)/2
+		total_area = math.pi*self.height/2*self.skin_thickness + self.height*self.spar_thickness + 2*self.lenght_skin*self.skin_thickness
+		centroid_z_semicircle = math.pi*self.height/2*self.skin_thickness * (-self.height/math.pi)
+		centroid_z_spar = self.height*self.spar_thickness * 0
+		centroid_z_plate = self.lenght_skin*self.skin_thickness * (self.chord-self.height/2)/2
+		centroid_z_area = centroid_z_semicircle + centroid_z_spar + 2*centroid_z_plate
+		
+		
+		
+		
+		#centroid measured from middle plate: component semi-circular area: pi*r * (-2*pi/r) ; component plate: 0 ; component rear plates: 2*(self.lenght_skin*self.thickness)(self.chord-self.height/2)/2
+		centroid_y_area = 0
+>>>>>>> stuff:geometry_analitical.py
 		for i in range(0,len(self.booms_z)):
 			centroid_z_area += self.booms_z[i]*self.str_area
 			centroid_y_area += self.booms_y[i]*self.str_area
