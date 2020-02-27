@@ -4,8 +4,9 @@ Group A26 SVV
 import numpy as np
 from macaulay import *
 from deflections import *
-#from geometry import *
+from geometry_analytical import *
 import matplotlib.pyplot as plt
+
 
 aircraft = "CRJ700" # Write either A320, F100, CRJ700 or Do228 (bear in mind capitals); this is used for aerodynamic loading
 Ca = 0.484 #m

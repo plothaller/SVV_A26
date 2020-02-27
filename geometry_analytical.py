@@ -39,18 +39,13 @@ class Geometry:
 		self.G = 28 * math.pow(10,9)
 		self.E = 73.1*math.pow(10,9)
 		self.str_area = width_str * thickness_str + height_str * thickness_str - (math.pow(thickness_str,2))
-		print("The stringer area is:", self.str_area)
 		self.perimeter = math.pi*height/2 + 2*math.sqrt(math.pow(height/2,2) + math.pow(chord - height/2,2))
 		self.spacing = (math.pi*height/2 + 2*math.sqrt(math.pow(height/2,2) + math.pow(chord - height/2,2)))/(number_str)
-		print("The spacing is:", self.spacing)
 		self.length_skin = np.sqrt(math.pow(self.height/2,2)+math.pow(self.chord - self.height/2,2))
-		print("The skin length is:", self.length_skin)
 		self.spacing_extra_booms = self.spacing/booms_per_str
 		self.booms_per_str = booms_per_str
 		self.a1 = 0.5*math.pi*math.pow(self.height/2,2)
-		print("Area1 circ:", self.a1)
 		self.a2 = (self.height/2) * (self.chord-self.height/2)
-		print("Area2 triang:", self.a2)
 		self.booms_z, self.booms_y, self.booms_area = self.booms(self.booms_per_str, True)[0], self.booms(self.booms_per_str, True)[1], self.booms(self.booms_per_str, True)[2]
 		self.shear_flow_magnitude_y = np.zeros(len(self.booms_z)+5)
 		self.shear_flow_integrated_y = np.zeros(len(self.booms_z)+5)
@@ -59,9 +54,7 @@ class Geometry:
 		self.centroid_z = self.centroid()[0]
 		self.centroid_y = self.centroid()[1]
 		self.I_zz = self.moments_of_inertia()[0]
-		print("The I_zz is:", self.I_zz)
 		self.I_yy = self.moments_of_inertia()[1]
-		print("The I_yy is:", self.I_yy)
 		if self.plane == "CRJ700":
 			self.plane_delta = 0
 		elif self.plane == "B737":
@@ -97,29 +90,27 @@ class Geometry:
 			a.append(self.str_area)
 		return z,y,a
 
-	def idealization(self):
-		fig = plt.figure()
-		ax = fig.add_subplot(111)
-		x_boom, y_boom = self.booms_z, self.booms_y
-		x_circle = np.linspace(-self.height/2, 0, 50)
-		y_circle = np.sqrt((-self.height/2)**2 - (x_circle)**2)
-		x_plate = np.linspace(0, self.chord - self.height/2, 50)
-		y_plate = self.height/2 - (self.height/2)/(self.chord-self.height/2) * x_plate
-		y_vplate = np.linspace(-self.height/2, self.height/2, 2)
-		x_vplate = y_vplate*0
-		ax.plot(x_circle, y_circle,'b')
-		ax.plot(x_circle, -y_circle,'b')
-		ax.plot(x_plate, y_plate,'b')
-		ax.plot(x_plate, -y_plate,'b')
-		ax.plot(x_vplate, y_vplate,'b')
-		ax.scatter(x_boom, y_boom)
-		ax.scatter(self.centroid_z, self.centroid_y)
-		#self.shear_center_z = self.shear_center()
-		#ax.scatter(self.shear_center_z,0)
-		ax.set_aspect(aspect=1)
-		print("The booms are located in		X: ", self.booms_z, "	Y:",self.booms_y)
-		print("The angles are for node 1:", 180/math.pi*math.acos(-self.booms_z[1]/(self.height/2)))
-		plt.show()
+	#def idealization(self):
+	#	fig = plt.figure()
+	#	ax = fig.add_subplot(111)
+	#	x_boom, y_boom = self.booms_z, self.booms_y
+	#	x_circle = np.linspace(-self.height/2, 0, 50)
+	#	y_circle = np.sqrt((-self.height/2)**2 - (x_circle)**2)
+	#	x_plate = np.linspace(0, self.chord - self.height/2, 50)
+	#	y_plate = self.height/2 - (self.height/2)/(self.chord-self.height/2) * x_plate
+	#	y_vplate = np.linspace(-self.height/2, self.height/2, 2)
+	#	x_vplate = y_vplate*0
+	#	ax.plot(x_circle, y_circle,'b')
+	#	ax.plot(x_circle, -y_circle,'b')
+	#	ax.plot(x_plate, y_plate,'b')
+	#	ax.plot(x_plate, -y_plate,'b')
+	#	ax.plot(x_vplate, y_vplate,'b')
+	#	ax.scatter(x_boom, y_boom)
+	#	ax.scatter(self.centroid_z, self.centroid_y)
+	#	#self.shear_center_z = self.shear_center()
+	#	#ax.scatter(self.shear_center_z,0)
+	#	ax.set_aspect(aspect=1)
+	#	plt.show()
 	
 	def centroid(self):
 		#centroid_z_area = (2*self.height)/(3*math.pi) * math.pi*self.height/2*self.skin_thickness + 2*((self.skin_thickness*self.length_skin) * ((self.chord-self.height/2)/2)) + 0*(self.height*self.skin_thickness)
@@ -137,7 +128,6 @@ class Geometry:
 			centroid_z_area += self.booms_z[i]*self.str_area
 			centroid_y_area += self.booms_y[i]*self.str_area
 			total_area = total_area + self.str_area
-		print("Centroid Z:", centroid_z_area/total_area)
 		return centroid_z_area/total_area, centroid_y_area/total_area
 
 	def moments_of_inertia(self):
@@ -155,7 +145,6 @@ class Geometry:
 			I_yy = I_yy + math.pow(abs(z-self.centroid_z),2) * self.str_area
 		for y in y_boom:
 			I_zz = I_zz + math.pow(abs(y-self.centroid_y),2) * self.str_area
-		print("Found I_ZZ is: ", I_zz)
 		#I_zz = 5.8159389575991465 * math.pow(10,-6)
 		print(" I_zz is: \t\t", I_zz, "\n reference I_zz: \t 5.8159389575991465e-06 \n percentage difference; ", (I_zz - 5.8159389575991465e-06)/(5.8159389575991465e-08), "%")
 		print(" I_yy is: \t\t", I_yy, "\n reference I_yy: \t 4.363276766019503e-05 \n percentage difference; ", (I_yy - 4.363276766019503e-05)/(4.363276766019503e-07), "%")
@@ -192,7 +181,6 @@ class Geometry:
 		self.shear_flow_magnitude_y[14+2*self.plane_delta] = -1/self.I_zz*	((-math.cos(-self.spacing/(self.height/2))+math.cos(-math.pi/2))*self.skin_thickness*math.pow(self.height/2,2)) + self.shear_flow_magnitude_y[13+2*self.plane_delta] - self.shear_flow_magnitude_y[16+2*self.plane_delta]
 		self.shear_flow_magnitude_y[15+2*self.plane_delta] = -1/self.I_zz*	((-math.cos(0)+math.cos(-self.spacing/(self.height/2)))*self.skin_thickness*math.pow(self.height/2,2)+self.sum_boom_SC_y(12+2*self.plane_delta,12+2*self.plane_delta)) + self.shear_flow_magnitude_y[14+2*self.plane_delta]
 	
-		print("Base_shear_flow is:", self.shear_flow_magnitude_y)
 	#Horizontal shear (Z-DIR)
 	#------------------------
 	#Region Z 1
@@ -220,7 +208,6 @@ class Geometry:
 	#Region Z 6
 		self.shear_flow_magnitude_z[14+2*self.plane_delta] = -1/self.I_yy * (self.skin_thickness*self.height/2*((-self.height/2*math.sin(-math.pi/2)-self.centroid_z*(-math.pi/2))-(-self.height/2*math.sin(-self.spacing/(self.height/2))-self.centroid_z*(-self.spacing/(self.height/2))))) + self.shear_flow_magnitude_z[13+2*self.plane_delta] - self.shear_flow_magnitude_z[16+2*self.plane_delta]
 		self.shear_flow_magnitude_z[15+2*self.plane_delta] = -1/self.I_yy * (self.skin_thickness*self.height/2*((-self.height/2*math.sin(-self.spacing/(self.height/2))-self.centroid_z*(-self.spacing/(self.height/2)))-(-self.height/2*math.sin(0)-self.centroid_z*(0)))+self.sum_boom_SC_z(12+2*self.plane_delta,12+2*self.plane_delta)*self.str_area + self.sum_boom_SC_z(0,0)*self.str_area/2) + self.shear_flow_magnitude_z[14+2*self.plane_delta]
-		print("Horizontal shear flow", self.shear_flow_magnitude_z)
 		return
 
 	def actual_shear_flow(self):
@@ -244,10 +231,8 @@ class Geometry:
 		if end > len(self.booms_y):
 			raise ValueError('Sum_boom_areas. End point is greater than the number of y_booms')
 		if start == end:
-			print("Summing booms for:", start)
 			return self.booms_y[start] * self.str_area 
 		for i in range(start, end+1):
-			print("Summing booms for:", i)
 			summation = summation + self.booms_y[i] * self.str_area
 		return summation
 
@@ -256,10 +241,8 @@ class Geometry:
 		if end > len(self.booms_z):
 			raise ValueError('Sum_boom_areas. End point is greater than the number of y_booms')
 		if start == end:
-			print("Summing booms for:", start)
 			return (self.booms_z[start]-self.centroid_z) * self.str_area 
 		for i in range(start, end+1):
-			print("Summing booms for:", i)
 			summation = summation + (self.booms_z[i]-self.centroid_z) * self.str_area
 		return summation
 	
@@ -299,12 +282,6 @@ class Geometry:
 			self.shear_flow_integrated_y[14] = -1/self.I_zz*	(self.skin_thickness*self.height/2/self.length_skin*-1/6*(math.pow(5.5*self.spacing,3) - math.pow(4.5*self.spacing,3)) + self.sum_boom_SC_y(12,12))*self.spacing + self.shear_flow_magnitude_y[13]*self.spacing
 			self.shear_flow_integrated_y[15] = -1/self.I_zz*	(self.skin_thickness*self.height/2/self.length_skin*-1/6*(math.pow(self.length_skin,3) - math.pow(5.5*self.spacing,3)) + self.sum_boom_SC_y(13,13))*(self.length_skin-5.5*self.spacing) + self.shear_flow_magnitude_y[14]*(self.length_skin-5.5*self.spacing)
 			self.int4 = self.shear_flow_integrated_y[9] + self.shear_flow_integrated_y[10] + self.shear_flow_integrated_y[11] + self.shear_flow_integrated_y[12] + self.shear_flow_integrated_y[13] + self.shear_flow_integrated_y[14] + self.shear_flow_integrated_y[15]
-		print("SF integrated 8", self.shear_flow_integrated_y[8])
-		print("SF integrated 9", self.shear_flow_integrated_y[9])
-		print("SF integrated 10", self.shear_flow_integrated_y[10])
-		print("SF integrated 11", self.shear_flow_integrated_y[11])
-		print("SF integrated 12", self.shear_flow_integrated_y[12])
-		print("SF integrated 13", self.shear_flow_integrated_y[13])
 		#Region Y 5:
 		self.shear_flow_integrated_y[16+2*self.plane_delta] = 1/self.I_zz *0.5*self.spar_thickness*math.pow(self.height/2,3)/3
 		self.int5 = self.shear_flow_integrated_y[16]
@@ -367,7 +344,6 @@ class Geometry:
 			self.shear_stress[i] = (self.shear_flow_magnitude_y[i]*y_shear + self.shear_flow_magnitude_z[i]*z_shear)/self.skin_thickness
 		self.shear_stress[len(self.shear_flow_magnitude_y)-2] = (self.shear_flow_magnitude_y[len(self.shear_flow_magnitude_y)-2]*y_shear + self.shear_flow_magnitude_z[len(self.shear_flow_magnitude_y)-2]*z_shear)/self.skin_thickness
 		self.shear_stress[len(self.shear_flow_magnitude_y)-1] = (self.shear_flow_magnitude_y[len(self.shear_flow_magnitude_y)-1]*y_shear + self.shear_flow_magnitude_z[len(self.shear_flow_magnitude_y)-1]*z_shear)/self.skin_thickness
-		print("THE shear stress is:", self.shear_stress)
 		return self.shear_stress
 
 	def Von_misses_stress(self, shear_stress, normal_stress):
@@ -453,10 +429,6 @@ class Geometry:
 		self.shear_center_z = self.shear_center()
 		#ax.scatter(self.shear_center_z,0)
 		ax.set_aspect(aspect=1)
-		plt.show()
-		print("The booms are located in		X: ", self.booms_z, "	Y:",self.booms_y)
-		print("The angles are for node 1:", 180/math.pi*math.acos(-self.booms_z[1]/(self.height/2)))
-		print("The von misses stresses are:", von_misses[::10])
 		
 		fig = plt.figure()
 		ax = fig.add_subplot(111)
@@ -467,9 +439,8 @@ class Geometry:
 
 
 x = Geometry(17.3/100,1.1/1000,2.5/1000,1.2/1000,1.4/100,1.8/100,0.484,13,1, "CRJ700")
-x.idealization()
 #x.integrate_shear_flows()
-print("Shear center location CRJ700 is:*******************************************************", x.shear_center())
+#print("Shear center location CRJ700 is:*******************************************************", x.shear_center())
 x.Compute_section(5, 5, 2, 2)
 
 z =  [-0, -0.03692049, -0.12081074, -0.20884515, -0.29687956, -0.38491397, -0.47294838, -0.56098279, -0.56098279, -0.47294838, -0.38491397, -0.29687956, -0.20884515, -0.12081074 , -0.03692049]
@@ -479,7 +450,7 @@ z3 =  [-0.1025, -0.06557951, 0.018310740000000006, 0.10634515000000001, 0.194379
 
 b737 = Geometry(20.5/100,1.1/1000,2.8/1000,1.2/1000,1.6/100,1.9/100,0.605,15,1, "B737")
 b737.idealization()
-print("Shear center location B737 is:*******************************************************", b737.shear_center())
+#print("Shear center location B737 is:*******************************************************", b737.shear_center())
 
 #for a in z:
 #	z2.append(-a-b737.height/2)

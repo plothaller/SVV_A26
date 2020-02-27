@@ -36,8 +36,6 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
     x, z = AV3.make_x_and_z()
     AeroLoading = AV3.MapAeroLoading(r"C:\Users\Guille\Documents\GitHub\SVV_A26\aerodynamicloadcrj700.dat")   #INPUT FILE LOCATION FOR AERO LOADING HERE
     w_bar = AV3.make_w_bar(AeroLoading)
-<<<<<<< HEAD
-    input("ojdlfkldkfddf")
 # =============================================================================
 #     x_max_double_integral_plus_minus_zsc = 0    #INPUT X_MAX FOR THE DOUBLE INTEGRAL PLUSMINUS Z_SC HERE
 #     z_sc = 0        #INPUT SHEAR CENTRE LOCATION HERE
@@ -66,9 +64,6 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
 #     TRIPLEINTEGRALPLUSZMINUSZSC = AV3.integrate_1d(x_three_plus_minus_zsc_2, y_three_plus_minus_zsc_2, x_max_three_plus_minus_zsc_2)
 #     FIVEINTEGRAL = AV3.integrate_1d(x_five_4, y_five_4, x_max_five_4)
 # =============================================================================
-=======
-
->>>>>>> 6caf1945c2a5261d2d5c2e317e40dbcf5989d5f2
 
     #A matrix:
     # row 0
