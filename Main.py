@@ -36,8 +36,7 @@ G = 28*10**9 #N/m2
 #Entering numbers from verification model
 I_zz = 5.81593895759915e-06
 I_yy = 4.363276766019503e-05
-zsc = (+0.09185594953325858 - ha/2)
-print('zsc =',  zsc)
+zsc = -0.087
 J = 0.00018782860610613963
 
 

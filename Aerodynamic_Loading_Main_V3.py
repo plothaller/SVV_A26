@@ -41,7 +41,7 @@ def MapAeroLoading(filename):
             i += 1
         return AeroLoading
     
-AeroLoading = MapAeroLoading("aerodynamicloadcrj700.dat")
+AeroLoading = 1000*MapAeroLoading("aerodynamicloadcrj700.dat")
     
 def findIndex(loc_x, loc_z):
     #input: x, z; location of a point on the aileron surface
@@ -141,13 +141,13 @@ def integrate_1d_tau(x, y, x_max, x_sc):
     i = 1
     while x[i] < x_max:
         total += (x[i] - x[i-1])*(y[i]+y[i-1])/2 * ((x[i] + x[i-1])*0.5 - x_sc)
-        print(((x[i] + x[i-1])*0.5 - x_sc))
+        #print(((x[i] + x[i-1])*0.5 - x_sc))
         #print(x[i-1], x[i], total)
         i += 1
     i -= 1
     if x_max > x[i]:
         total += (x_max - x[i])*(LinearInterpolatePos(y[i], y[i+1], x[i], x[i+1], x_max) + y[i])/2* ((x[i] + x_max)*0.5 - x_sc)
-        print((x[i] + x_max)*0.5 - x_sc)
+        #print((x[i] + x_max)*0.5 - x_sc)
         #print(x[i], x_max, total)
     return total
 
