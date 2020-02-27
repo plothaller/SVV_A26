@@ -112,17 +112,22 @@ class Geometry:
 		return centroid_z_area/total_area, centroid_y_area/total_area
 
 	def moments_of_inertia(self, z_boom, y_boom):
-		beta = -math.acos((self.chord-self.height/2)/(self.lenght_skin))
+		beta = math.acos((self.chord-self.height/2)/(self.lenght_skin))
 		I_zz = 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/12 + (self.lenght_skin*self.skin_thickness)*math.pow(self.height/4,2)) + (self.spar_thickness*math.pow(self.height,3))/12 + (math.pi/8 * ((self.height/2 + self.skin_thickness/2)**4 - (self.height/2 - self.skin_thickness/2)**4)) 	#(math.pi*math.pow(self.height/2,3)*self.skin_thickness)/2 #; alternative method for calculating the MoI of the semi-circular arc
-		I_yy = (math.pi/8*math.pow(self.height/2,3)*self.skin_thickness)/2 + (math.pi*self.height/2*self.skin_thickness*(self.centroid_z+(self.height/math.pi))**2) + (self.height*self.spar_thickness**3/12) + (self.height*self.spar_thickness*self.centroid_z**2) + 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/(12) + (self.lenght_skin*self.skin_thickness) * (self.chord-self.height/2 -self.centroid_z)**2)
-		
+		#I_yy = (math.pi/8*math.pow(self.height,3)*self.skin_thickness)/2 + (math.pi*self.height/2*self.skin_thickness*(self.centroid_z+(self.height/math.pi))**2) + ((self.height*self.spar_thickness**3)/12) + (self.height*self.spar_thickness*self.centroid_z**2) + 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/(12) + (self.lenght_skin*self.skin_thickness) * ((self.chord-self.height/2)/2 -self.centroid_z)**2)
+		#I_yy =  + 				# 2*((math.pow(self.lenght_skin,3)*self.skin_thickness*math.pow(math.sin(beta),2))/(12) + (self.lenght_skin*self.skin_thickness) * ((self.chord-self.height/2)/2 -self.centroid_z)**2)
+		I_yy_semi_circular = ((math.pi/8 - 8/(9*math.pi))*((self.height/2+self.skin_thickness/2)**4 - (self.height/2 - self.skin_thickness/2)**4)) + (self.height/2*math.pi*self.skin_thickness*(self.centroid_z+self.height/math.pi)**2)
+		I_yy_spar = ((self.height*self.spar_thickness**3)/12) + (self.height*self.spar_thickness*self.centroid_z**2)
+		I_yy_plates = 2*(self.skin_thickness*(self.lenght_skin)**3 * math.cos(beta)**2/12) + ((self.chord-self.height/2)/2 - self.centroid_z)**2 * self.skin_thickness*self.lenght_skin*2
+		I_yy = I_yy_semi_circular + I_yy_spar + I_yy_plates
 		for z in z_boom:
 			I_yy = I_yy + math.pow(abs(z-self.centroid_z),2) * self.str_area
 		for y in y_boom:
 			I_zz = I_zz + math.pow(abs(y-self.centroid_y),2) * self.str_area
 		print("Found I_ZZ is: ", I_zz)
-		I_zz = 5.8159389575991465 * math.pow(10,-6)
-		print("I_ZZ is:", I_zz)
+		#I_zz = 5.8159389575991465 * math.pow(10,-6)
+		print(" I_zz is: \t\t", I_zz, "\n reference I_zz: \t 5.8159389575991465e-06 \n percentage difference; ", (I_zz - 5.8159389575991465e-06)/(5.8159389575991465e-08), "%")
+		print(" I_yy is: \t\t", I_yy, "\n reference I_yy: \t 4.363276766019503e-05 \n percentage difference; ", (I_yy - 4.363276766019503e-05)/(4.363276766019503e-07), "%")
 		return I_zz, I_yy
 
 	def base_shear_flow(self):
