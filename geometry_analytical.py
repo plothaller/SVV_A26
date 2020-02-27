@@ -61,6 +61,7 @@ class Geometry:
 			self.plane_delta = 1
 		else:
 			raise ValueError("Plane is neither CRJ700 nor B737")
+		self.actual_shear_flow()
 
 
 
@@ -339,7 +340,6 @@ class Geometry:
 		return normal_stress
 		
 	def compute_shear_stress(self, y_shear, z_shear):
-		self.actual_shear_flow()
 		for i in range(0,len(self.shear_flow_magnitude_y)-2):
 			self.shear_stress[i] = (self.shear_flow_magnitude_y[i]*y_shear + self.shear_flow_magnitude_z[i]*z_shear)/self.skin_thickness
 		self.shear_stress[len(self.shear_flow_magnitude_y)-2] = (self.shear_flow_magnitude_y[len(self.shear_flow_magnitude_y)-2]*y_shear + self.shear_flow_magnitude_z[len(self.shear_flow_magnitude_y)-2]*z_shear)/self.skin_thickness
@@ -349,21 +349,17 @@ class Geometry:
 	def Von_misses_stress(self, shear_stress, normal_stress):
 		return math.sqrt(math.pow(normal_stress,2)+3*math.pow(shear_stress,2))
 	
-	def Compute_section(self, Moment_z, Moment_y, Shear_z, Shear_y):
-		Moment_z = 5
-		Moment_y = 5
-		Shear_z = 5
-		Shear_y	= 5
+	def Compute_section(self, Moment_z, Moment_y, Shear_z, Shear_y, Torque):
 		
-		z_circle = np.linspace(-self.height/2, 0, 1500)
+		z_circle = np.linspace(-self.height/2, 0, 500)
 		y_circle = np.sqrt((-self.height/2)**2 - (z_circle)**2)
-		z_circle_2 = np.linspace(0, -self.height/2, 1500)
+		z_circle_2 = np.linspace(0, -self.height/2, 500)
 		y_circle_2 = -np.sqrt((-self.height/2)**2 - (z_circle_2)**2)
-		z_plate = np.linspace(0, self.chord - self.height/2, 1500)
+		z_plate = np.linspace(0, self.chord - self.height/2, 500)
 		y_plate = self.height/2 - (self.height/2)/(self.chord-self.height/2) * z_plate
-		z_plate_2 = np.linspace(self.chord - self.height/2, 0, 1500)
+		z_plate_2 = np.linspace(self.chord - self.height/2, 0, 500)
 		y_plate_2 = -self.height/2 + (self.height/2)/(self.chord-self.height/2) * z_plate_2
-		y_vplate = np.linspace(-self.height/2, self.height/2,500)
+		y_vplate = np.linspace(-self.height/2, self.height/2,200)
 		z_vplate = y_vplate*0
 
 		z_pos = np.append(np.append(np.append(np.append(z_circle, z_plate), z_plate_2), z_circle_2),z_vplate)
@@ -374,7 +370,7 @@ class Geometry:
 		normal_stress = np.zeros(len(z_pos))
 		for i in range(0,len(normal_stress)):
 			normal_stress[i] = self.normal_stress(z_pos[i], y_pos[i], Moment_z, Moment_y)
-		self.compute_shear_stress(Shear_y, Shear_z)
+		Shear_stress = self.compute_shear_stress(Shear_y, Shear_z)
 
 		transversed = 0
 		shear_index = 0
@@ -391,7 +387,7 @@ class Geometry:
 				shear_index = shear_index+1
 				print(" Increasing +1: top plate",shear_index)
 				
-			von_misses[i+1500] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
+			von_misses[i+500] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
 
 		shear_index = shear_index + 1
 		for i in range(0,len(z_plate_2)):
@@ -399,14 +395,14 @@ class Geometry:
 				shear_index = shear_index+1
 				print(" Increasing bottom plate",shear_index)
 				
-			von_misses[i+3000] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
+			von_misses[i+1000] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
 
 		shear_index = shear_index+1
 		for i in range(0,len(z_circle_2)):
 			if shear_index < (len(self.booms_z)+2) and z_circle_2[i] < self.booms_z[shear_index-2]:
 				shear_index = shear_index+1
 				print(" Increasing +1: bottom circle",shear_index)
-			von_misses[i+4500] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
+			von_misses[i+1500] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
 
 		shear_index = shear_index+1
 		for i in range(0,len(z_vplate)):
@@ -414,26 +410,27 @@ class Geometry:
 				shear_index = shear_index+1
 				print(" Increasing +1: vertical plate",shear_index)
 				
-			von_misses[i+6000] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
+			von_misses[i+2000] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
 	
 
 		von_mises_max = np.max(von_misses)
 		von_mises_min = np.min(von_misses)
-		fig = plt.figure()
-		ax = fig.add_subplot(111)
-		#x_boom, y_boom = self.booms_z, self.booms_y
-		#ax.scatter(x_boom, y_boom)
-		#ax.scatter(self.centroid_z, self.centroid_y)
-		img = ax.scatter(z_pos, y_pos, c=von_misses, cmap=plt.cm.RdYlGn) #cmap = ((255*(von_misses[i]-von_mises_min)/(von_mises_max-von_mises_min)),(255*(1-(von_misses[i]-von_mises_min)/(von_mises_max-von_mises_min))),0))
-		fig.colorbar(img)
-		self.shear_center_z = self.shear_center()
-		#ax.scatter(self.shear_center_z,0)
-		ax.set_aspect(aspect=1)
+		#fig = plt.figure()
+		#ax = fig.add_subplot(111)
+		##x_boom, y_boom = self.booms_z, self.booms_y
+		##ax.scatter(x_boom, y_boom)
+		##ax.scatter(self.centroid_z, self.centroid_y)
+		#img = ax.scatter(z_pos, y_pos, c=von_misses, cmap=plt.cm.RdYlGn) #cmap = ((255*(von_misses[i]-von_mises_min)/(von_mises_max-von_mises_min)),(255*(1-(von_misses[i]-von_mises_min)/(von_mises_max-von_mises_min))),0))
+		#fig.colorbar(img)
+		#self.shear_center_z = self.shear_center()
+		##ax.scatter(self.shear_center_z,0)
+		#ax.set_aspect(aspect=1)
 		
-		fig = plt.figure()
-		ax = fig.add_subplot(111)
-		ax.plot(z_pos,von_misses)
-		plt.show()
+		#fig = plt.figure()
+		#ax = fig.add_subplot(111)
+		#ax.plot(z_pos,von_misses)
+		#plt.show()
+		return von_misses, normal_stress, Shear_stress, z_pos, y_pos  
 
 
 
@@ -441,7 +438,6 @@ class Geometry:
 x = Geometry(17.3/100,1.1/1000,2.5/1000,1.2/1000,1.4/100,1.8/100,0.484,13,1, "CRJ700")
 #x.integrate_shear_flows()
 #print("Shear center location CRJ700 is:*******************************************************", x.shear_center())
-x.Compute_section(5, 5, 2, 2)
 
 z =  [-0, -0.03692049, -0.12081074, -0.20884515, -0.29687956, -0.38491397, -0.47294838, -0.56098279, -0.56098279, -0.47294838, -0.38491397, -0.29687956, -0.20884515, -0.12081074 , -0.03692049]
 z2 = []
