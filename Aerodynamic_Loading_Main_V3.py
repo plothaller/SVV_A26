@@ -41,7 +41,7 @@ def MapAeroLoading(filename):
             i += 1
         return AeroLoading
     
-AeroLoading = MapAeroLoading(r"C:\Users\Max van Huffelen\Desktop\Quick Access\University\SVV\aerodynamicloadcrj700.dat")
+AeroLoading = MapAeroLoading(r"C:\Users\lotha\SVV_A26\aerodynamicloadcrj700.dat")
     
 def findIndex(loc_x, loc_z):
     #input: x, z; location of a point on the aileron surface
@@ -212,6 +212,18 @@ def DoubleIntegral(x_max):
     
     return integrate_1d(x, w_bar, x_max)
 
+def ThreeIntegral(x_max):
+    x = make_x_and_z()[0]
+    # Integration 1
+    w_bar = make_w_bar()
+
+    # Integration 2
+    int_list_2, x_list_2 = integrate_1d_list(x, w_bar, x_max)
+
+    # Integration 3
+    return integrate_1d(int_list_2, x_list_2, x_max)
+
+
 def FiveIntegral(x_max):
     x = make_x_and_z()[0]
     #Integration 1
@@ -245,5 +257,3 @@ def TripleIntegralZSC(x_max, z_sc):
     
     #Integration 3
     return integrate_1d(x_list_2, int_list_2, x_max)
-    
-    

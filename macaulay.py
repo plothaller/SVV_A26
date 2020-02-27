@@ -34,7 +34,7 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
     #intergral placeholders
     
     x, z = AV3.make_x_and_z()
-    AeroLoading = AV3.MapAeroLoading(r"C:\Users\Max van Huffelen\Desktop\Quick Access\University\SVV\aerodynamicloadcrj700.dat")   #INPUT FILE LOCATION FOR AERO LOADING HERE
+    AeroLoading = AV3.MapAeroLoading(r"C:\Users\lotha\SVV_A26\aerodynamicloadcrj700.dat")   #INPUT FILE LOCATION FOR AERO LOADING HERE
     w_bar = AV3.make_w_bar(AeroLoading)
 # =============================================================================
 #     x_max_double_integral_plus_minus_zsc = 0    #INPUT X_MAX FOR THE DOUBLE INTEGRAL PLUSMINUS Z_SC HERE
@@ -135,7 +135,7 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
 
     #row 11
     A[11, 0] = (zsc*(ha/2)*np.cos(theta)*(1/(G*J))*(xi1 - x1)) + ((1/(6*E*I_zz))*np.sin(theta)*(xi1-x1)**3) + (zsc**2*np.sin(theta)*(1/(G*J))*(xi1-x1))
-    A[11, 4] = np.cos(theta) * (xi1 - x1) ** 3 / (6 * E * I_yy)
+    A[11, 4] = np.cos(theta) * (x1 - xi1) ** 3 / (6 * E * I_yy)
     A[11, 7] = (xi1*np.sin(theta))
     A[11, 8] = (np.sin(theta))
     A[11, 9] = (xi1*np.cos(theta))
@@ -147,18 +147,16 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
     b[1] = P * np.cos(theta)
     b[2] = (ha / 2) * P * np.cos(theta) - (zsc) * P * np.sin(theta) - AV3.DoubleIntegralZSC(x[-1], zsc)
     b[3] = P * np.cos(theta) * (la - xi2)
-    b[4] = P * np.sin(theta) * (la - xi2) + AV3.DoubleIntegral(x[-1])
+    b[4] = P * np.sin(theta) * (la - xi2) + AV3.ThreeIntegral(x[-1])
     b[5] = d1*np.cos(theta) + (np.cos(theta)/(E*I_zz))*AV3.FiveIntegral(x1) - ((zsc*np.cos(theta))/(G*J))*AV3.TripleIntegralZSC(x1, zsc)
     b[6] = -d1*np.sin(theta)
     b[7] = (1/(E*I_zz))*AV3.FiveIntegral(x2) - (zsc/(G*J))*AV3.TripleIntegralZSC(x2, zsc)
-    b[9] = d3*np.cos(theta) + (P*np.sin(theta)*(1/(6*E*I_zz))*(x3-xi2)**3) + (zsc*(zsc)*P*np.sin(theta)*(x3-xi2)*(1/(G*J))) - (zsc*(ha/2)*(1/(G*J)*P*np.cos(theta)*(x3-xi2))) + (1/(E*I_zz))*AV3.FiveIntegral(x3) +(zsc*(1/(G*J))*AV3.TripleIntegralZSC(x3, zsc))
+    b[9] = d3*np.cos(theta) + (P*np.sin(theta)*(1/(6*E*I_zz))*(x3-xi2)**3) + (zsc*(zsc)*P*np.sin(theta)*(x3-xi2)*(1/(G*J))) + (zsc*(ha/2)*(1/(G*J)*P*np.cos(theta)*(x3-xi2))) + (1/(E*I_zz))*AV3.FiveIntegral(x3) +(zsc*(1/(G*J))*AV3.TripleIntegralZSC(x3, zsc))
     b[10] = -d3*np.sin(theta) + P*np.cos(theta)*((x3 - xi2)**3)/(6*E*I_yy)
     b[11] = -((1/(G*J))*(ha/2)*np.cos(theta)*AV3.TripleIntegralZSC(xi1, zsc)) + ((1/(E*I_zz))*np.sin(theta)*AV3.FiveIntegral(xi1)) - (zsc*(1/(G*J))*np.sin(theta)*AV3.TripleIntegralZSC(xi1, zsc))
 
     # solve for x
     x = np.linalg.solve(A, b)
-
-    Fy = x[0] + x[1] + x[2] + x[3]*np.sin(theta) - P*np.sin(theta)
-    Fz = x[3]*np.cos(theta) - P*np.cos(theta) + x[4] + x[5] + x[6]
-    print(Fy, Fz)
-    return [x]
+    print(A)
+    print(b)
+    return [x], A, b

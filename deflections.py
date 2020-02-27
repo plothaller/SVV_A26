@@ -1,4 +1,5 @@
 import numpy as np
+import Aerodynamic_Loading_Main_V3 as AV3
 
 #The deflections.py file contains the functions that produce the different deflection plots
 
@@ -22,16 +23,16 @@ def internal_moment_y(la, F_I, F_1z, F_2z, F_3z, x1, x2, x3, xa, theta, P):
     return x, y
 
 
-def internal_moment_z(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P):
+def internal_moment_z(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, zsc):
     # Temporary variables:
     xi1 = x2 - xa/2
     xi2 = x2 + xa/2
     x = np.linspace(0, la, 500)
     y = []
-    triple_int = 0
+
 
     for i in x:
-        y.append(-F_1y*macaulay(i, x1, 1) - F_I*np.sin(theta)*macaulay(i, xi1, 1) - F_2y * macaulay(i, x2, 1) + P*np.sin(theta)*macaulay(i, xi2, 1) - F_3y*macaulay(i, x3, 1) + triple_int)
+        y.append(-F_1y*macaulay(i, x1, 1) - F_I*np.sin(theta)*macaulay(i, xi1, 1) - F_2y * macaulay(i, x2, 1) + P*np.sin(theta)*macaulay(i, xi2, 1) - F_3y*macaulay(i, x3, 1) + AV3.ThreeIntegral(i))
 
     return x, y
 
@@ -41,10 +42,10 @@ def torque(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, zsc, ha):
     xi2 = x2 + xa / 2
     x = np.linspace(0, la, 500)
     y = []
-    triple_int = 0
+
 
     for i in x:
-        y.append((zsc*F_1y*macaulay(i, x1, 0) + (ha/2)*F_I*np.cos(theta)*macaulay(i, xi1, 0) + zsc*F_I*np.sin(theta)*macaulay(i, xi1, 0) + zsc* F_2y*macaulay(i, x2, 0) - zsc*P*np.sin(theta)*macaulay(i, xi2, 0) + zsc*F_3y*macaulay(i, x3, 0)))
+        y.append((zsc*F_1y*macaulay(i, x1, 0) + (ha/2)*F_I*np.cos(theta)*macaulay(i, xi1, 0) + zsc*F_I*np.sin(theta)*macaulay(i, xi1, 0) + zsc* F_2y*macaulay(i, x2, 0) - zsc*P*np.sin(theta)*macaulay(i, xi2, 0) + zsc*F_3y*macaulay(i, x3, 0) +AV3.DoubleIntegralZSC(i, zsc)))
 
     return x, y
 
@@ -56,10 +57,10 @@ def v_deflection(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, c1, c2,  E
     k = -1/(E*I_zz)
     x_v = np.linspace(0, la, 500)
     y_v = []
-    FIVEINTEGRAL = 0
+
 
     for i in x_v:
-        y_v.append(k*(-(F_1y/6)*macaulay(i, x1, 3) - (F_I/6)*np.sin(theta)*macaulay(i, xi1, 3) - (F_2y/6)*macaulay(i, x2, 3) + (P/6)*np.sin(theta)*macaulay(i, xi2, 3) - (F_3y/6)*macaulay(i, x3, 3) + FIVEINTEGRAL) + c1*i + c2)
+        y_v.append(k*(-(F_1y/6)*macaulay(i, x1, 3) - (F_I/6)*np.sin(theta)*macaulay(i, xi1, 3) - (F_2y/6)*macaulay(i, x2, 3) + (P/6)*np.sin(theta)*macaulay(i, xi2, 3) - (F_3y/6)*macaulay(i, x3, 3) + 0) + c1*i + c2) #AV3.FiveIntegral(i)
 
     return x_v, y_v
 
@@ -100,7 +101,7 @@ def shear_y(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P):
     DOUBLEINTEGRAL = 0
 
     for i in x:
-        y.append(-F_1y*macaulay(i, x1, 0) - F_I*np.sin(theta)*macaulay(i, xi1, 0) - F_2y*macaulay(i, x2, 0) + P*np.sin(theta)*macaulay(i, xi2, 0) - F_3y*macaulay(i, x3, 0) + DOUBLEINTEGRAL)
+        y.append(-F_1y*macaulay(i, x1, 0) - F_I*np.sin(theta)*macaulay(i, xi1, 0) - F_2y*macaulay(i, x2, 0) + P*np.sin(theta)*macaulay(i, xi2, 0) - F_3y*macaulay(i, x3, 0) + AV3.DoubleIntegral(i))
 
     return x, y
 
@@ -111,11 +112,10 @@ def Twist(la, F_I, F_1y, F_2y, F_3y, x1, x2, x3, xa, theta, P, c5, G, J, zsc, ha
     k = 1 / (G * J)
     x = np.linspace(0, la, 500)
     y = []
-    triple_int_z_zsc = 0
+
 
     for i in x:
-        y.append((k*((F_1y*zsc)*macaulay(i, x1, 1) + (F_2y*zsc)*macaulay(i, x2, 1) + (F_I*(ha/2)*np.cos(theta))*macaulay(i, xi1, 1) + (F_I*zsc*np.sin(theta))*macaulay(i, xi2, 1) + (F_3y*zsc)*macaulay(i, x3, 1)) - P*(ha/2)*np.cos(theta)*macaulay(i, xi2, 1) - P*zsc*np.sin(theta)*macaulay(i, xi2, 1) + triple_int_z_zsc) + c5)
-
+        y.append((k*((F_1y*zsc)*macaulay(i, x1, 1) + (F_2y*zsc)*macaulay(i, x2, 1) + (F_I*(ha/2)*np.cos(theta))*macaulay(i, xi1, 1) + (F_I*zsc*np.sin(theta))*macaulay(i, xi2, 1) + (F_3y*zsc)*macaulay(i, x3, 1)) - P*(ha/2)*np.cos(theta)*macaulay(i, xi2, 1) - P*zsc*np.sin(theta)*macaulay(i, xi2, 1) + AV3.TripleIntegralZSC(i, zsc)) + c5)
 
     return x, y
 
