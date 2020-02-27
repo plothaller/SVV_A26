@@ -42,8 +42,8 @@ J = 0.00018782860610613963
 
 #Calculating Reaction forces
 
-x, A, b = Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
-F_1y, F_2y, F_3y, F_I, F_1z, F_2z, F_3z, c1, c2, c3, c4, c5 = x[0][0][0], x[0][1][0], x[0][2][0], x[0][3][0], x[0][4][0], x[0][5][0], x[0][6][0], x[0][7][0], x[0][8][0], x[0][9][0], x[0][10][0], x[0][11][0]
+#x, A, b = Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
+#F_1y, F_2y, F_3y, F_I, F_1z, F_2z, F_3z, c1, c2, c3, c4, c5 = x[0][0][0], x[0][1][0], x[0][2][0], x[0][3][0], x[0][4][0], x[0][5][0], x[0][6][0], x[0][7][0], x[0][8][0], x[0][9][0], x[0][10][0], x[0][11][0]
 
 
 #Plotting deflections

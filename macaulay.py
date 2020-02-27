@@ -34,7 +34,7 @@ def Macaulay(la, x1, x2, x3, xa, ha, d1, d3, theta, P, zsc, E, J, G, I_zz, I_yy)
     #intergral placeholders
     
     x, z = AV3.make_x_and_z()
-    AeroLoading = AV3.MapAeroLoading(r"C:\Users\lotha\SVV_A26\aerodynamicloadcrj700.dat")   #INPUT FILE LOCATION FOR AERO LOADING HERE
+    AeroLoading = AV3.MapAeroLoading(r"C:\Users\Guille\Documents\GitHub\SVV_A26\aerodynamicloadcrj700.dat")   #INPUT FILE LOCATION FOR AERO LOADING HERE
     w_bar = AV3.make_w_bar(AeroLoading)
 
 

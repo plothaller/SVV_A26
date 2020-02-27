@@ -6,7 +6,6 @@ Created on Tue Feb 25 14:01:53 2020
 """
 
 import numpy as np
-import os
 
 #global variables C_a and l_a for the chord and length of the aileron, respectively
 C_a = 0.484
@@ -77,7 +76,7 @@ def LinearInterpolate(Q1, Q2, x_0, x_1):
 
 def integrate_1d(x, y, x_max):
     #inputs: x; an array containing all the x-locationx of the points. y; an array containing all the y values of the points. x_i; the value of x to where we integrate.
-    #outputs int_x; the total integrated value until x_i.
+    #outputs total; the total integrated value until x_i.
     
     #assert len(x) == len(y) #both arrays must have the same size
     
@@ -163,7 +162,7 @@ def integrate_1d_list_tau(x, y, x_max, x_sc):
     if x_max < x[0]:
         return [0], [x_max]
     if len(x) < 2:
-        return [0], [x_max]
+        return [0], [x_max]	
     int_list.append(0)
     x_new.append(x[0])
     while x[i] < x_max:
