@@ -68,11 +68,6 @@ def LinearInterpolatePos(Q1, Q2, x_0, x_1, x):
     #inputs: Q1, Q2, x_0, x_1, x; values of function Q1, Q2 at points x0 and x1, respectively, and a location x where the interpolating function is to be evaluated
     return Q1 + (Q2-Q1)/(x_1 - x_0)*(x-x_0)
 
-def LinearInterpolate(Q1, Q2, x_0, x_1):
-    #returns the weights a, b of the interpolating function a + b x
-    return np.array([[Q1 - x_0*(Q2 - Q1)/(x_1 - x_0)], [(Q2 - Q1)/(x_1 - x_0)]])
-
-
 
 def integrate_1d(x, y, x_max):
     #inputs: x; an array containing all the x-locationx of the points. y; an array containing all the y values of the points. x_i; the value of x to where we integrate.
