@@ -15,6 +15,8 @@ CRJ700 = Geometry(17.3/100,1.1/1000,2.5/1000,1.2/1000,1.4/100,1.8/100,0.484,13,1
 B737 = Geometry(20.5/100,1.1/1000,2.8/1000,1.2/1000,1.6/100,1.9/100,0.605,15,1, "B737")
 plane = CRJ700
 
+von_misses, normal_stress, shear_stress, z_pos, y_pos = plane.Compute_section(2, 2, 2, 2, 2)
+
 aircraft = "CRJ700" # Write either A320, F100, CRJ700 or Do228 (bear in mind capitals); this is used for aerodynamic loading
 Ca = 0.484 #m
 la = 1.691  # m
@@ -115,6 +117,7 @@ plt.ylabel('T(x)')
 plt.show()
 
 slices = 500
+sections = np.arrange(0,la,linspace)
 return_lenght = len(plane.Compute_section(0, 0, 0, 0, 0)[0])
 von_misses_total	= np.zeros(slices*return_lenght)
 normal_stress_total	= np.zeros(slices*return_lenght)
@@ -122,9 +125,11 @@ shear_stress_total	= np.zeros(slices*return_lenght)
 z_pos_total	= np.zeros(slices*return_lenght)
 y_pos_total	= np.zeros(slices*return_lenght)
 x_pos_total	= np.zeros(slices*return_lenght)
-for section in range(0,slices,5):
+von_mises_max_total = np.zeros(slices)
+for section in range(0,slices):
 	print("Doing section:	[", section,"/", len(x),"]")
 	von_misses, normal_stress, shear_stress, z_pos, y_pos = plane.Compute_section(y_3[section], y_4[section], y_5[section], y_6[section], y_7[section])
+	von_mises_max_total[section] = np.max(von_misses) 
 	for i in range(0,len(von_misses)):
 		von_misses_total[section*return_lenght+i] = von_misses[i]
 		z_pos_total[section*return_lenght+i] = z_pos[i]
@@ -134,21 +139,42 @@ for section in range(0,slices,5):
 von_mises_max = np.max(von_misses_total)
 von_mises_min = np.min(von_misses_total)
 #print(x_pos_total)
+#fig = plt.figure()
+#ax = fig.add_subplot(111, projection='3d')
+###x_boom, y_boom = self.booms_z, self.booms_y
+###ax.scatter(x_boom, y_boom)
+###ax.scatter(self.centroid_z, self.centroid_y)
+###self.shear_center_z = self.shear_center()
+###ax.scatter(self.shear_center_z,0)
+#img = ax.scatter(x_pos_total[::5], y_pos_total[::5]+0.15, z_pos_total[::5] ,c=von_misses_total[::5], cmap=plt.cm.RdYlGn) #cmap = ((255*(von_misses[i]-von_mises_min)/(von_mises_max-von_mises_min)),(255*(1-(von_misses[i]-von_mises_min)/(von_mises_max-von_mises_min))),0))
+#fig.colorbar(img)
+#ax.set_xlim3d(0,2)
+#ax.set_ylim3d(0,0.2)
+#ax.set_zlim3d(0,0.5)
+#plt.show()
 fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+ax = fig.add_subplot(111)
 ##x_boom, y_boom = self.booms_z, self.booms_y
-##ax.scatter(x_boom, y_boom)
-##ax.scatter(self.centroid_z, self.centroid_y)
-##self.shear_center_z = self.shear_center()
-##ax.scatter(self.shear_center_z,0)
-img = ax.scatter(x_pos_total[::5], y_pos_total[::5]+0.15, z_pos_total[::5] ,c=von_misses_total[::5], cmap=plt.cm.RdYlGn) #cmap = ((255*(von_misses[i]-von_mises_min)/(von_mises_max-von_mises_min)),(255*(1-(von_misses[i]-von_mises_min)/(von_mises_max-von_mises_min))),0))
-fig.colorbar(img)
-ax.set_xlim3d(0,2)
-ax.set_ylim3d(0,0.2)
-ax.set_zlim3d(0,0.5)
+ax.scatter(sections, von_mises_max_total)
+
 plt.show()
 
-#https://stackoverflow.com/questions/51152043/creating-a-3d-surface-plot-from-three-1d-arrays???
+#x = np.reshape(z_pos_total, (return_lenght, return_lenght))
+#y = np.reshape(z_pos_total, (return_lenght, return_lenght))
+#z = np.reshape(von_misses_total, (return_lenght, return_lenght))
+
+
+#fig = plt.figure()
+#ax = fig.add_subplot(111, projection='3d')
+
+#ax.plot_surface(x, y, z)
+
+#ax.set_xlabel('X Label')
+#ax.set_ylabel('Y Label')
+#ax.set_zlabel('Z Label')
+
+#plt.show()
+
 
 
 

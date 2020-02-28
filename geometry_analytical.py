@@ -61,7 +61,8 @@ class Geometry:
 			self.plane_delta = 1
 		else:
 			raise ValueError("Plane is neither CRJ700 nor B737")
-		self.actual_shear_flow()
+		self.qs0()
+		self.shear_center()
 
 
 
@@ -212,8 +213,8 @@ class Geometry:
 		return
 
 	def actual_shear_flow(self):
+		self.base_shear_flow()
 		self.qs0()
-		self.shear_center()
 		if self.plane == "CRJ700":
 			self.shear_flow_magnitude_y[0] = self.shear_flow_magnitude_y[0] - self.qs01
 			self.shear_flow_magnitude_y[1] = self.shear_flow_magnitude_y[1] - self.qs01 
@@ -225,6 +226,22 @@ class Geometry:
 			self.shear_flow_magnitude_y[13] = self.shear_flow_magnitude_y[13] - self.qs02
 			for i in range(3,13):
 				self.shear_flow_magnitude_y[i] = self.shear_flow_magnitude_y[i] - self.qs02
+		return
+
+	def actual_shear_flow_inc_torque(self, torque):
+		self.actual_shear_flow()
+		self.qs0(torque)
+		if self.plane == "CRJ700":
+			self.shear_flow_magnitude_y[0] = self.shear_flow_magnitude_y[0] - self.torque_q01
+			self.shear_flow_magnitude_y[1] = self.shear_flow_magnitude_y[1] - self.torque_q01 
+			self.shear_flow_magnitude_y[15] = self.shear_flow_magnitude_y[15] - self.torque_q01
+			self.shear_flow_magnitude_y[14] = self.shear_flow_magnitude_y[14] - self.torque_q01
+			self.shear_flow_magnitude_y[16] = self.shear_flow_magnitude_y[16] + self.torque_q01 - self.torque_q02																				  
+			self.shear_flow_magnitude_y[17] = self.shear_flow_magnitude_y[17] + self.torque_q01 - self.torque_q02
+			self.shear_flow_magnitude_y[2] = self.shear_flow_magnitude_y[2] - self.torque_q02	 
+			self.shear_flow_magnitude_y[13] = self.shear_flow_magnitude_y[13] - self.torque_q02
+			for i in range(3,13):
+				self.shear_flow_magnitude_y[i] = self.shear_flow_magnitude_y[i] - self.torque_q02
 		return
 
 	def sum_boom_SC_y(self, start, end):
@@ -293,7 +310,7 @@ class Geometry:
 		self.int6 = self.shear_flow_integrated_y[14+2*self.plane_delta] + self.shear_flow_integrated_y[15+2*self.plane_delta]
 		return
 			
-	def qs0(self):#in this part of the code the only thing that needs to be added is the sum of the shear flows through the arc, sum of the shear flows through the straight part of the skin and the shear flow through the spar
+	def qs0(self, torque = 0):#in this part of the code the only thing that needs to be added is the sum of the shear flows through the arc, sum of the shear flows through the straight part of the skin and the shear flow through the spar
 		self.integrate_shear_flows()
 		radius_arc = self.height/2 #defining the radius of the front section
 		length_straight_skin = 2*self.length_skin 
@@ -321,6 +338,8 @@ class Geometry:
 
 		self.qs01 = float(qs0[0])
 		self.qs02 = float(qs0[1])
+		self.torque_q01 = J_matrix[0,0] * torque
+		self.torque_q02	= J_matrix[1,0] * torque
 		print("Q01:", self.qs01, "QS02:", self.qs02)
 		print("Torsional stiffness:", self.J)
 		return
@@ -339,7 +358,8 @@ class Geometry:
 		normal_stress = Moment_y*(z_pos-self.centroid_z)/self.I_yy	+ Moment_z*y_pos/self.I_zz
 		return normal_stress
 		
-	def compute_shear_stress(self, y_shear, z_shear):
+	def compute_shear_stress(self, y_shear, z_shear, torque):
+		self.actual_shear_flow_inc_torque(torque)
 		for i in range(0,len(self.shear_flow_magnitude_y)-2):
 			self.shear_stress[i] = (self.shear_flow_magnitude_y[i]*y_shear + self.shear_flow_magnitude_z[i]*z_shear)/self.skin_thickness
 		self.shear_stress[len(self.shear_flow_magnitude_y)-2] = (self.shear_flow_magnitude_y[len(self.shear_flow_magnitude_y)-2]*y_shear + self.shear_flow_magnitude_z[len(self.shear_flow_magnitude_y)-2]*z_shear)/self.skin_thickness
@@ -348,8 +368,9 @@ class Geometry:
 
 	def Von_misses_stress(self, shear_stress, normal_stress):
 		return math.sqrt(math.pow(normal_stress,2)+3*math.pow(shear_stress,2))
+
 	
-	def Compute_section(self, Moment_z, Moment_y, Shear_z, Shear_y, Torque):
+	def Compute_section(self, Moment_z, Moment_y, Shear_z, Shear_y, torque):
 		
 		z_circle = np.linspace(-self.height/2, 0, 500)
 		y_circle = np.sqrt((-self.height/2)**2 - (z_circle)**2)
@@ -370,7 +391,7 @@ class Geometry:
 		normal_stress = np.zeros(len(z_pos))
 		for i in range(0,len(normal_stress)):
 			normal_stress[i] = self.normal_stress(z_pos[i], y_pos[i], Moment_z, Moment_y)
-		Shear_stress = self.compute_shear_stress(Shear_y, Shear_z)
+		Shear_stress = self.compute_shear_stress(Shear_y, Shear_z, torque)
 
 		transversed = 0
 		shear_index = 0
