@@ -227,6 +227,17 @@ class Geometry:
 			self.shear_flow_magnitude_y[13] = self.shear_flow_magnitude_y[13] - self.qs02
 			for i in range(3,13):
 				self.shear_flow_magnitude_y[i] = self.shear_flow_magnitude_y[i] - self.qs02
+		if self.plane == "B737":
+			self.shear_flow_magnitude_y[0] = self.shear_flow_magnitude_y[0] - self.qs01
+			self.shear_flow_magnitude_y[1] = self.shear_flow_magnitude_y[1] - self.qs01 
+			self.shear_flow_magnitude_y[15] = self.shear_flow_magnitude_y[17] - self.qs01
+			self.shear_flow_magnitude_y[14] = self.shear_flow_magnitude_y[16] - self.qs01
+			self.shear_flow_magnitude_y[16] = self.shear_flow_magnitude_y[18] + self.qs01 - self.qs02																				  
+			self.shear_flow_magnitude_y[17] = self.shear_flow_magnitude_y[19] + self.qs01 - self.qs02
+			self.shear_flow_magnitude_y[2] = self.shear_flow_magnitude_y[2] - self.qs02	 
+			self.shear_flow_magnitude_y[13] = self.shear_flow_magnitude_y[15] - self.qs02
+			for i in range(3,15):
+				self.shear_flow_magnitude_torque[i] = self.shear_flow_magnitude_torque[i] - self.torque_q02
 		return
 
 	def actual_shear_flow_inc_torque(self, torque):
@@ -242,6 +253,18 @@ class Geometry:
 			self.shear_flow_magnitude_torque[13] = self.shear_flow_magnitude_torque[13] - self.torque_q02
 			for i in range(3,13):
 				self.shear_flow_magnitude_torque[i] = self.shear_flow_magnitude_torque[i] - self.torque_q02
+		if self.plane == "B737":
+			self.shear_flow_magnitude_torque[0] = self.shear_flow_magnitude_torque[0] - self.torque_q01
+			self.shear_flow_magnitude_torque[1] = self.shear_flow_magnitude_torque[1] - self.torque_q01 
+			self.shear_flow_magnitude_torque[15] = self.shear_flow_magnitude_torque[17] - self.torque_q01
+			self.shear_flow_magnitude_torque[14] = self.shear_flow_magnitude_torque[16] - self.torque_q01
+			self.shear_flow_magnitude_torque[16] = self.shear_flow_magnitude_torque[18] + self.torque_q01 - self.torque_q02																				  
+			self.shear_flow_magnitude_torque[17] = self.shear_flow_magnitude_torque[19] + self.torque_q01 - self.torque_q02
+			self.shear_flow_magnitude_torque[2] = self.shear_flow_magnitude_torque[2] - self.torque_q02	 
+			self.shear_flow_magnitude_torque[13] = self.shear_flow_magnitude_torque[15] - self.torque_q02
+			for i in range(3,15):
+				self.shear_flow_magnitude_torque[i] = self.shear_flow_magnitude_torque[i] - self.torque_q02
+
 		return
 
 	def sum_boom_SC_y(self, start, end):
@@ -340,8 +363,8 @@ class Geometry:
 		self.qs02 = float(qs0[1])
 		self.torque_q01 =  J_matrix[0,0] * torque
 		self.torque_q02	=  J_matrix[1,0] * torque
-		print("Q01:", self.qs01, "QS02:", self.qs02)
-		print("Torsional stiffness:", self.J)
+		#print("Q01:", self.qs01, "QS02:", self.qs02)
+		#print("Torsional stiffness:", self.J)
 		return
 
 	def shear_center(self):
@@ -350,7 +373,7 @@ class Geometry:
 		print(self.height/2)
 		return shear_center_z
 
-	def normal_stress(self, z_pos, y_pos, Moment_z = 0, Moment_y = 0):
+	def normal_stress(self, z_pos, y_pos, Moment_z, Moment_y):
 		if z_pos == 0:
 			thickness = self.spar_thickness
 		else:
@@ -372,27 +395,30 @@ class Geometry:
 
 	
 	def Compute_section(self, Moment_z, Moment_y, Shear_z, Shear_y, torque):
-		
+		Moment_z = -Moment_z
+		Shear_z = -Shear_z
+		torque = - torque
 		z_circle = np.linspace(-self.height/2, 0, 500)
 		y_circle = np.sqrt((-self.height/2)**2 - (z_circle)**2)
 		z_circle_2 = np.linspace(0, -self.height/2, 500)
 		y_circle_2 = -np.sqrt((-self.height/2)**2 - (z_circle_2)**2)
-		z_plate = np.linspace(0, self.chord - self.height/2, 500)
+		z_plate = np.linspace(0, self.chord - self.height/2, 750)
 		y_plate = self.height/2 - (self.height/2)/(self.chord-self.height/2) * z_plate
-		z_plate_2 = np.linspace(self.chord - self.height/2, 0, 500)
+		z_plate_2 = np.linspace(self.chord - self.height/2, 0, 750)
 		y_plate_2 = -self.height/2 + (self.height/2)/(self.chord-self.height/2) * z_plate_2
-		y_vplate = np.linspace(-self.height/2, self.height/2,200)
+		y_vplate = np.linspace(-self.height/2, self.height/2,300)
 		z_vplate = y_vplate*0
 
 		z_pos = np.append(np.append(np.append(np.append(z_circle, z_plate), z_plate_2), z_circle_2),z_vplate)
 		y_pos = np.append(np.append(np.append(np.append(y_circle, y_plate), y_plate_2), y_circle_2),y_vplate)
 		
 		von_misses = np.zeros(len(z_pos))
-
+		Shear_flow = np.zeros(len(z_pos))
 		normal_stress = np.zeros(len(z_pos))
 		for i in range(0,len(normal_stress)):
 			normal_stress[i] = self.normal_stress(z_pos[i], y_pos[i], Moment_z, Moment_y)
 		Shear_stress = self.compute_shear_stress(Shear_y, Shear_z, torque)
+ 
 
 		transversed = 0
 		shear_index = 0
@@ -400,30 +426,35 @@ class Geometry:
 			if z_circle[i] > self.booms_z[shear_index+1]:
 				shear_index = shear_index + 1
 			von_misses[i] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
+			Shear_flow[i] = self.shear_stress[shear_index]/self.skin_thickness
 
 		shear_index = 2
 		for i in range(0,len(z_plate)):
 			if z_plate[i] > self.booms_z[shear_index] and self.booms_z[shear_index] > self.booms_z[shear_index-1]:
 				shear_index = shear_index+1
 			von_misses[i+500] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
+			Shear_flow[i+500] = self.shear_stress[shear_index]/self.skin_thickness
 
 		shear_index = shear_index + 1
 		for i in range(0,len(z_plate_2)):
 			if z_plate_2[i] < self.booms_z[shear_index-1]:
 				shear_index = shear_index+1
-			von_misses[i+1000] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
+			von_misses[i+1250] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
+			Shear_flow[i+1250] = self.shear_stress[shear_index]/self.skin_thickness
 
 		shear_index = shear_index+1
 		for i in range(0,len(z_circle_2)):
 			if shear_index < (len(self.booms_z)+2) and z_circle_2[i] < self.booms_z[shear_index-2]:
 				shear_index = shear_index+1
-			von_misses[i+1500] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
+			von_misses[i+2000] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
+			Shear_flow[i+2000] = self.shear_stress[shear_index]/self.skin_thickness
 
 		shear_index = shear_index+1
 		for i in range(0,len(z_vplate)):
 			if y_vplate[i] > 0 and y_vplate[i-1] < 0:
 				shear_index = shear_index+1
-			von_misses[i+2000] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
+			von_misses[i+2500] = self.Von_misses_stress(self.shear_stress[shear_index], normal_stress[i])
+			Shear_flow[i+2500] = self.shear_stress[shear_index]/self.spar_thickness
 	
 
 		von_mises_max = np.max(von_misses)
@@ -443,7 +474,7 @@ class Geometry:
 		##ax = fig.add_subplot(111)
 		##ax.plot(z_pos,von_misses)
 		#plt.show()
-		return von_misses, normal_stress, Shear_stress, z_pos, y_pos  
+		return von_misses, -normal_stress, Shear_stress, z_pos, y_pos, Shear_flow 
 
 
 
@@ -459,8 +490,9 @@ z3 =  [-0.1025, -0.06557951, 0.018310740000000006, 0.10634515000000001, 0.194379
 
 b737 = Geometry(20.5/100,1.1/1000,2.8/1000,1.2/1000,1.6/100,1.9/100,0.605,15,1, "B737")
 #b737.idealization()
-#print("Shear center location B737 is:*******************************************************", b737.shear_center())
-
+b737.qs0()
+print("Shear center location B737 is:*******************************************************", b737.shear_center())
+print("Torsional constant is:", b737.J)
 #for a in z:
 #	z2.append(-a-b737.height/2)
 #print("THE LIST Z2 IS:", z2)
