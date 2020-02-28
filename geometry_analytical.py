@@ -123,7 +123,7 @@ class Geometry:
 		centroid_z_spar = self.height*self.spar_thickness * 0
 		centroid_z_plate = self.length_skin*self.skin_thickness * (self.chord-self.height/2)/2
 		centroid_z_area = centroid_z_semicircle + centroid_z_spar + 2*centroid_z_plate
-	
+		print("centroids of individual components;", centroid_z_semicircle, centroid_z_spar, centroid_z_area)
 		
 		#centroid measured from middle plate: component semi-circular area: pi*r * (-2*pi/r) ; component plate: 0 ; component rear plates: 2*(self.length_skin*self.thickness)(self.chord-self.height/2)/2
 		centroid_y_area = 0
@@ -144,11 +144,16 @@ class Geometry:
 		I_yy_spar = ((self.height*self.spar_thickness**3)/12) + (self.height*self.spar_thickness*self.centroid_z**2)
 		I_yy_plates = 2*(self.skin_thickness*(self.length_skin)**3 * math.cos(beta)**2/12) + ((self.chord-self.height/2)/2 - self.centroid_z)**2 * self.skin_thickness*self.length_skin*2
 		I_yy = I_yy_semi_circular + I_yy_spar + I_yy_plates
+		self.I_yy_semi_circular = I_yy_semi_circular
+		self.I_yy_spar = I_yy_spar
+		self.I_yy_plates = I_yy_plates
 		for z in z_boom:
 			I_yy = I_yy + math.pow(abs(z-self.centroid_z),2) * self.str_area
 		for y in y_boom:
 			I_zz = I_zz + math.pow(abs(y-self.centroid_y),2) * self.str_area
 		#I_zz = 5.8159389575991465 * math.pow(10,-6)
+		self.I_yy= I_yy
+
 		print(" I_zz is: \t\t", I_zz, "\n reference I_zz: \t 5.8159389575991465e-06 \n percentage difference; ", (I_zz - 5.8159389575991465e-06)/(5.8159389575991465e-08), "%")
 		print(" I_yy is: \t\t", I_yy, "\n reference I_yy: \t 4.363276766019503e-05 \n percentage difference; ", (I_yy - 4.363276766019503e-05)/(4.363276766019503e-07), "%")
 		return I_zz, I_yy

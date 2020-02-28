@@ -6,6 +6,7 @@ import math as m
 import numpy.testing as npt
 import geometry_analytical as geom
 import Aerodynamic_Loading_Main_V3 as AV3
+import matploblib.pyplot as plt
 #in node 1, shear flow goes to zero
 #test integrals
 #test moment of inertias and centroids
@@ -154,7 +155,6 @@ class TestGeometricalProperties(unittest.TestCase):
 # 		
 # 	def test_shear_stresses(self):
 # 		#assert that shear stresses in [condition] are what they should be 
-# =============================================================================
 		
 class TestInterpolation_Integration(unittest.TestCase):
 	def test_interpolation_1(self):
@@ -174,6 +174,10 @@ class TestInterpolation_Integration(unittest.TestCase):
 	def test_integration_cubic(self):
 		#Integrate the function y = -1 + 2x + x^3 until x = 2.5
 		assert abs(AV3.integrate_1d([0, 1, 2, 3, 4], [-1, 2, 11, 32, 71], 2.5) - 15.125) < 0.00001 #actual value of y integrated is 13.515625
+		
+	def test_integration_cubic(self):
+		#Integrate the function y = -1 + 2x + x^3 until x = 2.5
+		assert abs(AV3.integrate_1d([0, 1, 2, 3, 4], [-1, 2, 11, 32, 71], 3) - 28.5) < 0.00001 #actual value of y integrated is
 		
 	def test_double_integral(self):
 		#Integrate the function y = 2 - x twice over x 
